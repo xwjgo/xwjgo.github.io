@@ -1,0 +1,602 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>观察者模式 | xuwenjiang</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="xuwenjiang">
+    
+
+    
+    <meta name="description" content="观察者模式又称发布/订阅模式，它定义了一种对象间一对多的依赖关系。 当发布者状态改变时，依赖其的所有订阅者都将得到通知并且自动更新自己的状态。 这种一对多的关系，就好比很多人都会订阅同一个微信公众号，当这个微信公众号有新消息时，所有订阅者都会收到。 这种设计模式，主要有以下两种角色组成：   发布者：作为一对多关系中的一，可以管理订阅者的增加和删除，以及发布新数据。 订阅者：一旦发布者发布新数据，">
+<meta name="keywords" content="javascript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="观察者模式">
+<meta property="og:url" content="http://xwjgo.github.io/2016/06/25/js_观察者模式/index.html">
+<meta property="og:site_name" content="xuwenjiang">
+<meta property="og:description" content="观察者模式又称发布/订阅模式，它定义了一种对象间一对多的依赖关系。 当发布者状态改变时，依赖其的所有订阅者都将得到通知并且自动更新自己的状态。 这种一对多的关系，就好比很多人都会订阅同一个微信公众号，当这个微信公众号有新消息时，所有订阅者都会收到。 这种设计模式，主要有以下两种角色组成：   发布者：作为一对多关系中的一，可以管理订阅者的增加和删除，以及发布新数据。 订阅者：一旦发布者发布新数据，">
+<meta property="og:updated_time" content="2017-09-18T13:24:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="观察者模式">
+<meta name="twitter:description" content="观察者模式又称发布/订阅模式，它定义了一种对象间一对多的依赖关系。 当发布者状态改变时，依赖其的所有订阅者都将得到通知并且自动更新自己的状态。 这种一对多的关系，就好比很多人都会订阅同一个微信公众号，当这个微信公众号有新消息时，所有订阅者都会收到。 这种设计模式，主要有以下两种角色组成：   发布者：作为一对多关系中的一，可以管理订阅者的增加和删除，以及发布新数据。 订阅者：一旦发布者发布新数据，">
+
+    
+    <link rel="alternative" href="/atom.xml" title="xuwenjiang" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="xuwenjiang" title="xuwenjiang"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="xuwenjiang">xuwenjiang</a></h1>
+				<h2 class="blog-motto">外面的繁华不是我的繁华</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="/tags">标签</a></li>
+					
+						<li><a href="/categories">分类</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Search" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/06/25/js_观察者模式/" title="观察者模式" itemprop="url">观察者模式</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="xuwenjiang" target="_blank" itemprop="author">xuwenjiang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-06-25T04:12:12.000Z" itemprop="datePublished"> Published 2016-06-25</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#基本实例"><span class="toc-number">1.</span> <span class="toc-text">基本实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#应用场景"><span class="toc-number">2.</span> <span class="toc-text">应用场景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#场景1"><span class="toc-number">2.1.</span> <span class="toc-text">场景1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#场景2"><span class="toc-number">2.2.</span> <span class="toc-text">场景2</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#发布者的继承"><span class="toc-number">3.</span> <span class="toc-text">发布者的继承</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<p>观察者模式又称<strong>发布/订阅</strong>模式，它定义了一种对象间<strong>一对多的依赖关系</strong>。</p>
+<p>当发布者状态改变时，依赖其的所有订阅者都将得到通知并且自动更新自己的状态。</p>
+<p>这种一对多的关系，就好比<strong>很多人都会订阅同一个微信公众号</strong>，当这个微信公众号有新消息时，所有订阅者都会收到。</p>
+<p>这种设计模式，主要有以下两种角色组成：</p>
+<hr>
+<ol>
+<li>发布者：作为一对多关系中的一，可以<strong>管理订阅者的增加和删除，以及发布新数据</strong>。</li>
+<li>订阅者：一旦发布者发布新数据，将<strong>自动作出相应的反应</strong>。</li>
+</ol>
+<hr>
+<h2 id="基本实例"><a href="#基本实例" class="headerlink" title="基本实例"></a>基本实例</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line"><span class="meta">'use strict'</span>;</div><div class="line"></div><div class="line"><span class="comment">// 发布者</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Publisher</span> (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">this</span>.subscribers = [];</div><div class="line">&#125;</div><div class="line"></div><div class="line">Publisher.prototype = &#123;</div><div class="line">  <span class="keyword">constructor</span>: Publisher,</div><div class="line">  </div><div class="line">  // 增加订阅者</div><div class="line">  addSubscriber: function (fn) &#123;</div><div class="line">    <span class="keyword">this</span>.subscribers.forEach(<span class="function"><span class="keyword">function</span> (<span class="params">item</span>) </span>&#123;</div><div class="line">      <span class="keyword">if</span> (fn === item) &#123;</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">      &#125;</div><div class="line">    &#125;);</div><div class="line">    <span class="keyword">this</span>.subscribers.push(fn);</div><div class="line">  &#125;,</div><div class="line">  </div><div class="line">  <span class="comment">// 发布新数据</span></div><div class="line">  publish: <span class="function"><span class="keyword">function</span> (<span class="params">data</span>) </span>&#123;</div><div class="line">    <span class="keyword">this</span>.subscribers.forEach(<span class="function"><span class="keyword">function</span> (<span class="params">item</span>) </span>&#123;</div><div class="line">      item(data);</div><div class="line">    &#125;);</div><div class="line">  &#125;,</div><div class="line">  </div><div class="line">  <span class="comment">// 删除订阅者</span></div><div class="line">  removeSubscriber: <span class="function"><span class="keyword">function</span> (<span class="params">fn</span>) </span>&#123;</div><div class="line">    <span class="keyword">this</span>.subscribers = <span class="keyword">this</span>.subscribers.filter(<span class="function"><span class="keyword">function</span> (<span class="params">item</span>) </span>&#123;</div><div class="line">      <span class="keyword">return</span> (item !== fn);</div><div class="line">    &#125;);</div><div class="line">  &#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// 订阅者A</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">subscriberA</span> (<span class="params">data</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">'A has received:'</span> + data);</div><div class="line">&#125;</div><div class="line"><span class="comment">// 订阅者B</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">subscriberB</span> (<span class="params">data</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">'B has received:'</span> + data);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 实例化一个发布者对象</span></div><div class="line"><span class="keyword">var</span> publisher = <span class="keyword">new</span> Publisher();</div><div class="line"></div><div class="line"><span class="comment">// 增加订阅者A和B</span></div><div class="line">publisher.addSubscriber(subscriberA);</div><div class="line">publisher.addSubscriber(subscriberB);</div><div class="line"></div><div class="line"><span class="comment">// 发布者发布新数据</span></div><div class="line">publisher.publish(<span class="string">'Welcome to subscribe to me!'</span>);</div></pre></td></tr></table></figure>
+<p>运行以上代码，输出结果为：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">A has received:Welcome to subscribe to me!</div><div class="line">B has received:Welcome to subscribe to me!</div></pre></td></tr></table></figure>
+<p>我们也可以删除订阅者：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 删除订阅者</span></div><div class="line">publisher.removeSubscriber(subscriberA);</div></pre></td></tr></table></figure>
+<p>以上代码中，当发布者发布新数据时，所有的订阅者都会自动作出相应的反应，当然，我们<strong>也可以扩展订阅者的功能，比如只将数据推送给特性的订阅者</strong>。</p>
+<h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><h3 id="场景1"><a href="#场景1" class="headerlink" title="场景1"></a>场景1</h3><p>我们在Web开发中，在通过Ajax请求到数据后，需要将数据填充到页面的不同部分，通常我们可以直接在Ajax的回调函数中执行，但是j假如需要更新的位置很多，我们就要去不断地修改回调函数，这种体验无疑是非常糟糕的。</p>
+<p>而以上的发布/订阅模式则可以较好地解决这个问题，我们只需要在<strong>回调函数中将Ajax请求来的数据发布出去</strong>就行。</p>
+<h3 id="场景2"><a href="#场景2" class="headerlink" title="场景2"></a>场景2</h3><p>js中的事件监听其实也是观察者模式的实现，比如当我我们点击一个按钮，便会触发事件监听函数。这种情况下，<strong>DOM元素就是发布者，事件处理程序便是订阅者</strong>。</p>
+<h2 id="发布者的继承"><a href="#发布者的继承" class="headerlink" title="发布者的继承"></a>发布者的继承</h2><p>因为发布者对象是封装在一个自定义类型中，所以<strong>其他对象也可以继承Publisher类型并且获得这个行为</strong>。</p>
+<p>以下代码，使用了寄生组合式的继承方式来实现：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 寄生组合式的继承</span></div><div class="line"><span class="comment">// 理念：将基类型的原型副本赋值给子类型的原型</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">inheritPrototype</span> (<span class="params">subType, superType</span>) </span>&#123;</div><div class="line">  <span class="keyword">var</span> prototype = <span class="built_in">Object</span>.create(superType.prototype);</div><div class="line">  prototype.constructor = subType;</div><div class="line">  subType.prototype = prototype;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 定义子类型</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">SubPublisher</span> (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="comment">// 继承基类型的实例属性</span></div><div class="line">  Publisher.call(<span class="keyword">this</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 继承基类型的原型方法</span></div><div class="line">inheritPrototype(SubPublisher, Publisher);</div><div class="line"></div><div class="line"><span class="comment">// 订阅者A</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">subscriberA</span> (<span class="params">data</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">'A has received:'</span> + data);</div><div class="line">&#125;</div><div class="line"><span class="comment">// 订阅者B</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">subscriberB</span> (<span class="params">data</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">'B has received:'</span> + data);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 实例化SubPublisher对象</span></div><div class="line"><span class="keyword">var</span> subPublisher = <span class="keyword">new</span> SubPublisher();</div><div class="line"></div><div class="line"><span class="comment">// 增加订阅者A和B</span></div><div class="line">subPublisher.addSubscriber(subscriberA);</div><div class="line">subPublisher.addSubscriber(subscriberB);</div><div class="line"></div><div class="line"><span class="comment">// 子类型也可以发布数据了</span></div><div class="line">subPublisher.publish(<span class="string">'subPublisher...'</span>);</div></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>观察者模式，或者订阅/发布模式的使用场景为：<strong>当一个对象的改变需要同时改变其他对象，并且不知道具体有多少对象需要改变的时候，就应该考虑使用这种模式</strong>。</p>
+<p>关于<strong>Object.create()</strong>的具体使用，你可以点击<a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/create" target="_blank" rel="external">这里</a>来查看。</p>
+<p>当它只传入第一个参数时，相当于以下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">object</span>(<span class="params">o</span>) </span>&#123;</div><div class="line">   <span class="function"><span class="keyword">function</span> <span class="title">F</span> (<span class="params"></span>) </span>&#123;&#125;;</div><div class="line">   F.prototype = o;</div><div class="line">   <span class="keyword">return</span> <span class="keyword">new</span> F();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/前端/">前端</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/javascript/">javascript</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://xwjgo.github.io/2016/06/25/js_观察者模式/" data-title="观察者模式 | xuwenjiang" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/07/01/js_函数绑定以及柯里化/" title="函数柯里化">
+  <strong>上一篇：</strong><br/>
+  <span>
+  函数柯里化</span>
+</a>
+</div>
+
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/06/25/js_观察者模式/" data-title="观察者模式" data-url="http://xwjgo.github.io/2016/06/25/js_观察者模式/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#基本实例"><span class="toc-number">1.</span> <span class="toc-text">基本实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#应用场景"><span class="toc-number">2.</span> <span class="toc-text">应用场景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#场景1"><span class="toc-number">2.1.</span> <span class="toc-text">场景1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#场景2"><span class="toc-number">2.2.</span> <span class="toc-text">场景2</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#发布者的继承"><span class="toc-number">3.</span> <span class="toc-text">发布者的继承</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/javascript/" title="javascript">javascript<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/linux/" title="linux">linux<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/node-js/" title="node.js">node.js<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/乱七八糟/" title="乱七八糟">乱七八糟<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/前端/" title="前端">前端<sup>24</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构/" title="数据结构">数据结构<sup>2</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/javascript/" title="javascript">javascript<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/es6/" title="es6">es6<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/react/" title="react">react<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/express/" title="express">express<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/css/" title="css">css<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C">C<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/webpack/" title="webpack">webpack<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/File/" title="File">File<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/history/" title="history">history<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/redux/" title="redux">redux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/react-redux/" title="react-redux">react-redux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ajax/" title="ajax">ajax<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/TODOLIST/" title="TODOLIST">TODOLIST<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/node-js/" title="node.js">node.js<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/vue-js/" title="vue.js">vue.js<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/mongodb/" title="mongodb">mongodb<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">Links</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.ouc.edu.cn" target="_blank" title="中国海洋大学">中国海洋大学</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://weilai5432.github.io" target="_blank" title="魏来">魏来</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> No matter who gives up, i will not. <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/xwjgo" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="xuwenjiang">xuwenjiang</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"xwjgo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-93479022-1', 'xwjgo.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

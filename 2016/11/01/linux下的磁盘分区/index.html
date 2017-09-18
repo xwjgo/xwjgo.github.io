@@ -1,0 +1,680 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>linux下的磁盘分区 | xuwenjiang</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="xuwenjiang">
+    
+
+    
+    <meta name="description" content="前段时间，自己在练习linux磁盘分区的时候把系统搞坏了，自己搭建在那台主机上的博客也随之消失了O_o。于是自己不得不重新安装系统，搭建环境，还好之前写的博客源文件还有备份，要不然损失真就大了。 也好久没有更新博客了，今天就总结下linux磁盘分区的知识吧！ 磁盘组成既然我们是给磁盘来分区的，那就先来复习下磁盘的组成，磁盘主要包括以下几个部分：   圆形的盘片（记录数据） 机械手臂和机械手臂上的磁">
+<meta name="keywords" content="linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux下的磁盘分区">
+<meta property="og:url" content="http://xwjgo.github.io/2016/11/01/linux下的磁盘分区/index.html">
+<meta property="og:site_name" content="xuwenjiang">
+<meta property="og:description" content="前段时间，自己在练习linux磁盘分区的时候把系统搞坏了，自己搭建在那台主机上的博客也随之消失了O_o。于是自己不得不重新安装系统，搭建环境，还好之前写的博客源文件还有备份，要不然损失真就大了。 也好久没有更新博客了，今天就总结下linux磁盘分区的知识吧！ 磁盘组成既然我们是给磁盘来分区的，那就先来复习下磁盘的组成，磁盘主要包括以下几个部分：   圆形的盘片（记录数据） 机械手臂和机械手臂上的磁">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/%E7%A3%81%E7%9B%98%E5%88%86%E5%8C%BA%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/%E5%88%86%E5%8C%BA%E8%A1%A8.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/%E8%AE%BE%E5%A4%87%E6%96%87%E4%BB%B6%E5%90%8D.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/%E5%90%AB%E6%89%A9%E5%B1%95%E5%88%86%E5%8C%BA.png">
+<meta property="og:updated_time" content="2017-09-14T15:27:56.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="linux下的磁盘分区">
+<meta name="twitter:description" content="前段时间，自己在练习linux磁盘分区的时候把系统搞坏了，自己搭建在那台主机上的博客也随之消失了O_o。于是自己不得不重新安装系统，搭建环境，还好之前写的博客源文件还有备份，要不然损失真就大了。 也好久没有更新博客了，今天就总结下linux磁盘分区的知识吧！ 磁盘组成既然我们是给磁盘来分区的，那就先来复习下磁盘的组成，磁盘主要包括以下几个部分：   圆形的盘片（记录数据） 机械手臂和机械手臂上的磁">
+<meta name="twitter:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/%E7%A3%81%E7%9B%98%E5%88%86%E5%8C%BA%E7%BB%93%E6%9E%84.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="xuwenjiang" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="xuwenjiang" title="xuwenjiang"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="xuwenjiang">xuwenjiang</a></h1>
+				<h2 class="blog-motto">外面的繁华不是我的繁华</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="/tags">标签</a></li>
+					
+						<li><a href="/categories">分类</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Search" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/11/01/linux下的磁盘分区/" title="linux下的磁盘分区" itemprop="url">linux下的磁盘分区</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="xuwenjiang" target="_blank" itemprop="author">xuwenjiang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-11-01T04:12:12.000Z" itemprop="datePublished"> Published 2016-11-01</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#磁盘组成"><span class="toc-number">1.</span> <span class="toc-text">磁盘组成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MBR和磁盘分区表"><span class="toc-number">2.</span> <span class="toc-text">MBR和磁盘分区表</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MBR"><span class="toc-number">2.1.</span> <span class="toc-text">MBR</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#磁盘分区表"><span class="toc-number">2.2.</span> <span class="toc-text">磁盘分区表</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#磁盘与分区的设备文件名"><span class="toc-number">3.</span> <span class="toc-text">磁盘与分区的设备文件名</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#磁盘设备文件名"><span class="toc-number">3.1.</span> <span class="toc-text">磁盘设备文件名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分区设备文件名"><span class="toc-number">3.2.</span> <span class="toc-text">分区设备文件名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#概念小结"><span class="toc-number">3.3.</span> <span class="toc-text">概念小结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fdisk"><span class="toc-number">4.</span> <span class="toc-text">fdisk</span></a></li></ol>
+		
+		</div>
+		
+		<p>前段时间，自己在练习linux磁盘分区的时候把系统搞坏了，自己搭建在那台主机上的博客也随之消失了O_o。于是自己不得不重新安装系统，搭建环境，还好之前写的博客源文件还有备份，要不然损失真就大了。</p>
+<p>也好久没有更新博客了，今天就总结下linux磁盘分区的知识吧！</p>
+<h2 id="磁盘组成"><a href="#磁盘组成" class="headerlink" title="磁盘组成"></a>磁盘组成</h2><p>既然我们是给磁盘来分区的，那就先来复习下<strong>磁盘的组成</strong>，磁盘主要包括以下几个部分：</p>
+<hr>
+<ol>
+<li>圆形的盘片（记录数据）</li>
+<li>机械手臂和机械手臂上的磁头（可读写盘片上的数据）</li>
+<li>主轴马达（可以转动盘片）</li>
+</ol>
+<hr>
+<p>从上面我们明白数据存储和读取的重点在于盘片，而盘片的物理组成如下：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/%E7%A3%81%E7%9B%98%E5%88%86%E5%8C%BA%E7%BB%93%E6%9E%84.png" alt=""></p>
+<p>相关概念说明如下：</p>
+<hr>
+<ol>
+<li><strong>扇区（Sector）</strong>为最小的物理存储单位，每个扇区为<strong>521bytes</strong>。</li>
+<li>将扇区组成一个圆，就是一个<strong>磁道（Track）</strong>。</li>
+<li>多个<strong>盘片（platter）</strong>同一位置的磁道组成一个<strong>柱面（Cylinder）</strong>。</li>
+</ol>
+<hr>
+<p>另外我们需要明白的是，<strong>柱面是磁盘分区（partition）的最小单位</strong>。</p>
+<h2 id="MBR和磁盘分区表"><a href="#MBR和磁盘分区表" class="headerlink" title="MBR和磁盘分区表"></a>MBR和磁盘分区表</h2><p>整个磁盘的第一个扇区是很重要的，因为它里面包含两部分内容：<code>MBR</code>和<code>磁盘分区表</code>。</p>
+<h3 id="MBR"><a href="#MBR" class="headerlink" title="MBR"></a>MBR</h3><p>MBR即<strong>硬盘主引导记录（Master boot record）</strong>，它占有<strong>446bytes</strong>，保存了最基本的<code>引导加载程序（boot loader）</code>。</p>
+<p>而引导加载程序（boot loader）是一个可读取内核文件来执行的软件，它提供了以下几个功能：</p>
+<hr>
+<ol>
+<li><strong>提供菜单：</strong> 用户可以选择不同的开机选项，这也是多重引导的重要功能。</li>
+<li><strong>载入内核文件：</strong> 直接指向可开机的程序区段来开始操作系统。</li>
+<li><strong>转交其他loader：</strong> 将引导加载程序转交给其他loader负责。</li>
+</ol>
+<hr>
+<p>而我们的<strong>开机流程与MBR息息相关</strong>，我们知道，BIOS是一个写入到主板上的<strong>韧体（写入到硬件上的软件程序）</strong>，它是开机时计算机系统会主动执行的第一个程序。接下来BIOS会依据用户设置去<strong>读取计算机的第一个可开机设备，比如硬盘</strong>。并且到该硬盘里面去<strong>读取第一个扇区的MBR</strong>。至此，BIOS任务完成，剩下就转交给MBR的boot loader来完成了。</p>
+<h3 id="磁盘分区表"><a href="#磁盘分区表" class="headerlink" title="磁盘分区表"></a>磁盘分区表</h3><p>partition table即分区表，它占有<strong>64bytes</strong>，保存了与磁盘分区相关的信息。</p>
+<p>它的作用就在与告诉操作系统：<strong>某分区可以访问的磁盘区域是柱面A到柱面B之间的块</strong>。</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/%E5%88%86%E5%8C%BA%E8%A1%A8.png" alt=""></p>
+<p>正如上图所示，linux分区表中<strong>仅能记录四条分区信息</strong>，其中每条记录区记录了<strong>该分区的起始柱面和结束柱面号码</strong>。</p>
+<p>到现在，我们对分区应该大致理解如下：</p>
+<hr>
+<ol>
+<li>所谓的分区，就是对分区表的64bytes设置而已。</li>
+<li>硬盘默认的分区仅能写入<strong>四组分区信息</strong>。</li>
+<li>这四组分区我们成为主<strong>（primary）分区</strong>或者<strong>扩展（extended）分区</strong>。</li>
+<li>分区的<strong>最小单位为柱面（cylinder）</strong>。</li>
+</ol>
+<h2 id="磁盘与分区的设备文件名"><a href="#磁盘与分区的设备文件名" class="headerlink" title="磁盘与分区的设备文件名"></a>磁盘与分区的设备文件名</h2><p>了解了磁盘的基本组成之后，我们需要知道，在linux中，磁盘和分区的设备文件名分别怎么表示。</p>
+<h3 id="磁盘设备文件名"><a href="#磁盘设备文件名" class="headerlink" title="磁盘设备文件名"></a>磁盘设备文件名</h3><p>个人计算机常见的磁盘接口有两种，分别是<code>IDE</code>和<code>SATA</code>接口。</p>
+<p>以IDE接口来说，通常一个主机有两个IDE接口<strong>（primary和secondary）</strong>，而一个IDE接口可以通过一个IDE扁平电缆连接两个IDE设备<strong>（Master和slave）</strong>。所以，一台主机通常最多可以连接<strong>4个IDE设备</strong>。</p>
+<p>这4个IDE设备在linux中会有如下的设备文件名：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/%E8%AE%BE%E5%A4%87%E6%96%87%E4%BB%B6%E5%90%8D.png" alt=""></p>
+<p>再以SATA接口来说，由于<code>SATA/USB/SCSI</code>等设备接口都是用<code>SCSI</code>模块来驱动的，因此这些设备的设备文件名都是<code>/dev/sd[a-p]</code>的格式。</p>
+<p>况且与IDE接口不同的是，他们没有一定的顺序，而他们设备文件名的顺序则取决于<strong>linux内核检测到磁盘的顺序</strong>。</p>
+<hr>
+<p>下面来看一个案例：</p>
+<p>假设你有一个USB磁盘和两个SATA磁盘，并且你的PC主板上有6个SATA插槽，你将这两个SATA磁盘分别安插在SATA1、SATA5插槽上，请问这三个磁盘在linux中的设备文件名是什么？</p>
+<p>答案如下：</p>
+<ol>
+<li>SATA1插槽上的磁盘文件名：/dev/sda</li>
+<li>SATA2插槽上的磁盘文件名：/dev/sdb</li>
+<li>USB插槽上的磁盘文件名：/dev/sdc (由于开机完成之后才被系统识别）</li>
+</ol>
+<h3 id="分区设备文件名"><a href="#分区设备文件名" class="headerlink" title="分区设备文件名"></a>分区设备文件名</h3><p>就拿设备文件名为<code>/dev/hda</code>的这块磁盘来说，假设这块磁盘的分区情况如下：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/%E5%90%AB%E6%89%A9%E5%B1%95%E5%88%86%E5%8C%BA.png" alt=""></p>
+<p>上图中看出，我们硬盘的分区记录仅使用了两个，其中<strong>P1为主分区，P2为扩展分区</strong>。</p>
+<p>请注意：扩展分区的目的是<strong>使用额外的扇区来记录分区信息，扩展分区本身并不能用来格式化</strong>。这样我们可以通过扩展分区所指向的那个区块继续做分区的记录。</p>
+<p>这样，我们就可以进一步<strong>将扩展分区P2划分出L1-L4这几个逻辑分区</strong>。</p>
+<p>并且，以上几个分区的设备文件名如下所示：</p>
+<hr>
+<ol>
+<li>P1: <code>/dev/hda1</code></li>
+<li>P2: <code>/dev/hda2</code></li>
+<li>L1: /dev/hda5</li>
+<li>L2: /dev/hda6</li>
+<li>L3: /dev/hda7</li>
+<li>L4: /dev/hda8</li>
+</ol>
+<hr>
+<p>我们注意到： 怎么分区的设备文件名没有<code>/dev/hda3</code>和<code>/dev/hda4</code>呢？</p>
+<p>这是因为，<strong>前面四个号码都是保留给Primary或者Extended用的</strong>。所以，逻辑分区的设备文件名号码就由<strong>5开始</strong>了。</p>
+<h3 id="概念小结"><a href="#概念小结" class="headerlink" title="概念小结"></a>概念小结</h3><p>这里将主分区、扩展分区、逻辑分区的相关概念，做个总结：</p>
+<hr>
+<ol>
+<li>主分区与扩展分区最多可以有4个（硬盘的限制）。</li>
+<li>扩展分区最多只能有一个（操作系统的限制）。</li>
+<li>逻辑分区是由扩展分区持续切割出来的分区。</li>
+<li>主分区和逻辑分区可以被格式化，而扩展分区不可以被格式化。</li>
+<li>逻辑分区的数量因操作系统而不同。在linux中，<strong>IDE硬盘最多有59个逻辑分区（5号到63号），SATA硬盘最多有11个逻辑分区（5号到15号）</strong>。</li>
+</ol>
+<h2 id="fdisk"><a href="#fdisk" class="headerlink" title="fdisk"></a>fdisk</h2><p>前面总结了理论，这里来实践一下。以下是linux中分区可能用到的命令：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 如果不加最后一个参数，可列出整体磁盘相关信息（包括分区信息）</span></div><div class="line"><span class="comment">// 如果加上最后一个参数，可以自动分析该目录或文件所在分区，并列出相关分区信息</span></div><div class="line">$ df [-akmhi] [目录或者文件名]    </div><div class="line"></div><div class="line"><span class="comment">// 磁盘分区命令，进入之后输入help查看使用方式</span></div><div class="line"><span class="comment">// 磁盘分区的删除、添加分区等</span></div><div class="line">$ fdisk 磁盘设备文件名</div></pre></td></tr></table></figure>
+<p>我上次就是使用这个命令进行分区的时候，将系统弄奔溃的，所以使用时候一定要万分小心，最后确定分区表是正确的之后，才输入<code>w</code>。</p>
+<p>今天就总结到这里。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/linux/">linux</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/linux/">linux</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://xwjgo.github.io/2016/11/01/linux下的磁盘分区/" data-title="linux下的磁盘分区 | xuwenjiang" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/11/05/linux文件权限/" title="linux文件权限">
+  <strong>上一篇：</strong><br/>
+  <span>
+  linux文件权限</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/10/12/KMP算法中的next数组/"  title="KMP算法中的next数组">
+ <strong>下一篇：</strong><br/> 
+ <span>KMP算法中的next数组
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/11/01/linux下的磁盘分区/" data-title="linux下的磁盘分区" data-url="http://xwjgo.github.io/2016/11/01/linux下的磁盘分区/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#磁盘组成"><span class="toc-number">1.</span> <span class="toc-text">磁盘组成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MBR和磁盘分区表"><span class="toc-number">2.</span> <span class="toc-text">MBR和磁盘分区表</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MBR"><span class="toc-number">2.1.</span> <span class="toc-text">MBR</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#磁盘分区表"><span class="toc-number">2.2.</span> <span class="toc-text">磁盘分区表</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#磁盘与分区的设备文件名"><span class="toc-number">3.</span> <span class="toc-text">磁盘与分区的设备文件名</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#磁盘设备文件名"><span class="toc-number">3.1.</span> <span class="toc-text">磁盘设备文件名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分区设备文件名"><span class="toc-number">3.2.</span> <span class="toc-text">分区设备文件名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#概念小结"><span class="toc-number">3.3.</span> <span class="toc-text">概念小结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fdisk"><span class="toc-number">4.</span> <span class="toc-text">fdisk</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/javascript/" title="javascript">javascript<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/linux/" title="linux">linux<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/node-js/" title="node.js">node.js<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/乱七八糟/" title="乱七八糟">乱七八糟<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/前端/" title="前端">前端<sup>24</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构/" title="数据结构">数据结构<sup>2</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/javascript/" title="javascript">javascript<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/es6/" title="es6">es6<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/react/" title="react">react<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/express/" title="express">express<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/css/" title="css">css<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C">C<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/webpack/" title="webpack">webpack<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/File/" title="File">File<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/history/" title="history">history<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/redux/" title="redux">redux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/react-redux/" title="react-redux">react-redux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ajax/" title="ajax">ajax<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/TODOLIST/" title="TODOLIST">TODOLIST<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/node-js/" title="node.js">node.js<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/vue-js/" title="vue.js">vue.js<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/mongodb/" title="mongodb">mongodb<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">Links</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.ouc.edu.cn" target="_blank" title="中国海洋大学">中国海洋大学</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://weilai5432.github.io" target="_blank" title="魏来">魏来</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> No matter who gives up, i will not. <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/xwjgo" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="xuwenjiang">xuwenjiang</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"xwjgo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-93479022-1', 'xwjgo.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

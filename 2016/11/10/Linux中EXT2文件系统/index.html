@@ -1,0 +1,718 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>EXT2文件系统 | xuwenjiang</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="xuwenjiang">
+    
+
+    
+    <meta name="description" content="之前总结了linux下的磁盘分区，分区完成之后，下一步就需要将分区格式化(format)。 为什么要格式化呢？这是因为每种操作系统所设置的文件属性/权限并不相同，为了存放这些文件所需的数据，就要将分区进行格式化，以成为操作系统能够利用的文件系统。 今天，就整理下linux的正规文件系统：Ext2。 Ext2文件系统特征我们知道，在Linux中，一个文件除了本身的数据内容之外，通常含有非常多的属性，">
+<meta name="keywords" content="linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="EXT2文件系统">
+<meta property="og:url" content="http://xwjgo.github.io/2016/11/10/Linux中EXT2文件系统/index.html">
+<meta property="og:site_name" content="xuwenjiang">
+<meta property="og:description" content="之前总结了linux下的磁盘分区，分区完成之后，下一步就需要将分区格式化(format)。 为什么要格式化呢？这是因为每种操作系统所设置的文件属性/权限并不相同，为了存放这些文件所需的数据，就要将分区进行格式化，以成为操作系统能够利用的文件系统。 今天，就整理下linux的正规文件系统：Ext2。 Ext2文件系统特征我们知道，在Linux中，一个文件除了本身的数据内容之外，通常含有非常多的属性，">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/%E7%B4%A2%E5%BC%95%E5%BC%8F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/Ext2%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/inode%E7%BB%93%E6%9E%84%E5%9B%BE.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/ext2%E7%9B%AE%E5%BD%95.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/ext2%E7%9B%AE%E5%BD%95%E4%BA%8C.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/df-1.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/df-2.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/df-3.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/du-1.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/du-2.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/du-3.png">
+<meta property="og:updated_time" content="2017-09-14T15:27:56.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="EXT2文件系统">
+<meta name="twitter:description" content="之前总结了linux下的磁盘分区，分区完成之后，下一步就需要将分区格式化(format)。 为什么要格式化呢？这是因为每种操作系统所设置的文件属性/权限并不相同，为了存放这些文件所需的数据，就要将分区进行格式化，以成为操作系统能够利用的文件系统。 今天，就整理下linux的正规文件系统：Ext2。 Ext2文件系统特征我们知道，在Linux中，一个文件除了本身的数据内容之外，通常含有非常多的属性，">
+<meta name="twitter:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/%E7%B4%A2%E5%BC%95%E5%BC%8F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="xuwenjiang" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="xuwenjiang" title="xuwenjiang"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="xuwenjiang">xuwenjiang</a></h1>
+				<h2 class="blog-motto">外面的繁华不是我的繁华</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="/tags">标签</a></li>
+					
+						<li><a href="/categories">分类</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Search" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/11/10/Linux中EXT2文件系统/" title="EXT2文件系统" itemprop="url">EXT2文件系统</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="xuwenjiang" target="_blank" itemprop="author">xuwenjiang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-11-10T04:12:12.000Z" itemprop="datePublished"> Published 2016-11-10</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Ext2文件系统特征"><span class="toc-number">1.</span> <span class="toc-text">Ext2文件系统特征</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ext2文件系统结构"><span class="toc-number">2.</span> <span class="toc-text">Ext2文件系统结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#boot-sector"><span class="toc-number">2.1.</span> <span class="toc-text">boot sector</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#data-block"><span class="toc-number">2.2.</span> <span class="toc-text">data block</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#inode-table"><span class="toc-number">2.3.</span> <span class="toc-text">inode table</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#superblock"><span class="toc-number">2.4.</span> <span class="toc-text">superblock</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#file-system-description"><span class="toc-number">2.5.</span> <span class="toc-text">file system description</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#block-bitmap"><span class="toc-number">2.6.</span> <span class="toc-text">block bitmap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#inode-bitmap"><span class="toc-number">2.7.</span> <span class="toc-text">inode bitmap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#信息查询"><span class="toc-number">2.8.</span> <span class="toc-text">信息查询</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何记录目录与文件"><span class="toc-number">3.</span> <span class="toc-text">如何记录目录与文件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#目录"><span class="toc-number">3.1.</span> <span class="toc-text">目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#文件"><span class="toc-number">3.2.</span> <span class="toc-text">文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#文件内容读取过程"><span class="toc-number">3.3.</span> <span class="toc-text">文件内容读取过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#两个查询命令"><span class="toc-number">4.</span> <span class="toc-text">两个查询命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#df"><span class="toc-number">4.1.</span> <span class="toc-text">df</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#du"><span class="toc-number">4.2.</span> <span class="toc-text">du</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<p>之前总结了linux下的磁盘分区，分区完成之后，下一步就需要将分区<strong>格式化(format)</strong>。</p>
+<p><strong>为什么要格式化呢？</strong>这是因为每种操作系统所设置的文件属性/权限并不相同，为了存放这些文件所需的数据，就要将分区进行格式化，以成为操作系统能够利用的文件系统。</p>
+<p>今天，就整理下linux的正规文件系统：<code>Ext2</code>。</p>
+<h2 id="Ext2文件系统特征"><a href="#Ext2文件系统特征" class="headerlink" title="Ext2文件系统特征"></a>Ext2文件系统特征</h2><p>我们知道，在Linux中，一个文件除了本身的数据内容之外，通常含有非常多的属性，比如文件权限、所有者、群组、创建时间等。</p>
+<p>Ext2文件系统中，文件属性存放在<code>inode</code>中，而实际数据则存放到<code>data block</code>当中。另外，还有一个<code>superblock</code>来记录整个文件系统的整体信息，包括inode和block的总量、使用量、剩余量等。</p>
+<p>每个inode和block都有编号，更详细的说明如下：</p>
+<hr>
+<ul>
+<li>superblock：记录文件系统整体信息，包括inode/block的总量、使用量、剩余量，以及文件系统的格式等相关信息。</li>
+<li>inode：记录文件的属性，一个文件占用一个inode，同时记录此文件数据所在的block号码。</li>
+<li>block：记录文件的实际数据，可能会占用多个block。</li>
+</ul>
+<hr>
+<p>下图来帮助理解：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/%E7%B4%A2%E5%BC%95%E5%BC%8F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F.png" alt=""></p>
+<p>以上这种数据访问的方法我们称为<strong>索引式文件系统</strong>，Ext2就是这样的一个文件系统。</p>
+<h2 id="Ext2文件系统结构"><a href="#Ext2文件系统结构" class="headerlink" title="Ext2文件系统结构"></a>Ext2文件系统结构</h2><p>如果我们格式化完某一个分区之后，文件系统将会自动把<code>inode</code>和<code>block</code>规划好。</p>
+<p>但是，假如某个文件系统高达几百GB，那么<strong>把所有的inode和block放在一起，将非常不容易管理</strong>。</p>
+<p>所以，Ext2文件系统在格式化的时候，是将分区划<strong>分为多个块组(block group)</strong>的，每个块组都有独立的<code>inode/block/superblock</code>系统。</p>
+<p>图示如下：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/Ext2%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84.png" alt=""></p>
+<p>下面针对上图依次做出说明。</p>
+<h3 id="boot-sector"><a href="#boot-sector" class="headerlink" title="boot sector"></a>boot sector</h3><p>文件系统的最前面有一个启动扇区<strong>(boot sector)</strong>，这个启动扇区可以安装引导<strong>装载程序(boot loader)</strong>。</p>
+<p>如此一来，我们就可以将不同的<code>boot loader</code>安装到个别文件系统的最前端，而不用覆盖整块硬盘唯一的<code>MBR</code>。</p>
+<p>这样也能做出<strong>多重引导的环境</strong>。</p>
+<h3 id="data-block"><a href="#data-block" class="headerlink" title="data block"></a>data block</h3><p><code>data block</code>是用来存放文件内容的地方，在Ext2文件系统中，所支持的block大小有<code>1KB</code>、<code>2KB</code>以及<code>4KB</code>三种。</p>
+<p>承上，每个block只能存放一个文件的数据。若文件较大，可能占用多个block；若文件小于block大小，剩下的空间也不能再使用了。</p>
+<p>所以，假设你文件系统的block设置为4KB，并且你有很多很多小文件，那么将造成很大的空间浪费。</p>
+<p>但是，如果将block大小设置为1KB，并且有很多大文件，那么一个文件将需要占据多个block，此时可能导致文件读写性能下降。</p>
+<h3 id="inode-table"><a href="#inode-table" class="headerlink" title="inode table"></a>inode table</h3><p><code>inode table</code>是inode的集合，某个inode记录的是某个文件的属性以及该文件的数据实际放在哪些block之中。</p>
+<p>下面罗列出了一个inode记录的基本数据项：</p>
+<hr>
+<ul>
+<li>该文件的访问模式（read/write/excute）</li>
+<li>该文件的所有者与组（owner/group）</li>
+<li>该文件的大小</li>
+<li>该文件创建或状态改变的时间（ctime）</li>
+<li>最近一次读取时间（atime）</li>
+<li>最近修改时间（mtime）</li>
+<li>特殊权限（SUID/SGID）</li>
+<li>该文件的真正内容指向（block 号码）</li>
+</ul>
+<hr>
+<p>另外，每个inode的固定大小为<code>128bytes</code>，而inode记录一个block号码要花费<code>4bytes</code>。</p>
+<p>假设一个文件大小为400M，并且文件系统的block大小为4KB，那么该文件至少需要10万个block来存储器数据，该文件的inode哪儿能存储这么多block号码呢？</p>
+<p>为了解决以上问题，Ext2文件系统将inode记录block号码的区域定义为<strong>12个直接、一个间接、一个双间接</strong>与<strong>一个三间接记录区</strong>。</p>
+<p>下图来辅助理解：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/inode%E7%BB%93%E6%9E%84%E5%9B%BE.png" alt=""></p>
+<p>这样假设我们的文件系统的block大小设置为1KB，那么该文件的inode的三间接记录区所能保存的block大小为：<code>256×256×256×1KB</code>，约为2的34次方个byte，大约为<code>16GB</code>。</p>
+<p>承上，当文件系统<strong>将block大小设置为1KB时，能够容纳的单个最大文件为16GB</strong>。</p>
+<p>但是这种计算方法，不能用在block大小为2KB和4KB时，因为这将会收到Ext2文件系统本身的限制。</p>
+<h3 id="superblock"><a href="#superblock" class="headerlink" title="superblock"></a>superblock</h3><p><code>superblock</code>记录的是整个文件系统的相关信息，大小为<code>1024bytes</code>，记录信息主要包括：</p>
+<hr>
+<ul>
+<li>block与inode的总量。</li>
+<li>未使用与已使用的inode/block数量。</li>
+<li>block与inode的大小（block为1K、2K、4K，inode为128bytes）。</li>
+<li>文件系统的挂载时间、最近一次写入数据的时间、最忌一次检验磁盘的时间等。</li>
+<li>一个<code>valid bit</code>数值，若该值为0，表示该文件系统已经挂载，若为1，表示未被挂载。</li>
+</ul>
+<hr>
+<p>以上信息，我们可以通过<code>dumpe2fs</code>命令来查看，由于显示内容比较多，就不上图片了。</p>
+<p>另外，我们知道，<strong>一个文件系统应该只会有一个superblock而已</strong>。</p>
+<p>但事实上，除了第一个<code>block group</code>内会含有<code>superblock</code>之外，后续的<code>block group</code>不一定含有<code>superblock</code>，若含有的话，则是第一个<code>block group</code>中<code>superblock</code>的备份，这样可以进行<code>superblock</code>的救援。</p>
+<h3 id="file-system-description"><a href="#file-system-description" class="headerlink" title="file system description"></a>file system description</h3><p>即文件系统描述说明，这个区段描述每个<code>block group</code>的开始与结束block号码，以及说明每个区段（superblock、inode table、data block等）分别介于哪一个block号码之间。</p>
+<p>这部分也可以通过<code>dumpe2fs</code>来查看。</p>
+<h3 id="block-bitmap"><a href="#block-bitmap" class="headerlink" title="block bitmap"></a>block bitmap</h3><p>即块对照表，记录哪些block是空的，哪些已经被使用。</p>
+<p>比如你删除某个文件时，此时<code>block bitmap</code>中想对应该文件block的号码就被修改成“未使用中”。</p>
+<h3 id="inode-bitmap"><a href="#inode-bitmap" class="headerlink" title="inode bitmap"></a>inode bitmap</h3><p>即inode对照表，与<code>block bitmap</code>类似，<code>inode bitmap</code>记录使用与未使用的inode号码。</p>
+<h3 id="信息查询"><a href="#信息查询" class="headerlink" title="信息查询"></a>信息查询</h3><p>使用<code>dumpe2fs</code>可以查询到以上所有信息。</p>
+<h2 id="如何记录目录与文件"><a href="#如何记录目录与文件" class="headerlink" title="如何记录目录与文件"></a>如何记录目录与文件</h2><p>以上对linux下的Ext2文件系统做了简单的介绍，那么目录与文件在Ext2文件系统中是如何如何被记录的呢？</p>
+<h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><p>当我们在linux的Ext2文件系统中，新建一个目录时，Ext2会分配一个inode与至少一块block给该目录。</p>
+<p>其中，inode记录该目录的相关权限和属性，以及分配到的那块block的号码。</p>
+<p>而那块block则记录该目录下的文件名，以及每个文件对应的inode号码。</p>
+<p>那么我们如何查看某个目录下保存的文件名和inode号码呢？用<code>ls -li</code>即可：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/ext2%E7%9B%AE%E5%BD%95.png" alt=""></p>
+<p>上图第一列就是每个文件对应的inode号码！</p>
+<p>另外，我们如何查看给某个目录分配的空间大小呢？使用<code>ls -ld</code>:</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/ext2%E7%9B%AE%E5%BD%95%E4%BA%8C.png" alt=""></p>
+<p>上图可以看出，文件系统为每个目录分配的空间大小都是<code>4096Bytes</code>的整数倍。这是因为，我的block就设置为<code>4KB</code>（可以使用<code>dumpe2fs</code>来查看）。</p>
+<p>但是，我们也发现目录<code>/proc</code>所占磁盘空间为0，这是因为该目录不占用硬盘容量（<strong>占用内存</strong>），所以消耗的block大小自然为0。</p>
+<p>还有<code>/lost+found</code>目录，其占用了4个block。这是因为该目录下文件数量太多，导致<strong>一个block不能够记录该目录下的所有文件名及其对应inode号码</strong>，因此会多一些block来记录相关数据。</p>
+<h3 id="文件"><a href="#文件" class="headerlink" title="文件"></a>文件</h3><p>当我们在linux下的Ext2文件系统中，新建一个文件时，Ext2会<strong>分配一个inode与相对于该文件大小的block数量给该文件</strong>。</p>
+<p>比如，当文件系统block大小为4KB，我新建了一个100KB的文件，那么将会分配1个inode和25个block来存储该文件。</p>
+<p>但是，由于inode仅有12个直接指向，因此还要多一个block来作为作为块号码的记录。</p>
+<h3 id="文件内容读取过程"><a href="#文件内容读取过程" class="headerlink" title="文件内容读取过程"></a>文件内容读取过程</h3><p>由上面总结可知：<strong>无论是文件还是目录，inode本身并不记录文件名；而文件名是记录在其所在目录的block中</strong>。</p>
+<p>因此当我们试图读取一个文件时，务必会先读取其所在目录的inode和block，在block中找到待读取文件的inode号码，继而再读取该文件的block内容。</p>
+<p>另外我们需要直到，通常一个文件系统最顶层的inode号码，是从<code>2号</code>开始（参考上一张图片）。</p>
+<p>下面假设我们要读取<code>/etc/passwd</code>文件的内容，大致会经过以下几个步骤：</p>
+<hr>
+<ol>
+<li>/的inode : 查看用户是否具有对应权限，若有，则可以读取对应block内容</li>
+<li>/的block : 在block中找到/etc目录的inode号码</li>
+<li>/etc的inode : 根据上一阶段拿到的inode号码，找到并读取/etc的inode，查看用户是否具有相应权限</li>
+<li>/etc的block : 读取/etc的block，找到文件passwd对应的inode号码</li>
+<li>/etc/passwd的inode : 根据文件passwd具有的权限，决定是否可以读取block内容</li>
+<li>/etc/passwd的block : 读取文件passwd的内容</li>
+</ol>
+<h2 id="两个查询命令"><a href="#两个查询命令" class="headerlink" title="两个查询命令"></a>两个查询命令</h2><p>最后，我们来看与文件系统相关的两个信息查询命令：<code>df</code>和<code>du</code>。</p>
+<h3 id="df"><a href="#df" class="headerlink" title="df"></a>df</h3><p>df可以列出当前磁盘的挂载情况以及磁盘使用量，主要来自<code>superblock</code>中，所以速度很快。</p>
+<p>使用方法如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$ df [-kmhi] [目录或文件名]</div><div class="line">参数：</div><div class="line">-k：以KB为容量显示各文件系统使用量</div><div class="line">-m：以MB为容量显示各文件系统使用量</div><div class="line">-h：以人类较易理解的GB、MB、KB等格式显示</div><div class="line">-i：不使用硬盘容量，而以inode的数量来表示</div><div class="line">-T：连同该文件系统的类型（如Ext3）也列出来</div></pre></td></tr></table></figure>
+<p>以下有几个使用场景：</p>
+<p>后面不加文件或者目录名，将列出系统内所有的文件系统使用和挂载信息：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/df-1.png" alt=""></p>
+<p>如果后面跟上文件名，将自动分析该目录或者文件所在分区，并且列出该分区的使用和挂载信息：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/df-2.png" alt=""></p>
+<p>列出某文件系统的的inode个数使用量：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/df-3.png" alt=""></p>
+<h3 id="du"><a href="#du" class="headerlink" title="du"></a>du</h3><p>du主要用与评估<strong>文件大小</strong>或者<strong>目录容量</strong>（注意，即使一个文件中只有一个字符<code>a</code>，那么该文件也占用一个block，即4K）。</p>
+<p>与df读取superblock不同，du这个命令会直接到文件系统内去查找所有的文件数据，所以速度稍慢。</p>
+<p>du的用法如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$ du [-akmhs] [文件或者目录名称]</div><div class="line">参数：</div><div class="line">-a：列出所有的文件大小和目录容量，因为默认du仅列出目录容量。</div><div class="line">-k：以KB显示</div><div class="line">-m: 以MB显示</div><div class="line">-h：以人类较易理解的KB、MB、GB来显示</div><div class="line">-s：仅列出当前（指定）目录的block总量</div></pre></td></tr></table></figure>
+<p>现在假设我们有这样一个名为<code>test</code>的文件夹：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/du-1.png" alt=""></p>
+<p>来看几个场景：</p>
+<p>列出该目录下，所有目录容量（注意：仅显示目录）：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/du-2.png" alt=""></p>
+<p>列出该目录下，所有文件大小和目录容量（包含文件和目录）：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/du-3.png" alt=""></p>
+<p>今天就写到这里吧！</p>
+<p>下一篇将总结一下linux中的连接文件，因为与文件系统相关性较高，所以要趁热打铁，才能记得牢啊O_o。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/linux/">linux</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/linux/">linux</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://xwjgo.github.io/2016/11/10/Linux中EXT2文件系统/" data-title="EXT2文件系统 | xuwenjiang" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2017/01/06/TODOLIST/" title="TODOLIST">
+  <strong>上一篇：</strong><br/>
+  <span>
+  TODOLIST</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/11/05/linux文件权限/"  title="linux文件权限">
+ <strong>下一篇：</strong><br/> 
+ <span>linux文件权限
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/11/10/Linux中EXT2文件系统/" data-title="EXT2文件系统" data-url="http://xwjgo.github.io/2016/11/10/Linux中EXT2文件系统/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Ext2文件系统特征"><span class="toc-number">1.</span> <span class="toc-text">Ext2文件系统特征</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ext2文件系统结构"><span class="toc-number">2.</span> <span class="toc-text">Ext2文件系统结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#boot-sector"><span class="toc-number">2.1.</span> <span class="toc-text">boot sector</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#data-block"><span class="toc-number">2.2.</span> <span class="toc-text">data block</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#inode-table"><span class="toc-number">2.3.</span> <span class="toc-text">inode table</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#superblock"><span class="toc-number">2.4.</span> <span class="toc-text">superblock</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#file-system-description"><span class="toc-number">2.5.</span> <span class="toc-text">file system description</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#block-bitmap"><span class="toc-number">2.6.</span> <span class="toc-text">block bitmap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#inode-bitmap"><span class="toc-number">2.7.</span> <span class="toc-text">inode bitmap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#信息查询"><span class="toc-number">2.8.</span> <span class="toc-text">信息查询</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何记录目录与文件"><span class="toc-number">3.</span> <span class="toc-text">如何记录目录与文件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#目录"><span class="toc-number">3.1.</span> <span class="toc-text">目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#文件"><span class="toc-number">3.2.</span> <span class="toc-text">文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#文件内容读取过程"><span class="toc-number">3.3.</span> <span class="toc-text">文件内容读取过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#两个查询命令"><span class="toc-number">4.</span> <span class="toc-text">两个查询命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#df"><span class="toc-number">4.1.</span> <span class="toc-text">df</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#du"><span class="toc-number">4.2.</span> <span class="toc-text">du</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/javascript/" title="javascript">javascript<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/linux/" title="linux">linux<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/node-js/" title="node.js">node.js<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/乱七八糟/" title="乱七八糟">乱七八糟<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/前端/" title="前端">前端<sup>24</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构/" title="数据结构">数据结构<sup>2</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/javascript/" title="javascript">javascript<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/es6/" title="es6">es6<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/react/" title="react">react<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/express/" title="express">express<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/css/" title="css">css<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C">C<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/webpack/" title="webpack">webpack<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/File/" title="File">File<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/history/" title="history">history<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/redux/" title="redux">redux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/react-redux/" title="react-redux">react-redux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ajax/" title="ajax">ajax<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/TODOLIST/" title="TODOLIST">TODOLIST<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/node-js/" title="node.js">node.js<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/vue-js/" title="vue.js">vue.js<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/mongodb/" title="mongodb">mongodb<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">Links</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.ouc.edu.cn" target="_blank" title="中国海洋大学">中国海洋大学</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://weilai5432.github.io" target="_blank" title="魏来">魏来</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> No matter who gives up, i will not. <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/xwjgo" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="xuwenjiang">xuwenjiang</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"xwjgo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-93479022-1', 'xwjgo.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

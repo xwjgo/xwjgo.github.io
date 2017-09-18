@@ -1,0 +1,605 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>动态链表的创建 | xuwenjiang</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="xuwenjiang">
+    
+
+    
+    <meta name="description" content="在正式创建一个动态链表之前，先来看C语言中用来动态分配内存的calloc()和malloc()函数。 calloc()和malloc()函数calloc()和malloc()是标准C库中提供了两个函数，用于在运行时分配堆内存。他们都在标准头文件&amp;lt;stdlib.h&amp;gt;中声明，所以，如果要使用这两个动态内存分配函数，应用程序必须包含这个头文件。 如果分配成功，将返回void（C语言中通用指针">
+<meta name="keywords" content="C">
+<meta property="og:type" content="article">
+<meta property="og:title" content="动态链表的创建">
+<meta property="og:url" content="http://xwjgo.github.io/2016/10/04/动态链表的创建/index.html">
+<meta property="og:site_name" content="xuwenjiang">
+<meta property="og:description" content="在正式创建一个动态链表之前，先来看C语言中用来动态分配内存的calloc()和malloc()函数。 calloc()和malloc()函数calloc()和malloc()是标准C库中提供了两个函数，用于在运行时分配堆内存。他们都在标准头文件&amp;lt;stdlib.h&amp;gt;中声明，所以，如果要使用这两个动态内存分配函数，应用程序必须包含这个头文件。 如果分配成功，将返回void（C语言中通用指针">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/%E5%88%9B%E5%BB%BA%E9%93%BE%E8%A1%A8.png">
+<meta property="og:updated_time" content="2017-09-14T15:27:56.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="动态链表的创建">
+<meta name="twitter:description" content="在正式创建一个动态链表之前，先来看C语言中用来动态分配内存的calloc()和malloc()函数。 calloc()和malloc()函数calloc()和malloc()是标准C库中提供了两个函数，用于在运行时分配堆内存。他们都在标准头文件&amp;lt;stdlib.h&amp;gt;中声明，所以，如果要使用这两个动态内存分配函数，应用程序必须包含这个头文件。 如果分配成功，将返回void（C语言中通用指针">
+<meta name="twitter:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/%E5%88%9B%E5%BB%BA%E9%93%BE%E8%A1%A8.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="xuwenjiang" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="xuwenjiang" title="xuwenjiang"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="xuwenjiang">xuwenjiang</a></h1>
+				<h2 class="blog-motto">外面的繁华不是我的繁华</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="/tags">标签</a></li>
+					
+						<li><a href="/categories">分类</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Search" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/10/04/动态链表的创建/" title="动态链表的创建" itemprop="url">动态链表的创建</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="xuwenjiang" target="_blank" itemprop="author">xuwenjiang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-10-04T04:12:12.000Z" itemprop="datePublished"> Published 2016-10-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#calloc-和malloc-函数"><span class="toc-number">1.</span> <span class="toc-text">calloc()和malloc()函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#calloc"><span class="toc-number">1.1.</span> <span class="toc-text">calloc()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#malloc"><span class="toc-number">1.2.</span> <span class="toc-text">malloc()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sizeof运算符"><span class="toc-number">1.3.</span> <span class="toc-text">sizeof运算符</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#小案例"><span class="toc-number">1.4.</span> <span class="toc-text">小案例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#动态链表C语言实现"><span class="toc-number">2.</span> <span class="toc-text">动态链表C语言实现</span></a></li></ol>
+		
+		</div>
+		
+		<p>在正式创建一个动态链表之前，先来看C语言中用来动态分配内存的<strong>calloc()</strong>和<strong>malloc()</strong>函数。</p>
+<h2 id="calloc-和malloc-函数"><a href="#calloc-和malloc-函数" class="headerlink" title="calloc()和malloc()函数"></a>calloc()和malloc()函数</h2><p>calloc()和malloc()是标准C库中提供了两个函数，用于<strong>在运行时分配堆内存</strong>。他们都在<strong>标准头文件<code>&lt;stdlib.h&gt;</code></strong>中声明，所以，如果要使用这两个动态内存分配函数，应用程序必须包含这个头文件。</p>
+<p>如果分配成功，将返回void（C语言中通用指针类型）类型指针，指向刚分配的内存空间；如果分配失败，则<strong>返回NULL</strong>。</p>
+<h3 id="calloc"><a href="#calloc" class="headerlink" title="calloc()"></a>calloc()</h3><p>calloc()函数接收两个参数，指定要<strong>提供元素个数以及每个元素的大小（字节数）</strong>，并且<strong>返回指向给内存开头区域的指针</strong>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></div><div class="line"><span class="function"><span class="keyword">void</span> *<span class="title">calloc</span><span class="params">(<span class="keyword">size_t</span> num, <span class="keyword">size_t</span> size)</span></span>;</div></pre></td></tr></table></figure>
+<p>calloc()函数<strong>返回的指针类型为void</strong>，所以通常我们需要将其<strong>强制转换</strong>为适当类型的指针。</p>
+<p><strong>其存储区域将被自动设定为0</strong>。</p>
+<h3 id="malloc"><a href="#malloc" class="headerlink" title="malloc()"></a>malloc()</h3><p>malloc()函数和calloc()工作方式相似，不过它只接收一个参数：<strong>所分配空间的总字节数</strong>。</p>
+<p>另外，其<strong>存储区域不会自动设定为0</strong>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></div><div class="line"><span class="function"><span class="keyword">void</span> *<span class="title">malloc</span><span class="params">(<span class="keyword">size_t</span> size)</span></span>;</div></pre></td></tr></table></figure>
+<h3 id="sizeof运算符"><a href="#sizeof运算符" class="headerlink" title="sizeof运算符"></a>sizeof运算符</h3><p>sizeof用起来像一个函数，但它实际上是一个运算符，其<strong>以字节为单位返回指定项目的大小</strong>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">sizeof</span>(<span class="keyword">int</span>)          <span class="comment">// 4</span></div><div class="line"><span class="keyword">sizeof</span>(struct student)</div></pre></td></tr></table></figure>
+<h3 id="小案例"><a href="#小案例" class="headerlink" title="小案例"></a>小案例</h3><p>回到动态分配内存的话题，如果希望在程序中为1000个整数分配足够的内存，我们有以下两种方式：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">int</span> *intp;</div><div class="line"></div><div class="line"><span class="comment">/*使用calloc()*/</span></div><div class="line">intp = (<span class="keyword">int</span> *)<span class="built_in">calloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">int</span>), <span class="number">1000</span>);</div><div class="line"></div><div class="line"><span class="comment">/*使用malloc()*/</span></div><div class="line">intp = (<span class="keyword">int</span> *)<span class="built_in">malloc</span>(<span class="number">1000</span>*<span class="keyword">sizeof</span>(<span class="keyword">int</span>));</div></pre></td></tr></table></figure>
+<h2 id="动态链表C语言实现"><a href="#动态链表C语言实现" class="headerlink" title="动态链表C语言实现"></a>动态链表C语言实现</h2><p>现在可以来实现一个创建单链表的函数，让用户输入节点信息，并且以student.age=0作为结束。最后在主函数中，打印出所有的节点信息：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></div><div class="line"><span class="comment">/*定义一个名为student的结构体*/</span></div><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">student</span> &#123;</span></div><div class="line">  <span class="keyword">char</span> name[<span class="number">20</span>];</div><div class="line">  <span class="keyword">int</span> age;</div><div class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">student</span> *<span class="title">next</span>;</span></div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">/*创建一个动态链表，其返回值为头指针*/</span></div><div class="line"><span class="function">struct student * <span class="title">create</span> <span class="params">()</span> </span>&#123;</div><div class="line">  <span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">student</span> <span class="title">stu_t</span>;</span></div><div class="line">  <span class="keyword">stu_t</span> *head, *p1, *p2;   <span class="comment">//head为头指针，p1总指向最后一个节点，p2指向p1前一个节点</span></div><div class="line">  head = p1 = p2 = (<span class="keyword">stu_t</span> *)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">stu_t</span>));  <span class="comment">//创建第一个节点，并且让head、p1、p2均指向第一个节点</span></div><div class="line">  <span class="built_in">scanf</span>(<span class="string">"%s %d"</span>, p1-&gt;name, &amp;p1-&gt;age);  <span class="comment">//输入第一个节点信息，并将其赋值给第一个节点</span></div><div class="line">  <span class="comment">/*添加新节点*/</span></div><div class="line">  <span class="keyword">while</span> (p1-&gt;age != <span class="number">0</span>) &#123;</div><div class="line">    p2 = p1;                               <span class="comment">// p1要去指向新节点，p2指向p1原来指向的节点</span></div><div class="line">    p1 = (<span class="keyword">stu_t</span> *)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">stu_t</span>));    <span class="comment">// p1指向新开辟的节点</span></div><div class="line">    p2-&gt;next = p1;                          <span class="comment">// 上一个节点的next指向新节点</span></div><div class="line">    <span class="built_in">scanf</span>(<span class="string">"%s %d"</span>, p1-&gt;name, &amp;p1-&gt;age);     <span class="comment">// 输入信息并赋值给新节点</span></div><div class="line">  &#125;</div><div class="line">  p1-&gt;next = <span class="literal">NULL</span>;                          <span class="comment">// 将最后一个节点的next置为空</span></div><div class="line">  <span class="keyword">return</span> head;                              <span class="comment">// 返回头指针</span></div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span> </span>&#123;</div><div class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">student</span> *<span class="title">s</span>;</span></div><div class="line">  s = create();</div><div class="line">  <span class="keyword">while</span> (s-&gt;next != <span class="literal">NULL</span>) &#123;</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"name=%s,age=%d\n"</span>, s-&gt;name, s-&gt;age);</div><div class="line">    s = s-&gt;next;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>运行结果如下：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/%E5%88%9B%E5%BB%BA%E9%93%BE%E8%A1%A8.png" alt=""></p>
+<p>这样就实现了动态链表的创建，关于链表的增加、删除等功能，后期再逐渐完善。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/数据结构/">数据结构</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/C/">C</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://xwjgo.github.io/2016/10/04/动态链表的创建/" data-title="动态链表的创建 | xuwenjiang" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/10/12/KMP算法中的next数组/" title="KMP算法中的next数组">
+  <strong>上一篇：</strong><br/>
+  <span>
+  KMP算法中的next数组</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/09/23/express的中间件/"  title="express的中间件">
+ <strong>下一篇：</strong><br/> 
+ <span>express的中间件
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/10/04/动态链表的创建/" data-title="动态链表的创建" data-url="http://xwjgo.github.io/2016/10/04/动态链表的创建/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#calloc-和malloc-函数"><span class="toc-number">1.</span> <span class="toc-text">calloc()和malloc()函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#calloc"><span class="toc-number">1.1.</span> <span class="toc-text">calloc()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#malloc"><span class="toc-number">1.2.</span> <span class="toc-text">malloc()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sizeof运算符"><span class="toc-number">1.3.</span> <span class="toc-text">sizeof运算符</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#小案例"><span class="toc-number">1.4.</span> <span class="toc-text">小案例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#动态链表C语言实现"><span class="toc-number">2.</span> <span class="toc-text">动态链表C语言实现</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/javascript/" title="javascript">javascript<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/linux/" title="linux">linux<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/node-js/" title="node.js">node.js<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/乱七八糟/" title="乱七八糟">乱七八糟<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/前端/" title="前端">前端<sup>24</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构/" title="数据结构">数据结构<sup>2</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/javascript/" title="javascript">javascript<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/es6/" title="es6">es6<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/react/" title="react">react<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/express/" title="express">express<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/css/" title="css">css<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C">C<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/webpack/" title="webpack">webpack<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/File/" title="File">File<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/history/" title="history">history<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/redux/" title="redux">redux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/react-redux/" title="react-redux">react-redux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ajax/" title="ajax">ajax<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/TODOLIST/" title="TODOLIST">TODOLIST<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/node-js/" title="node.js">node.js<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/vue-js/" title="vue.js">vue.js<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/mongodb/" title="mongodb">mongodb<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">Links</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.ouc.edu.cn" target="_blank" title="中国海洋大学">中国海洋大学</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://weilai5432.github.io" target="_blank" title="魏来">魏来</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> No matter who gives up, i will not. <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/xwjgo" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="xuwenjiang">xuwenjiang</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"xwjgo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-93479022-1', 'xwjgo.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

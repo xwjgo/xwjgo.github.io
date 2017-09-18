@@ -1,0 +1,614 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>KMP算法中的next数组 | xuwenjiang</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="xuwenjiang">
+    
+
+    
+    <meta name="description" content="我们经常会有这种需求，比如在字符串goodgoogle中去查找google这个子串，这种子串的定位操作通常称作串的模式匹配。 朴素的模式匹配算法对于以上问题，最容易想到的方式当然是暴力破解了，我们可能写出如下代码： 12345678910111213141516171819202122232425262728293031#include &amp;lt;stdio.h&amp;gt;#include &amp;lt;st">
+<meta name="keywords" content="C,KMP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="KMP算法中的next数组">
+<meta property="og:url" content="http://xwjgo.github.io/2016/10/12/KMP算法中的next数组/index.html">
+<meta property="og:site_name" content="xuwenjiang">
+<meta property="og:description" content="我们经常会有这种需求，比如在字符串goodgoogle中去查找google这个子串，这种子串的定位操作通常称作串的模式匹配。 朴素的模式匹配算法对于以上问题，最容易想到的方式当然是暴力破解了，我们可能写出如下代码： 12345678910111213141516171819202122232425262728293031#include &amp;lt;stdio.h&amp;gt;#include &amp;lt;st">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/KMP%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/next%E6%95%B0%E7%BB%84%E6%B1%82%E8%A7%A3.png">
+<meta property="og:updated_time" content="2017-09-14T15:27:56.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="KMP算法中的next数组">
+<meta name="twitter:description" content="我们经常会有这种需求，比如在字符串goodgoogle中去查找google这个子串，这种子串的定位操作通常称作串的模式匹配。 朴素的模式匹配算法对于以上问题，最容易想到的方式当然是暴力破解了，我们可能写出如下代码： 12345678910111213141516171819202122232425262728293031#include &amp;lt;stdio.h&amp;gt;#include &amp;lt;st">
+<meta name="twitter:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/KMP%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="xuwenjiang" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="xuwenjiang" title="xuwenjiang"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="xuwenjiang">xuwenjiang</a></h1>
+				<h2 class="blog-motto">外面的繁华不是我的繁华</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="/tags">标签</a></li>
+					
+						<li><a href="/categories">分类</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Search" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/10/12/KMP算法中的next数组/" title="KMP算法中的next数组" itemprop="url">KMP算法中的next数组</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="xuwenjiang" target="_blank" itemprop="author">xuwenjiang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-10-12T04:12:12.000Z" itemprop="datePublished"> Published 2016-10-12</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#朴素的模式匹配算法"><span class="toc-number">1.</span> <span class="toc-text">朴素的模式匹配算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#KMP算法"><span class="toc-number">2.</span> <span class="toc-text">KMP算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#next数组求解"><span class="toc-number">3.</span> <span class="toc-text">next数组求解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现"><span class="toc-number">4.</span> <span class="toc-text">代码实现</span></a></li></ol>
+		
+		</div>
+		
+		<p>我们经常会有这种需求，比如在字符串<code>goodgoogle</code>中去查找<code>google</code>这个子串，这种<strong>子串的定位操作通常称作串的模式匹配</strong>。</p>
+<h2 id="朴素的模式匹配算法"><a href="#朴素的模式匹配算法" class="headerlink" title="朴素的模式匹配算法"></a>朴素的模式匹配算法</h2><p>对于以上问题，最容易想到的方式当然是暴力破解了，我们可能写出如下代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="comment">/*朴素的模式匹配算法*/</span></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">getIndex</span> <span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *pStr,<span class="keyword">const</span> <span class="keyword">char</span> *cStr)</span> </span>&#123;</div><div class="line">  <span class="keyword">int</span> pLen = <span class="built_in">strlen</span>(pStr);</div><div class="line">  <span class="keyword">int</span> cLen = <span class="built_in">strlen</span>(cStr);</div><div class="line">  <span class="keyword">int</span> pos = <span class="number">-1</span>,i = <span class="number">0</span>,j = <span class="number">0</span>;</div><div class="line">  <span class="keyword">while</span> (i &lt; pLen &amp;&amp; j &lt; cLen) &#123;</div><div class="line">    <span class="keyword">if</span> (pStr[i] == cStr[j]) &#123;</div><div class="line">      i ++;</div><div class="line">      j ++;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">      i = i - j + <span class="number">1</span>;        <span class="comment">// 回到上一次开始匹配的下一个位置</span></div><div class="line">      j = <span class="number">0</span>;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">if</span> (j = cLen) &#123;</div><div class="line">    pos = i - cLen;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> pos;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span> </span>&#123;</div><div class="line">  <span class="keyword">char</span> *p = <span class="string">"goodgoodgoodgoogle"</span>;</div><div class="line">  <span class="keyword">char</span> *c = <span class="string">"google"</span>;</div><div class="line">  <span class="keyword">int</span> pos;</div><div class="line">  pos = getIndex(p, c);</div><div class="line">  <span class="built_in">printf</span>(<span class="string">"pos: %d\n"</span>, pos);           <span class="comment">// 12</span></div><div class="line">  <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>以上算法，简单地说，就是对依次用主串的每一个字符作为开头，与子串字符进行匹配。主串做大循环，子串做小循环，直到匹配成功为止。</p>
+<p>它的时间复杂度为<code>O(n + m)</code>，其中n为主串长度，m为子串长度。</p>
+<h2 id="KMP算法"><a href="#KMP算法" class="headerlink" title="KMP算法"></a>KMP算法</h2><p>朴素的模式匹配算法是低效的，于是三位前辈——D.E.Knuth、J.H.Morris、V.R.Pratt就研究出了KMP算法，有人称看毛片算法。</p>
+<p>KMP算法是一个模式匹配算法，可以大大避免重复遍历的情况。</p>
+<p>它具有以下特点：</p>
+<hr>
+<ol>
+<li>主串的i值不回溯。</li>
+<li>子串的j值会在不匹配时发生回溯，回溯的位置为next[j]。</li>
+<li>next数组表示：<strong>在子串与主串在某处失配时，子串j应该回溯的位置，即next[j]</strong>。</li>
+<li>而next[j]的值取决与<strong>子串位置j之前的字符串中，前后缀的相似度</strong>。</li>
+</ol>
+<hr>
+<p>下面一张图辅助理解：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/KMP%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D.png" alt=""></p>
+<h2 id="next数组求解"><a href="#next数组求解" class="headerlink" title="next数组求解"></a>next数组求解</h2><p>KMP算法的核心就是next数组，有了一个子串的next数组，KMP算法也就很容易实现了！</p>
+<p>那么给定一个子串，如何求出其next数组呢？</p>
+<p>要解决这个问题，我们需要谨记next数组的相关概念:</p>
+<p><strong>它的长度和子串长度相同，它的每个值说明了在子串和主串失配时，应该从子串的哪个位置开始下次匹配。而next[j]的值，就是子串在j位置之前的字符串的前后缀相似度。</strong></p>
+<p>它的求解过程可以图解如下：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/next%E6%95%B0%E7%BB%84%E6%B1%82%E8%A7%A3.png" alt=""></p>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>有了next数组，就可以上代码啦，代码虽然写的不太简洁，但是问题可以解决了：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="comment">/*返回子串next数组*/</span></div><div class="line"><span class="function"><span class="keyword">int</span> * <span class="title">getNext</span> <span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *c)</span> </span>&#123;</div><div class="line">  <span class="keyword">int</span> cLen = <span class="built_in">strlen</span>(c);</div><div class="line">  <span class="keyword">int</span> next[cLen];</div><div class="line">  <span class="keyword">int</span> *p = next;    <span class="comment">// 用于返回，因为next不能用作返回返回值</span></div><div class="line">  <span class="keyword">int</span> i = <span class="number">0</span>;            <span class="comment">// 前缀的下标</span></div><div class="line">  <span class="keyword">int</span> j = <span class="number">1</span>;            <span class="comment">// 后缀的下标</span></div><div class="line">  next[<span class="number">0</span>] = <span class="number">-1</span>;</div><div class="line">  <span class="keyword">while</span> (j &lt; cLen) &#123;</div><div class="line">    <span class="keyword">if</span> (c[i] == c[j<span class="number">-1</span>]) &#123;        <span class="comment">// 如果前后缀相等，前后缀相似度加1</span></div><div class="line">      next[j] = next[j<span class="number">-1</span>] + <span class="number">1</span>;</div><div class="line">      i ++;</div><div class="line">      j ++;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">      i --;                 <span class="comment">// 如果前后缀不相等，i值回溯</span></div><div class="line">      <span class="keyword">if</span> (i &lt; <span class="number">0</span>) &#123;          <span class="comment">// 如果i回溯到0位置依旧不等，j指向下一个位置</span></div><div class="line">        next[j] = <span class="number">0</span>;</div><div class="line">        i ++;</div><div class="line">        j ++;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> p;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/*KMP模式匹配算法*/</span></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">getIndex</span> <span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *p, <span class="keyword">const</span> <span class="keyword">char</span> *c)</span> </span>&#123;</div><div class="line">  <span class="keyword">int</span> pLen = <span class="built_in">strlen</span>(p);</div><div class="line">  <span class="keyword">int</span> cLen = <span class="built_in">strlen</span>(c);</div><div class="line">  <span class="keyword">int</span> pos = <span class="number">-1</span>, i = <span class="number">0</span>, j = <span class="number">0</span>;</div><div class="line">  <span class="keyword">int</span> *next = getNext(c);                <span class="comment">// 对c串进行分析，得到其next数组</span></div><div class="line">  <span class="keyword">while</span> (i &lt; pLen &amp;&amp; j &lt; cLen) &#123;</div><div class="line">    <span class="keyword">if</span> (j == <span class="number">-1</span> || p[i] == c[j]) &#123;       <span class="comment">// 如果j=-1，代表第0个位置不匹配，则i和j都需要向后加1</span></div><div class="line">      i ++;</div><div class="line">      j ++;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">      j = next[j];</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">if</span> (j == cLen) &#123;</div><div class="line">    pos = i - cLen;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> pos;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span> </span>&#123;</div><div class="line">  <span class="keyword">char</span> *p = <span class="string">"aaaaabcdefaaaaax"</span>;</div><div class="line">  <span class="keyword">char</span> *c = <span class="string">"aaaaax"</span>;</div><div class="line">  <span class="keyword">int</span> pos;</div><div class="line">  pos = getIndex(p, c);</div><div class="line">  <span class="built_in">printf</span>(<span class="string">"pos: %d\n"</span>, pos);    <span class="comment">// 10</span></div><div class="line">  <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>以上就是完整的KMP算法的实现，不过KMP算法还有可以优化的地方，后续补充。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/数据结构/">数据结构</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/C/">C</a><a href="/tags/KMP/">KMP</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://xwjgo.github.io/2016/10/12/KMP算法中的next数组/" data-title="KMP算法中的next数组 | xuwenjiang" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/11/01/linux下的磁盘分区/" title="linux下的磁盘分区">
+  <strong>上一篇：</strong><br/>
+  <span>
+  linux下的磁盘分区</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/10/04/动态链表的创建/"  title="动态链表的创建">
+ <strong>下一篇：</strong><br/> 
+ <span>动态链表的创建
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/10/12/KMP算法中的next数组/" data-title="KMP算法中的next数组" data-url="http://xwjgo.github.io/2016/10/12/KMP算法中的next数组/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#朴素的模式匹配算法"><span class="toc-number">1.</span> <span class="toc-text">朴素的模式匹配算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#KMP算法"><span class="toc-number">2.</span> <span class="toc-text">KMP算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#next数组求解"><span class="toc-number">3.</span> <span class="toc-text">next数组求解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现"><span class="toc-number">4.</span> <span class="toc-text">代码实现</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/javascript/" title="javascript">javascript<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/linux/" title="linux">linux<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/node-js/" title="node.js">node.js<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/乱七八糟/" title="乱七八糟">乱七八糟<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/前端/" title="前端">前端<sup>24</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构/" title="数据结构">数据结构<sup>2</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/javascript/" title="javascript">javascript<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/es6/" title="es6">es6<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/react/" title="react">react<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/express/" title="express">express<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/css/" title="css">css<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C">C<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/webpack/" title="webpack">webpack<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/File/" title="File">File<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/history/" title="history">history<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/redux/" title="redux">redux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/react-redux/" title="react-redux">react-redux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ajax/" title="ajax">ajax<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/TODOLIST/" title="TODOLIST">TODOLIST<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/node-js/" title="node.js">node.js<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/vue-js/" title="vue.js">vue.js<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/mongodb/" title="mongodb">mongodb<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">Links</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.ouc.edu.cn" target="_blank" title="中国海洋大学">中国海洋大学</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://weilai5432.github.io" target="_blank" title="魏来">魏来</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> No matter who gives up, i will not. <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/xwjgo" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="xuwenjiang">xuwenjiang</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"xwjgo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-93479022-1', 'xwjgo.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

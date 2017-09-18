@@ -1,0 +1,646 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>js创建对象的几种模式 | xuwenjiang</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="xuwenjiang">
+    
+
+    
+    <meta name="description" content="虽然Object构造函数和对象字面量都可以用来创建单个对象，但是这些方式有一个明显的缺点：即使用同一个接口创建很多对象，会产生大量的重复代码。 这篇文章总结了工厂模式、构造函数模式、原型模式、组合使用构造函数和原型模式来创建对象的方法，一定程度上能够解决上面的问题。 重点放在原型模式，以增进对原型的理解。 工厂模式工厂模式将创建对象的细节封装在函数中。 1234567891011function">
+<meta name="keywords" content="javascript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="js创建对象的几种模式">
+<meta property="og:url" content="http://xwjgo.github.io/2016/08/17/js_创建对象的几种模式/index.html">
+<meta property="og:site_name" content="xuwenjiang">
+<meta property="og:description" content="虽然Object构造函数和对象字面量都可以用来创建单个对象，但是这些方式有一个明显的缺点：即使用同一个接口创建很多对象，会产生大量的重复代码。 这篇文章总结了工厂模式、构造函数模式、原型模式、组合使用构造函数和原型模式来创建对象的方法，一定程度上能够解决上面的问题。 重点放在原型模式，以增进对原型的理解。 工厂模式工厂模式将创建对象的细节封装在函数中。 1234567891011function">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/js%E5%8E%9F%E5%9E%8B%E5%9B%BE.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/%E9%87%8D%E5%86%99%E5%8E%9F%E5%9E%8B.png">
+<meta property="og:updated_time" content="2017-09-14T15:27:56.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="js创建对象的几种模式">
+<meta name="twitter:description" content="虽然Object构造函数和对象字面量都可以用来创建单个对象，但是这些方式有一个明显的缺点：即使用同一个接口创建很多对象，会产生大量的重复代码。 这篇文章总结了工厂模式、构造函数模式、原型模式、组合使用构造函数和原型模式来创建对象的方法，一定程度上能够解决上面的问题。 重点放在原型模式，以增进对原型的理解。 工厂模式工厂模式将创建对象的细节封装在函数中。 1234567891011function">
+<meta name="twitter:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/js%E5%8E%9F%E5%9E%8B%E5%9B%BE.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="xuwenjiang" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="xuwenjiang" title="xuwenjiang"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="xuwenjiang">xuwenjiang</a></h1>
+				<h2 class="blog-motto">外面的繁华不是我的繁华</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="/tags">标签</a></li>
+					
+						<li><a href="/categories">分类</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Search" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/08/17/js_创建对象的几种模式/" title="js创建对象的几种模式" itemprop="url">js创建对象的几种模式</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="xuwenjiang" target="_blank" itemprop="author">xuwenjiang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-08-17T04:12:12.000Z" itemprop="datePublished"> Published 2016-08-17</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#工厂模式"><span class="toc-number">1.</span> <span class="toc-text">工厂模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构造函数模式"><span class="toc-number">2.</span> <span class="toc-text">构造函数模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#原型模式"><span class="toc-number">3.</span> <span class="toc-text">原型模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#理解原型对象"><span class="toc-number">3.1.</span> <span class="toc-text">理解原型对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#原型模式的缺点"><span class="toc-number">3.2.</span> <span class="toc-text">原型模式的缺点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#重写原型对象"><span class="toc-number">3.3.</span> <span class="toc-text">重写原型对象</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#组合使用构造函数模式和原型模式"><span class="toc-number">4.</span> <span class="toc-text">组合使用构造函数模式和原型模式</span></a></li></ol>
+		
+		</div>
+		
+		<p>虽然Object构造函数和对象字面量都可以用来创建单个对象，但是这些方式有一个明显的缺点：即使用同一个接口创建很多对象，会产生大量的重复代码。</p>
+<p>这篇文章总结了<strong>工厂模式</strong>、<strong>构造函数模式</strong>、<strong>原型模式</strong>、<strong>组合使用构造函数和原型模式</strong>来创建对象的方法，一定程度上能够解决上面的问题。</p>
+<p>重点放在原型模式，以增进对原型的理解。</p>
+<h2 id="工厂模式"><a href="#工厂模式" class="headerlink" title="工厂模式"></a>工厂模式</h2><p>工厂模式将创建对象的细节封装在函数中。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">createPerson</span> (<span class="params">name, age</span>) </span>&#123;</div><div class="line">   <span class="keyword">var</span> o = <span class="keyword">new</span> <span class="built_in">Object</span>();</div><div class="line">   o.name = name;</div><div class="line">   o.age = age;</div><div class="line">   o.sayName = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">     <span class="built_in">console</span>.log(<span class="keyword">this</span>.name);</div><div class="line">   &#125;;</div><div class="line">   <span class="keyword">return</span> o;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> person1 = createPerson(<span class="string">'xwj'</span>, <span class="number">21</span>);</div></pre></td></tr></table></figure>
+<p>工厂模式虽然解决了创建多个相似对象的问题，但是却没有解决对象识别问题，都是Object类（怎样知道一个对象的类型）。</p>
+<h2 id="构造函数模式"><a href="#构造函数模式" class="headerlink" title="构造函数模式"></a>构造函数模式</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Person</span> (<span class="params">name, age</span>) </span>&#123;</div><div class="line">        <span class="keyword">this</span>.name = name;</div><div class="line">        <span class="keyword">this</span>.age = age;</div><div class="line">        <span class="keyword">this</span>.sayName = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">          <span class="built_in">console</span>.log(<span class="keyword">this</span>.name);</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> person1 = <span class="keyword">new</span> Person(<span class="string">'xwj'</span>, <span class="number">21</span>);</div><div class="line"><span class="keyword">var</span> person2 = <span class="keyword">new</span> Person(<span class="string">'hyy'</span>, <span class="number">20</span>);</div></pre></td></tr></table></figure>
+<p>与工厂模式相比，构造函数模式具有以下特点：</p>
+<hr>
+<ol>
+<li>没有显式地创建对象</li>
+<li>直接将属性和方法赋给了this对象</li>
+<li>没有return语句</li>
+</ol>
+<hr>
+<p>而在创建Person类型的实例时，使用了<strong>new</strong>关键字。</p>
+<p>new关键字会使以下几个步骤发生：</p>
+<hr>
+<ol>
+<li>创建一个新对象</li>
+<li>将构造函数的作用域赋给新对象（即this指向了这个新对象）</li>
+<li>执行构造函数中的代码</li>
+<li>返回新对象</li>
+</ol>
+<hr>
+<p>这时候我们就可以检测person1的类型了：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">person1.constructor === Person;     <span class="comment">// true</span></div><div class="line">person2 <span class="keyword">instanceof</span> Person;          <span class="comment">// true</span></div></pre></td></tr></table></figure>
+<p>构造函数模式的也存在一些问题：即每个方法都会在每个实例中重新创建一遍，比如<strong>sayName()</strong>方法。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">person1.sayName === Person2.sayName;        // fasle</div></pre></td></tr></table></figure>
+<p>其实这两个实例完全可以共享一个sayName()方法。</p>
+<h2 id="原型模式"><a href="#原型模式" class="headerlink" title="原型模式"></a>原型模式</h2><p>我们创建的每一个函数都有一个prototype属性，这个属性是一个指针，它指向一个对象，而这个对象的用途是包含所有实例都能共享的属性和方法。</p>
+<p>使用原型对象的好处是可以让所有对象实例共享它所包含的属性和方法。</p>
+<p>换句话说，不必在构造函数中定义对象实例的信息，而是在构造函数的原型对象中添加这些信息。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 创建构造函数</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Dog</span> (<span class="params"></span>) </span>&#123;&#125;</div><div class="line"></div><div class="line"><span class="comment">// 向原型对象中添加属性，这些属性将被所有实例共享</span></div><div class="line">Dog.prototype.name = <span class="string">'dog'</span>;</div><div class="line">Dog.prototype.age = <span class="number">2</span>;</div><div class="line">Dog.prototype.sayName = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(<span class="keyword">this</span>.name);</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="keyword">var</span> dog1 = <span class="keyword">new</span> Dog();</div><div class="line"><span class="keyword">var</span> dog2 = <span class="keyword">new</span> Dog();</div></pre></td></tr></table></figure>
+<p>以上代码，创建了构造函数Dog()，并且在其原型对象中增加了name、age两个属性，以及一个方法sayName()，最后实例化了两个实例对象dog1和dog2。</p>
+<p>可以将以上代码中各个对象的关系展示如下：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/js%E5%8E%9F%E5%9E%8B%E5%9B%BE.png" alt=""></p>
+<h3 id="理解原型对象"><a href="#理解原型对象" class="headerlink" title="理解原型对象"></a>理解原型对象</h3><p>我们每创建一个新函数，就会同时创建他们的<strong>prototype</strong>对象，这个对象也会自动获得<strong>constructor</strong>属性。</p>
+<p>constructor属性是一个指针，它指向<strong>prototype属性所在函数</strong>。</p>
+<p>因为所有实例都能共享构造函数的prototype对象，所以所有实例也会获得constructor属性。</p>
+<p>另外，实例内部还包含一个指针，它指向构造函数的原型对象。这个指针没有标准的方式可以访问，但在一些浏览器中可以使用<strong>__proto__</strong>来访问。要始终铭记的一点是：这个连接存在于<strong>实例对象</strong>和<strong>构造函数的原型对象</strong>之间，而不是存在于实例与构造函数之间。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">dog1.__proto__ === Dog.prototype;      <span class="comment">// true</span></div></pre></td></tr></table></figure>
+<p>还有另外两种方法<strong>isPrototypeOf()</strong>和<strong>Object.getPrototypeOf()</strong>，可以用来确定实例对象和构造函数原型对象之间是否存在联系：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Dog.prototype.isPrototypeOf(dog1);      <span class="comment">// true</span></div><div class="line"><span class="built_in">Object</span>.getPrototypeOf(dog1);            <span class="comment">// true</span></div></pre></td></tr></table></figure>
+<h3 id="原型模式的缺点"><a href="#原型模式的缺点" class="headerlink" title="原型模式的缺点"></a>原型模式的缺点</h3><p>原型模式最大的问题，是由其共享的本质所导致的。</p>
+<p>对于那些包含基本数据值的属性，可以通过在实例上添加一个同名属性，就可以覆盖。但是对于哪些引用类型值来说，问题就比较突出。以下代码就是很好的说明：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Dog</span> (<span class="params"></span>) </span>&#123;&#125;;</div><div class="line"></div><div class="line"><span class="comment">// 重写原型对象</span></div><div class="line">Dog.prototype = &#123;</div><div class="line">  <span class="keyword">constructor</span>: Dog,</div><div class="line">  name: 'dog',</div><div class="line">  age: 20,</div><div class="line">  friends: ['dogA', 'dogB']</div><div class="line">&#125;</div><div class="line"></div><div class="line">var dog1 = new Dog();</div><div class="line">var dog2 = new Dog();</div><div class="line"></div><div class="line">dog1.friends.push('dogC');</div><div class="line"></div><div class="line">// 只想改变dog1的friends，却将dog1和dog2的friends都改变了</div><div class="line">console.log(dog1.friends);      // ["dogA", "dogB", "dogC"]</div><div class="line">console.log(dog2.friends);      // ["dogA", "dogB", "dogC"]</div></pre></td></tr></table></figure>
+<h3 id="重写原型对象"><a href="#重写原型对象" class="headerlink" title="重写原型对象"></a>重写原型对象</h3><p>以上代码，在重写原型对象时，增加了<code>construtor: Dog</code>，为什么要加这行代码呢？解释如下：</p>
+<p><strong>我们每创建一个函数，就会同时创建它的prototype对象，这个对象也会同时获得constructor属性，指向我们创建的函数。</strong></p>
+<p>我们重写 Dog.prototype = {}，其本质是完全覆盖了原来的prototype对象，也就是说Dog的prototype属性指向了一个新的对象，而这个新的对象虽然也叫prototype，但是它的constructor属性却不指向Dog，而是指向Object，所以需要我们显式地声明。</p>
+<p>如果我们在已经创建实例的情况下重写原型，并且没有显式声明新原型对象的constrctor属性，那么就会切断所有现有实例于新原型之间的联系。我们看以下代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Dog</span> (<span class="params"></span>) </span>&#123;&#125;</div><div class="line"></div><div class="line"><span class="comment">// 先实例化对象</span></div><div class="line"><span class="keyword">var</span> dog1 = <span class="keyword">new</span> Dog();</div><div class="line"></div><div class="line"><span class="comment">// 然后再重写原型对象</span></div><div class="line">Dog.prototype = &#123;</div><div class="line">  name: <span class="string">'dog'</span>,</div><div class="line">  age: <span class="number">20</span>,</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="built_in">console</span>.log(dog1.name);                          <span class="comment">// undefined</span></div><div class="line"><span class="built_in">console</span>.log(dog1.__proto__ === Dog.prototype);       <span class="comment">// fasle</span></div><div class="line"><span class="built_in">console</span>.log(dog1.__proto__.constructor === Dog);     <span class="comment">// true</span></div></pre></td></tr></table></figure>
+<p>图解如下：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/%E9%87%8D%E5%86%99%E5%8E%9F%E5%9E%8B.png" alt=""></p>
+<h2 id="组合使用构造函数模式和原型模式"><a href="#组合使用构造函数模式和原型模式" class="headerlink" title="组合使用构造函数模式和原型模式"></a>组合使用构造函数模式和原型模式</h2><p>创建自定义类型最常见的方式，就是组合使用构造函数模式和原型模式。</p>
+<p>构造函数模式用于定义<strong>实例属性</strong>，而原型模式用于定义<strong>方法</strong>和<strong>共享的属性</strong>。</p>
+<p>这样，每个实例都会有一份自己的实例属性的副本，但同时又共享这对方法的引用，最大限度地节省了内存。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 定义构造函数</span></div><div class="line"><span class="comment">// 构造函数中所有属性，每个实例都会有自己的副本</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Dog</span> (<span class="params">name, age</span>) </span>&#123;</div><div class="line">        <span class="keyword">this</span>.name = name;</div><div class="line">        <span class="keyword">this</span>.age = age;</div><div class="line">        <span class="keyword">this</span>.friends = [<span class="string">'dogA'</span>, <span class="string">'dogB'</span>];</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 原型模式，重写原型</span></div><div class="line"><span class="comment">// 原型对象中的方法和引用类型值的属性为所有实例共享</span></div><div class="line">Dog.prototype = &#123;</div><div class="line">  <span class="keyword">constructor</span>: Dog,</div><div class="line">  sayName: function () &#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.name);</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> dog1 = <span class="keyword">new</span> Dog(<span class="string">'dog1'</span>, <span class="number">2</span>);</div><div class="line"><span class="keyword">var</span> dog2 = <span class="keyword">new</span> Dog(<span class="string">'dog2'</span>, <span class="number">3</span>);</div><div class="line"></div><div class="line">dog1.friends.push(<span class="string">'dogC'</span>);</div><div class="line"></div><div class="line"><span class="comment">// dog1和dog2的friends都是实例属性，互不影响</span></div><div class="line"><span class="built_in">console</span>.log(dog1.friends);    <span class="comment">// ["dogA", "dogB", "dogC"]</span></div><div class="line"><span class="built_in">console</span>.log(dog2.friends);    <span class="comment">// ["dogA", "dogB"]</span></div><div class="line"></div><div class="line"><span class="comment">// dog1和dog2都可以同时使用sayName()方法</span></div><div class="line">dog1.sayName();         <span class="comment">// dog1</span></div><div class="line">dog2.sayName();         <span class="comment">// dog2</span></div></pre></td></tr></table></figure>
+<p>以上就是对创建对象几种模式的简单总结，当然还有其他一些模式，后期逐步完善。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/前端/">前端</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/javascript/">javascript</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://xwjgo.github.io/2016/08/17/js_创建对象的几种模式/" data-title="js创建对象的几种模式 | xuwenjiang" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/09/08/js_原生js实现双向绑定/" title="原生js实现双向绑定">
+  <strong>上一篇：</strong><br/>
+  <span>
+  原生js实现双向绑定</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/08/15/js_es6中箭头函数/"  title="ES6箭头函数">
+ <strong>下一篇：</strong><br/> 
+ <span>ES6箭头函数
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/08/17/js_创建对象的几种模式/" data-title="js创建对象的几种模式" data-url="http://xwjgo.github.io/2016/08/17/js_创建对象的几种模式/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#工厂模式"><span class="toc-number">1.</span> <span class="toc-text">工厂模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构造函数模式"><span class="toc-number">2.</span> <span class="toc-text">构造函数模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#原型模式"><span class="toc-number">3.</span> <span class="toc-text">原型模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#理解原型对象"><span class="toc-number">3.1.</span> <span class="toc-text">理解原型对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#原型模式的缺点"><span class="toc-number">3.2.</span> <span class="toc-text">原型模式的缺点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#重写原型对象"><span class="toc-number">3.3.</span> <span class="toc-text">重写原型对象</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#组合使用构造函数模式和原型模式"><span class="toc-number">4.</span> <span class="toc-text">组合使用构造函数模式和原型模式</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/javascript/" title="javascript">javascript<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/linux/" title="linux">linux<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/node-js/" title="node.js">node.js<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/乱七八糟/" title="乱七八糟">乱七八糟<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/前端/" title="前端">前端<sup>24</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构/" title="数据结构">数据结构<sup>2</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/javascript/" title="javascript">javascript<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/es6/" title="es6">es6<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/react/" title="react">react<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/express/" title="express">express<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/css/" title="css">css<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C">C<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/webpack/" title="webpack">webpack<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/File/" title="File">File<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/history/" title="history">history<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/redux/" title="redux">redux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/react-redux/" title="react-redux">react-redux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ajax/" title="ajax">ajax<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/TODOLIST/" title="TODOLIST">TODOLIST<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/node-js/" title="node.js">node.js<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/vue-js/" title="vue.js">vue.js<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/mongodb/" title="mongodb">mongodb<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">Links</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.ouc.edu.cn" target="_blank" title="中国海洋大学">中国海洋大学</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://weilai5432.github.io" target="_blank" title="魏来">魏来</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> No matter who gives up, i will not. <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/xwjgo" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="xuwenjiang">xuwenjiang</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"xwjgo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-93479022-1', 'xwjgo.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

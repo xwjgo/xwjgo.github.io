@@ -1,0 +1,694 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>一个前后端分离开发的Demo | xuwenjiang</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="xuwenjiang">
+    
+
+    
+    <meta name="description" content="断断续续折腾了一周多的时间，终于实现了一个前后端分离开发的小项目（没有做UI，所以有点丑），代码可以点击这里访问到。 这篇文章就回顾一下整个项目的架构流程以及遇到的技术难点。 项目介绍这是一个简单的购书平台，主要实现了以下功能：   注册 登陆/登出 添加书籍 查看书籍 添加购物车并且结算   后端基于node.js，使用了express框架，以及mongodb、mongoose、express-">
+<meta name="keywords" content="express,node.js,vue.js,mongodb">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一个前后端分离开发的Demo">
+<meta property="og:url" content="http://xwjgo.github.io/2016/09/12/一个前后端分离开发的Demo/index.html">
+<meta property="og:site_name" content="xuwenjiang">
+<meta property="og:description" content="断断续续折腾了一周多的时间，终于实现了一个前后端分离开发的小项目（没有做UI，所以有点丑），代码可以点击这里访问到。 这篇文章就回顾一下整个项目的架构流程以及遇到的技术难点。 项目介绍这是一个简单的购书平台，主要实现了以下功能：   注册 登陆/登出 添加书籍 查看书籍 添加购物车并且结算   后端基于node.js，使用了express框架，以及mongodb、mongoose、express-">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/post%E6%88%90%E5%8A%9F%E5%95%A6.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BF%9D%E5%AD%98%E6%88%90%E5%8A%9F.png">
+<meta property="og:updated_time" content="2017-09-14T15:27:56.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一个前后端分离开发的Demo">
+<meta name="twitter:description" content="断断续续折腾了一周多的时间，终于实现了一个前后端分离开发的小项目（没有做UI，所以有点丑），代码可以点击这里访问到。 这篇文章就回顾一下整个项目的架构流程以及遇到的技术难点。 项目介绍这是一个简单的购书平台，主要实现了以下功能：   注册 登陆/登出 添加书籍 查看书籍 添加购物车并且结算   后端基于node.js，使用了express框架，以及mongodb、mongoose、express-">
+<meta name="twitter:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/post%E6%88%90%E5%8A%9F%E5%95%A6.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="xuwenjiang" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="xuwenjiang" title="xuwenjiang"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="xuwenjiang">xuwenjiang</a></h1>
+				<h2 class="blog-motto">外面的繁华不是我的繁华</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="/tags">标签</a></li>
+					
+						<li><a href="/categories">分类</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Search" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/09/12/一个前后端分离开发的Demo/" title="一个前后端分离开发的Demo" itemprop="url">一个前后端分离开发的Demo</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="xuwenjiang" target="_blank" itemprop="author">xuwenjiang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-09-12T02:08:03.000Z" itemprop="datePublished"> Published 2016-09-12</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#项目介绍"><span class="toc-number">1.</span> <span class="toc-text">项目介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后端环境搭建"><span class="toc-number">2.</span> <span class="toc-text">后端环境搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#安装express"><span class="toc-number">2.1.</span> <span class="toc-text">安装express</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动mongoDB"><span class="toc-number">2.2.</span> <span class="toc-text">启动mongoDB</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装express中间件"><span class="toc-number">2.3.</span> <span class="toc-text">安装express中间件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#app-js"><span class="toc-number">2.4.</span> <span class="toc-text">app.js</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#路由模块"><span class="toc-number">2.5.</span> <span class="toc-text">路由模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据库设计"><span class="toc-number">2.6.</span> <span class="toc-text">数据库设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#添加路由"><span class="toc-number">2.7.</span> <span class="toc-text">添加路由</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试"><span class="toc-number">2.8.</span> <span class="toc-text">测试</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#前端环境搭建"><span class="toc-number">3.</span> <span class="toc-text">前端环境搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#vue-cli快速搭建应用"><span class="toc-number">3.1.</span> <span class="toc-text">vue-cli快速搭建应用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#插件安装"><span class="toc-number">3.2.</span> <span class="toc-text">插件安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vue-resource基本使用"><span class="toc-number">3.3.</span> <span class="toc-text">vue-resource基本使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vue-router基本使用"><span class="toc-number">3.4.</span> <span class="toc-text">vue-router基本使用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一些难点"><span class="toc-number">4.</span> <span class="toc-text">一些难点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#解决跨域"><span class="toc-number">4.1.</span> <span class="toc-text">解决跨域</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vue-resource发送带凭证的请求"><span class="toc-number">4.2.</span> <span class="toc-text">vue-resource发送带凭证的请求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vue-router-Cannot-find-element-app"><span class="toc-number">4.3.</span> <span class="toc-text">vue-router: Cannot find element: #app</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mongoose不能重复编译"><span class="toc-number">4.4.</span> <span class="toc-text">mongoose不能重复编译</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关于跨域的一点思考"><span class="toc-number">4.5.</span> <span class="toc-text">关于跨域的一点思考</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#更改vue项目的build目录"><span class="toc-number">4.6.</span> <span class="toc-text">更改vue项目的build目录</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#推荐工具"><span class="toc-number">5.</span> <span class="toc-text">推荐工具</span></a></li></ol>
+		
+		</div>
+		
+		<p>断断续续折腾了一周多的时间，终于实现了一个前后端分离开发的小项目（没有做UI，所以有点丑），代码可以点击<a href="https://github.com/xwjgo/nodeApp" target="_blank" rel="external">这里</a>访问到。</p>
+<p>这篇文章就回顾一下整个项目的架构流程以及遇到的技术难点。</p>
+<h2 id="项目介绍"><a href="#项目介绍" class="headerlink" title="项目介绍"></a>项目介绍</h2><p>这是一个简单的购书平台，主要实现了以下功能：</p>
+<hr>
+<ol>
+<li>注册</li>
+<li>登陆/登出</li>
+<li>添加书籍</li>
+<li>查看书籍</li>
+<li>添加购物车并且结算</li>
+</ol>
+<hr>
+<p>后端基于<strong>node.js</strong>，使用了<strong>express</strong>框架，以及<strong>mongodb、mongoose、express-session</strong>等功能模块。</p>
+<p>前端基于<strong>vue.js</strong>，使用了<strong>vue-resource、vue-router</strong>这两个插件。</p>
+<p>为了模拟前后端分离开发的环境，后端运行在8888端口，而前端运行在8080端口。</p>
+<p>前后端主要通过交换json数据来实现相关功能，总结来说，<strong>后端只负责提供数据（数据库读写），前端负责呈现数据</strong>。</p>
+<h2 id="后端环境搭建"><a href="#后端环境搭建" class="headerlink" title="后端环境搭建"></a>后端环境搭建</h2><h3 id="安装express"><a href="#安装express" class="headerlink" title="安装express"></a>安装express</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ mkdir myapp</div><div class="line">$ cd myapp</div><div class="line">$ npm init</div><div class="line">$ npm install express --save</div></pre></td></tr></table></figure>
+<p>它会为我们将根目录初始化以下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">common           <span class="comment">// 文件夹，存放可复用的工具模块</span></div><div class="line">public           <span class="comment">// 文件夹，存放前端build的静态资源</span></div><div class="line">routes           <span class="comment">// 文件夹，存放路由模块</span></div><div class="line">app.js           <span class="comment">// 项目入口文件</span></div><div class="line">package.json     <span class="comment">// 项目配置</span></div></pre></td></tr></table></figure>
+<h3 id="启动mongoDB"><a href="#启动mongoDB" class="headerlink" title="启动mongoDB"></a>启动mongoDB</h3><p>mongoDB的安装可以参考其官方文档，对于不同的系统环境，有不同的安装方法：</p>
+<p>我的系统为<strong>Ubuntu 16.04</strong>，其安装方法可以看<a href="https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/" target="_blank" rel="external">这里</a>。</p>
+<p>安装完成之后，可以通过以下命令来启动mongoDB服务器：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo mongod</div></pre></td></tr></table></figure>
+<p>当然，mongodb自带一个JavaScript shell，常用的命令有以下几个：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ mongo          <span class="comment">// 进入shell</span></div><div class="line">$ show dbs       <span class="comment">// 查看当前有有哪些数据库，默认只有一个test</span></div><div class="line">$ db             <span class="comment">// db指向当前数据库</span></div><div class="line">$ use &lt;dbname&gt;   <span class="comment">// 使db变量指向某个数据库</span></div><div class="line">$ show collections               <span class="comment">// 查看当前数据库中的集合</span></div><div class="line">$ db.test.users.find().pretty()  <span class="comment">// 查询test数据库中users集合中的所有文档，并且以较为规整的格式输出</span></div></pre></td></tr></table></figure>
+<p>关于mongoDB更多的操作（<strong>CRUD</strong>），可以参考其<a href="https://docs.mongodb.com/manual/introduction/" target="_blank" rel="external">官方教程</a></p>
+<h3 id="安装express中间件"><a href="#安装express中间件" class="headerlink" title="安装express中间件"></a>安装express中间件</h3><p>express内置的中间件只有一个，那就是<code>express.static()</code>，它负责在express应用中托管静态资源。</p>
+<p>现在我们在项目中安装我们需要的几个第三方中间件：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ npm install mongoose --save     <span class="comment">// 一个更便捷的操作mongoDB数据的对象模型工具 </span></div><div class="line">$ npm install morgan  --save      <span class="comment">// 在控制台打印HTTP请求的记录，用于调试</span></div><div class="line">$ npm install body-parser  --save <span class="comment">// 解析http请求体，并且覆盖到原来的req.body属性</span></div><div class="line">$ npm install express-session  --save   <span class="comment">// 创建会话，并将会话数据挂载到req.session，保存在服务端（除了connect.id)</span></div></pre></td></tr></table></figure>
+<p>以上几个中间件，都可以在<a href="http://www.expressjs.com.cn/resources/middleware.html" target="_blank" rel="external">这里</a>找到，详细配置可以看其文档。</p>
+<h3 id="app-js"><a href="#app-js" class="headerlink" title="app.js"></a>app.js</h3><p>安装完中间件之后，我们就开始写我们的项目入口文件，代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 引入第三方中间件</span></div><div class="line"><span class="keyword">var</span> express = <span class="built_in">require</span>(<span class="string">'express'</span>);</div><div class="line"><span class="keyword">var</span> mongoose = <span class="built_in">require</span>(<span class="string">'mongoose'</span>);</div><div class="line"><span class="keyword">var</span> morgan = <span class="built_in">require</span>(<span class="string">'morgan'</span>);</div><div class="line"><span class="keyword">var</span> bodyParser = <span class="built_in">require</span>(<span class="string">'body-parser'</span>);</div><div class="line"><span class="keyword">var</span> session = <span class="built_in">require</span>(<span class="string">'express-session'</span>)</div><div class="line"><span class="comment">// node内置模块</span></div><div class="line"><span class="keyword">var</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>);</div><div class="line"><span class="comment">// 自定义模块</span></div><div class="line">global.dbHelper = <span class="built_in">require</span>(<span class="string">'./common/dbHelper'</span>); <span class="comment">// 用来操作数据库中的集合</span></div><div class="line"><span class="keyword">var</span> routes = <span class="built_in">require</span>(<span class="string">'./routes/api'</span>)            <span class="comment">// 用来操作路由</span></div><div class="line"></div><div class="line"><span class="keyword">var</span> app = express();</div><div class="line"></div><div class="line"><span class="comment">// 调用mongoose，连接数据库test3</span></div><div class="line">mongoose.connect(<span class="string">'mongodb://localhost/test3'</span>)</div><div class="line"><span class="comment">// 调用morgan中间件，在控制台打印http请求记录</span></div><div class="line">app.use(morgan(<span class="string">'dev'</span>));</div><div class="line"><span class="comment">// 调用body-parser中间件，将传来的json数据解析为对象，并覆盖到req.body</span></div><div class="line">app.use(bodyParser.json());</div><div class="line"><span class="comment">// 调用express-session中间件，connect.id过期时间设置为10分钟</span></div><div class="line">app.use(session(&#123;</div><div class="line">  secret: <span class="string">'fuckyou'</span>,</div><div class="line">  resave: <span class="literal">false</span>,</div><div class="line">  saveUninitialized: <span class="literal">true</span>,</div><div class="line">  cookie: &#123;</div><div class="line">    maxAge: <span class="number">1000</span>*<span class="number">60</span>*<span class="number">10</span></div><div class="line">  &#125;</div><div class="line">&#125;));</div><div class="line"><span class="comment">// 调用express.static中间件，指定静态资源目录，默认为pubic下的index.html</span></div><div class="line">app.use(express.static(path.join(__dirname, <span class="string">'public'</span>)));</div><div class="line"></div><div class="line"><span class="comment">// 调用路由模块，处理不同请求，并且将app作为参数传入</span></div><div class="line">routes(app);</div><div class="line"></div><div class="line"><span class="comment">// 监听8888端口</span></div><div class="line">app.listen(<span class="number">8888</span>);</div></pre></td></tr></table></figure>
+<h3 id="路由模块"><a href="#路由模块" class="headerlink" title="路由模块"></a>路由模块</h3><p>我们将路由模块都放置在<code>routes</code>文件夹下，并且由<code>api.js</code>统一管理，其代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="keyword">function</span> (<span class="params">app</span>) </span>&#123;</div><div class="line">  <span class="comment">// 因为前后端分离开发，需要处理跨域，所以对所有请求均设置响应头</span></div><div class="line">  app.use(<span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">    res.setHeader(<span class="string">'Access-Control-Allow-Origin'</span>, <span class="string">'http://192.168.0.101:8080'</span>);</div><div class="line">    res.setHeader(<span class="string">'Access-Control-Allow-Headers'</span>, <span class="string">'content-type'</span>);</div><div class="line">    res.setHeader(<span class="string">'Access-Control-Allow-Credentials'</span>, <span class="string">'true'</span>);</div><div class="line">    next();</div><div class="line">  &#125;);</div><div class="line">  <span class="comment">// 如果是预请求，就直接终结请求-响应循环</span></div><div class="line">  app.options(<span class="string">'*'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">    res.end();</div><div class="line">  &#125;)</div><div class="line"></div><div class="line">  <span class="comment">// 输出的api有以下5个，为了方便统一管理，我们都统一在这里</span></div><div class="line">  <span class="built_in">require</span>(<span class="string">'./register'</span>)(app);        <span class="comment">// 处理注册页（/register）发来的请求</span></div><div class="line">  <span class="built_in">require</span>(<span class="string">'./login'</span>)(app);           <span class="comment">// 处理登录页（/login）发来的请求</span></div><div class="line">  <span class="built_in">require</span>(<span class="string">'./bookslist'</span>)(app);       <span class="comment">// 处理图书列表页（/home）发来的请求</span></div><div class="line">  <span class="built_in">require</span>(<span class="string">'./cart'</span>)(app);            <span class="comment">// 处理购物车页（/cart）发来的请求</span></div><div class="line">  <span class="built_in">require</span>(<span class="string">'./logout'</span>)(app);          <span class="comment">// 处理登出（/logout）请求</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<h3 id="数据库设计"><a href="#数据库设计" class="headerlink" title="数据库设计"></a>数据库设计</h3><p>数据库我们选用了<a href="http://mongodb.github.io/node-mongodb-native/2.2/quick-start/" target="_blank" rel="external">MongoDB</a>，它是一个<strong>开源的NoSQL数据库</strong>，相比于MySQL那样的关系型数据库，它更加适合在<strong>数据规模很大、事务性不强的场合</strong>下使用。同时，它也是一个对象数据库，<strong>没有表、行等概念，只有集合和文档的概念</strong>，数据格式为<strong>JSON</strong>。</p>
+<p><a href="http://mongoosejs.com/docs/index.html" target="_blank" rel="external">mongoose</a>是一个针对MongoDB操作的对象模型库，它<strong>封装了MongoDB对文档的一些增删改查</strong>等常用方法。可以点击<a href="http://www.cnblogs.com/aaronjs/p/4489354.html" target="_blank" rel="external">这里</a>查看基础示例。</p>
+<p>我们将对数据库的Schema定义在<code>common/models.js</code>文件中，其代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 定义并导出数据库中几个集合的模型（Schema）</span></div><div class="line"><span class="comment">// 注意：Schema对应的数据集合会默认加上s，即books，users，carts</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  book: &#123;</div><div class="line">    name: <span class="built_in">String</span>,</div><div class="line">    description: <span class="built_in">String</span>,</div><div class="line">    price: <span class="built_in">Number</span></div><div class="line">  &#125;,</div><div class="line">  user: &#123;</div><div class="line">    username: <span class="built_in">String</span>,</div><div class="line">    password: <span class="built_in">String</span></div><div class="line">  &#125;,</div><div class="line">  cart: &#123;</div><div class="line">    username: <span class="built_in">String</span>,</div><div class="line">    bookname: <span class="built_in">String</span>,</div><div class="line">    number: <span class="built_in">Number</span>,</div><div class="line">    price: <span class="built_in">Number</span>,</div><div class="line">    status: <span class="built_in">Boolean</span></div><div class="line">  &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>并且将操作Schma的公共方法封装在了<code>common/dbHelper.js</code>文件中，代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> mongoose = <span class="built_in">require</span>(<span class="string">'mongoose'</span>);</div><div class="line"><span class="keyword">var</span> Schema = mongoose.Schema;</div><div class="line"><span class="keyword">var</span> models = <span class="built_in">require</span>(<span class="string">'./models'</span>);</div><div class="line"></div><div class="line"><span class="comment">// 将models中定义的所有模式（Schema）编译为模型（Model)</span></div><div class="line"><span class="keyword">for</span> (<span class="keyword">var</span> m <span class="keyword">in</span> models) &#123;</div><div class="line">  <span class="keyword">var</span> typeSchema =  <span class="keyword">new</span> Schema(models[m]);</div><div class="line">  mongoose.model(m, typeSchema);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 返回编译后的对应type的模型（该模型可直接对数据库增删改查）</span></div><div class="line"><span class="keyword">var</span> _getModel = <span class="function"><span class="keyword">function</span> (<span class="params">type</span>) </span>&#123;</div><div class="line">  <span class="keyword">return</span> mongoose.model(type);</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// 将getModel方法暴露出去</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  getModel: <span class="function"><span class="keyword">function</span> (<span class="params">type</span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> _getModel(type);</div><div class="line">  &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<h3 id="添加路由"><a href="#添加路由" class="headerlink" title="添加路由"></a>添加路由</h3><p>我们拿<code>register.js</code>来举例，它用来专门处理前端注册（register）页面发起的post请求，其代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="keyword">function</span> (<span class="params">app</span>) </span>&#123;</div><div class="line">  <span class="comment">// 获取User的Model，用于对集合users的增删改查</span></div><div class="line">  <span class="keyword">var</span> User = global.dbHelper.getModel(<span class="string">'user'</span>);</div><div class="line"></div><div class="line">  app.route(<span class="string">'/register'</span>)</div><div class="line">    .post(<span class="function"><span class="keyword">function</span> (<span class="params">req, res</span>) </span>&#123;</div><div class="line">      <span class="keyword">var</span> postData = req.body;</div><div class="line">      <span class="comment">// 先从集合users中检索是否存在该用户名</span></div><div class="line">      User.findOne(&#123;<span class="attr">username</span>: postData.username&#125;, <span class="function"><span class="keyword">function</span> (<span class="params">err, doc</span>) </span>&#123;</div><div class="line">        <span class="keyword">if</span> (doc) &#123;</div><div class="line">          <span class="comment">// 如果用户名已经存在</span></div><div class="line">          res.status(<span class="number">500</span>).send(<span class="string">'用户名已经存在'</span>);</div><div class="line">        &#125;<span class="keyword">else</span> &#123;</div><div class="line">          <span class="comment">// 如果用户名不存在，那么就该用户数据保存至数据库</span></div><div class="line">          User.create(&#123;</div><div class="line">            username: postData.username,</div><div class="line">            password: postData.password</div><div class="line">          &#125;, <span class="function"><span class="keyword">function</span> (<span class="params">err, doc</span>) </span>&#123;</div><div class="line">            <span class="keyword">if</span> (err) &#123;</div><div class="line">              res.status(<span class="number">500</span>).send(<span class="string">'服务端保存数据出错'</span>);</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">              res.status(<span class="number">200</span>).send(<span class="string">'注册成功'</span>);</div><div class="line">            &#125;</div><div class="line">          &#125;);</div><div class="line">        &#125;</div><div class="line">      &#125;);</div><div class="line">    &#125;);</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>写完路径<code>/register</code>对应的路由模块后，我们通过firefox的一款插件<code>HttpRequester</code>来模拟一下前端的post请求，模拟结果如下：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/post%E6%88%90%E5%8A%9F%E5%95%A6.png" alt=""></p>
+<p>然后，我们再进入mongdb shell，查看是否将user信息存入数据库：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BF%9D%E5%AD%98%E6%88%90%E5%8A%9F.png" alt=""></p>
+<p>数据保存成功！其他路由模块也是一样的实现原理，这里就不一一写出。</p>
+<p>至此，我们已经可以正确地响应前端的各种http请求，后端的开发流程大致就是这样，它主要负责提供api，向前端发送数据。</p>
+<h2 id="前端环境搭建"><a href="#前端环境搭建" class="headerlink" title="前端环境搭建"></a>前端环境搭建</h2><p>前端的搭建基于<a href="http://cn.vuejs.org/" target="_blank" rel="external">vue.js</a>，是一个小型的单页应用，并且使用了<a href="https://github.com/vuejs/vue-resource" target="_blank" rel="external">vue-resource</a>和<a href="https://github.com/vuejs/vue-router" target="_blank" rel="external">vue-router</a>这两个插件。</p>
+<h3 id="vue-cli快速搭建应用"><a href="#vue-cli快速搭建应用" class="headerlink" title="vue-cli快速搭建应用"></a>vue-cli快速搭建应用</h3><p><a href="https://github.com/vuejs/vue-cli" target="_blank" rel="external">vue-cli</a>是vue官方提供的一个脚手架工具，可以快速地帮我们构建项目，并且具有<strong>单文件Vue组件、热加载、保存时检查代码，单元测试</strong>等功能。</p>
+<p>其使用方式如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ npm install -g vue-cli        <span class="comment">// 全局安装vue-cli</span></div><div class="line">$ vue init webpack myProject    <span class="comment">// 创建一个基于webpack模板的新项目myProject</span></div><div class="line">$ cd myProject</div><div class="line">$ npm install                   <span class="comment">// 安装依赖</span></div><div class="line">$ npm run dev                   <span class="comment">// 启动项目，可在本地8080端口访问</span></div></pre></td></tr></table></figure>
+<p>我们可以点击<a href="http://vuejs-templates.github.io/webpack/structure.html" target="_blank" rel="external">这里</a>来查看项目的架构。</p>
+<blockquote>
+<p>官方的npm可以运行比较慢，建议换成<a href="https://npm.taobao.org/" target="_blank" rel="external">淘宝的npm镜像</a>，可以提高模块下载速度。以后就可以用<code>cnpm</code>来替代<code>npm</code>了（除了publish命令）。</p>
+</blockquote>
+<h3 id="插件安装"><a href="#插件安装" class="headerlink" title="插件安装"></a>插件安装</h3><p><strong>vue-resource</strong>可以通过XMLHttpRequest或者JSONP发起请求并且处理响应。<br><strong>vue-router</strong>是vue.js的官方路由，可以将路由映射到各个组件。</p>
+<p>现在，我们可以在项目中安装并使用它们：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ cnpm install vue-resource --save    <span class="comment">// cnpm是淘宝npm镜像</span></div><div class="line">$ cnpm install vue-router --save</div></pre></td></tr></table></figure>
+<p>然后我们在项目入口文件中使用他们：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 导入插件</span></div><div class="line"><span class="keyword">import</span> VueResource <span class="keyword">from</span> <span class="string">'vue-resource'</span></div><div class="line"><span class="keyword">import</span> VueRouter <span class="keyword">from</span> <span class="string">'vue-router'</span></div><div class="line"><span class="comment">// 全局注入</span></div><div class="line">Vue.use(<span class="string">'VueResource'</span>)</div><div class="line">Vue.use(<span class="string">'VueRouter'</span>)</div></pre></td></tr></table></figure>
+<h3 id="vue-resource基本使用"><a href="#vue-resource基本使用" class="headerlink" title="vue-resource基本使用"></a>vue-resource基本使用</h3><p>现在我们将实现<code>Register.vue</code>组件，其功能就是让用户输入用户名和密码，然后通过发送<strong>POST请求</strong>来实现注册功能。</p>
+<p>假设我们通过vue的双向绑定，获取了用户注册信息user，那么我们可以通过vue-resource提交数据，代码实现如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 导入要提交的地址registerApi，这里为http://192.168.0.101:8888/register</span></div><div class="line"><span class="keyword">import</span> &#123;registerApi&#125; <span class="keyword">from</span> <span class="string">'../api'</span></div><div class="line"></div><div class="line"><span class="comment">// 要提交的数据</span></div><div class="line"><span class="keyword">var</span> postData = &#123;<span class="attr">username</span>: <span class="keyword">this</span>.user.username, <span class="attr">password</span>: <span class="keyword">this</span>.user.password&#125;</div><div class="line"></div><div class="line"><span class="comment">// 方法一：使用当前实例的$http来提交数据，它返回一个Promise对象</span></div><div class="line"><span class="keyword">this</span>.$http.post(registerApi, postData).then(successCallBack, errorCallBack)</div><div class="line"></div><div class="line"><span class="comment">// 方法二：使用当前实例的$resource来提交数据，同样返回一个Promise对象</span></div><div class="line"><span class="keyword">var</span> resource = <span class="keyword">this</span>.$resource(registerApi)</div><div class="line">resource.save(registerApi, postData).then(successCallBack, errorCallBack)</div></pre></td></tr></table></figure>
+<p>更加详细的CURD操作，可以看<a href="http://www.cnblogs.com/keepfool/p/5657065.html" target="_blank" rel="external">这里</a>。</p>
+<h3 id="vue-router基本使用"><a href="#vue-router基本使用" class="headerlink" title="vue-router基本使用"></a>vue-router基本使用</h3><p>vue-router的主要作用就是<strong>将路由映射到各个组件</strong>。</p>
+<p>现在假设我们有两个组件：<code>Register.vue</code>,<code>Login.vue</code>，那么我们可以这样使用vue-router。</p>
+<p>在<code>main.js</code>中添加如下代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 创建一个路由器实例，可以传入配置参数</span></div><div class="line"><span class="keyword">var</span> router = <span class="keyword">new</span> VueRouter()</div><div class="line"></div><div class="line"><span class="comment">// 定义路由规则，每条路由规则映射到一个组件</span></div><div class="line">router.map(&#123;</div><div class="line">  <span class="string">'/register'</span>: &#123;</div><div class="line">    component: Register</div><div class="line">  &#125;,</div><div class="line">  <span class="string">'/login'</span>: &#123;</div><div class="line">    component: Login</div><div class="line">  &#125;</div><div class="line">&#125;)</div><div class="line"></div><div class="line"><span class="comment">// 启动应用</span></div><div class="line"><span class="comment">// 路由器会创建一个App实例，并且挂载到选择符#app的元素上</span></div><div class="line">router.start(App, <span class="string">'#app'</span>)</div></pre></td></tr></table></figure>
+<p>完成以上工作后，我们就可以在<code>App.vue</code>组件上使用<code>vue-router</code>来进行导航：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&lt;div id=<span class="string">"app"</span>&gt;</div><div class="line">  &lt;!-- 使用指令 v-link 进行导航 --&gt;</div><div class="line">  &lt;ul&gt;</div><div class="line">    &lt;li v-link = <span class="string">"&#123;path: '/register'&#125;"</span>&gt;注册&lt;<span class="regexp">/li&gt;</span></div><div class="line"><span class="regexp">    &lt;li v-link = "&#123;path: '/</span>login<span class="string">'&#125;"&gt;登陆&lt;/li&gt;</span></div><div class="line"><span class="string">  &lt;/ul&gt;</span></div><div class="line"><span class="string">  &lt;!-- 路由外链 --&gt;</span></div><div class="line"><span class="string">  &lt;router-view&gt;&lt;/router-view&gt;</span></div><div class="line"><span class="string">&lt;/div&gt;</span></div></pre></td></tr></table></figure>
+<p>关于vue-router更详细的使用，可以点击<a href="http://router.vuejs.org/zh-cn/basic.html" target="_blank" rel="external">这里</a>。</p>
+<h2 id="一些难点"><a href="#一些难点" class="headerlink" title="一些难点"></a>一些难点</h2><p>在写这个小项目过程中踩过一些<strong>坑</strong>，有的真的是很基础的错误，但是我有时不得不花费大量的时间来发现并改正，所以我将它们总结在这里。</p>
+<h3 id="解决跨域"><a href="#解决跨域" class="headerlink" title="解决跨域"></a>解决跨域</h3><p>完成上面的任务后，我们还不能实现前后端的分离开发，因为还存在跨域问题。</p>
+<p><strong>使用CORS解决跨域问题</strong>在我之前的博客中总结过，可以在<a href="http://xwjgo.github.io/2016/07/29/js_CORS%E8%A7%A3%E5%86%B3%E8%B7%A8%E5%9F%9F%E8%AF%B7%E6%B1%82%E9%97%AE%E9%A2%98/">这里</a>查看。</p>
+<p>这里我们也是通过CORS来解决的跨域，代码之前已经呈现，这里再写出核心代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">app.use(<span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">  <span class="comment">// 之前设置为了星号，但是因为要发送带凭证的请求，必须要指定域名，详见下一个小结</span></div><div class="line">  res.setHeader(<span class="string">'Access-Control-Allow-Origin'</span>, <span class="string">'http://192.168.0.101:8080'</span>);</div><div class="line">  res.setHeader(<span class="string">'Access-Control-Allow-Headers'</span>, <span class="string">'content-type'</span>);</div><div class="line">  res.setHeader(<span class="string">'Access-Control-Allow-Credentials'</span>, <span class="string">'true'</span>);</div><div class="line">  next();</div><div class="line">&#125;);</div><div class="line">app.options(<span class="string">'*'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">  res.end();</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h3 id="vue-resource发送带凭证的请求"><a href="#vue-resource发送带凭证的请求" class="headerlink" title="vue-resource发送带凭证的请求"></a>vue-resource发送带凭证的请求</h3><p>后台使用了<code>express-session</code>中间件来管理会话，它的工作原理如下：</p>
+<hr>
+<p>当客户通过浏览器（前端）第一次请求服务器（后端）时，服务器会在http的响应头中，通过<code>set-cookie</code>字段来给浏览器端设置一个默认叫做<code>connect.sid</code>的cookie，用作该用户的<strong>身份标识</strong>。</p>
+<p>此后，浏览器每次对服务器端发起http请求时，都会自动带上这个cookie。服务端在接收到这个<code>connect.sid</code>字段后，会判断其是否过期（maxAge)，以及是否正确，并且对客户端做出不同的响应。</p>
+<hr>
+<p>在这个项目中，当某个客户发来请求时，浏览器端需要根据请求头中是否有<code>connect.sid</code>来判定用户登陆与否，所以，我们的<strong>请求必须要带上cookie</strong>。即<strong>要发送带凭证的请求</strong>。</p>
+<p>而在vue-resource中，解决方式如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// main.js</span></div><div class="line"><span class="comment">// 发送带凭证的请求，因为每次请求都要带上cookie中的connect.id</span></div><div class="line">Vue.http.options.credentials = <span class="literal">true</span></div></pre></td></tr></table></figure>
+<h3 id="vue-router-Cannot-find-element-app"><a href="#vue-router-Cannot-find-element-app" class="headerlink" title="vue-router: Cannot find element: #app"></a>vue-router: Cannot find element: #app</h3><p>在使用vue-router时，遇到这个错误提示，其由<code>main.js</code>中的以下代码引起：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">router.start(App, <span class="string">'#app'</span>)</div></pre></td></tr></table></figure>
+<p>以上代码可以理解为: <strong>将App组件，挂载到#app元素上</strong>。</p>
+<p>而错误很明确，即<strong>找不到一个id为<code>#app</code>的元素</strong>。</p>
+<p>所以，我们需要对vue-cli给我们自动生成的<code>index.html</code>文件作出修改：<strong>将<code>&lt;app&gt;&lt;/app&gt;</code>改为<code>&lt;div id=&quot;app&quot;&gt;&lt;/app&gt;</code></strong>。</p>
+<h3 id="mongoose不能重复编译"><a href="#mongoose不能重复编译" class="headerlink" title="mongoose不能重复编译"></a>mongoose不能重复编译</h3><p>使用mongoose编写<code>dbHelper.js</code>时，出现了错误：<strong>Cannot overwrite ‘users’ model once compiled.</strong></p>
+<p>谷歌一番之后，发现原因：<strong>重复对某个一模式（Schma）进行了编译</strong>。</p>
+<p><a href="http://stackoverflow.com/questions/19051041/cannot-overwrite-model-once-compiled-mongoose" target="_blank" rel="external">这里</a>有一个解决方式，做了很详细的说明。</p>
+<h3 id="关于跨域的一点思考"><a href="#关于跨域的一点思考" class="headerlink" title="关于跨域的一点思考"></a>关于跨域的一点思考</h3><p>在这个demo的开发过程中成功实现了简单的<strong>前后端分离</strong>，那是因为前后端都运行在本地，<strong>只有有端口号不同</strong>。这导致<strong>后端的8888端口是可以通过响应头中的set-cookie字段来向前端的8080端口写入connect.sid这个cookie的</strong>。</p>
+<p>但是如果前后端运行在完全不同的两个域，比如<code>http://www.abc.com</code>和<code>http://www.123.com</code>，那这样的情况下，跨域就有些复杂了。</p>
+<h3 id="更改vue项目的build目录"><a href="#更改vue项目的build目录" class="headerlink" title="更改vue项目的build目录"></a>更改vue项目的build目录</h3><p>由于前后端在同一个主机，所以在没有解决跨域之前，我是通过将前端build目录配置为后端的<code>public</code>文件夹下的，这样，我每次修改完前端代码之后，直接<code>npm run build</code>，就会直接build到后端，这样，直接直接在后端运行项目了。</p>
+<p>那么如何更改bulid的出口呢？</p>
+<p>打开<code>config/index.js</code>，修改如下两行代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">index: path.resolve(__dirname, <span class="string">'../../myapp/public/index.html'</span>),</div><div class="line">assetsRoot: path.resolve(__dirname, <span class="string">'../../myapp/public'</span>),</div></pre></td></tr></table></figure>
+<p>当然，这样的效率是不高的，如果能解决跨域，不建议这么做。</p>
+<h2 id="推荐工具"><a href="#推荐工具" class="headerlink" title="推荐工具"></a>推荐工具</h2><ul>
+<li>HttpRequester —— 火狐浏览器的一个插件，可以方便地发起各种http请求</li>
+<li><a href="http://www.showdoc.cc/" target="_blank" rel="external">showDoc</a> —— 一个在线生成api文档的工具</li>
+<li><a href="http://thx.github.io/RAP/index_zh.html" target="_blank" rel="external">rap</a> —— 阿里在用的一个可视化接口管理工具</li>
+<li><a href="http://apizza.cc/" target="_blank" rel="external">Apizza</a> ——  极客专属的api管理工具</li>
+</ul>
+<p>以上不免有纰漏之处，仅作参考。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/node-js/">node.js</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/express/">express</a><a href="/tags/node-js/">node.js</a><a href="/tags/vue-js/">vue.js</a><a href="/tags/mongodb/">mongodb</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://xwjgo.github.io/2016/09/12/一个前后端分离开发的Demo/" data-title="一个前后端分离开发的Demo | xuwenjiang" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/09/15/css_浅谈Flex布局/" title="浅谈Flex布局">
+  <strong>上一篇：</strong><br/>
+  <span>
+  浅谈Flex布局</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/09/08/js_原生js实现双向绑定/"  title="原生js实现双向绑定">
+ <strong>下一篇：</strong><br/> 
+ <span>原生js实现双向绑定
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/09/12/一个前后端分离开发的Demo/" data-title="一个前后端分离开发的Demo" data-url="http://xwjgo.github.io/2016/09/12/一个前后端分离开发的Demo/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#项目介绍"><span class="toc-number">1.</span> <span class="toc-text">项目介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后端环境搭建"><span class="toc-number">2.</span> <span class="toc-text">后端环境搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#安装express"><span class="toc-number">2.1.</span> <span class="toc-text">安装express</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动mongoDB"><span class="toc-number">2.2.</span> <span class="toc-text">启动mongoDB</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装express中间件"><span class="toc-number">2.3.</span> <span class="toc-text">安装express中间件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#app-js"><span class="toc-number">2.4.</span> <span class="toc-text">app.js</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#路由模块"><span class="toc-number">2.5.</span> <span class="toc-text">路由模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据库设计"><span class="toc-number">2.6.</span> <span class="toc-text">数据库设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#添加路由"><span class="toc-number">2.7.</span> <span class="toc-text">添加路由</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试"><span class="toc-number">2.8.</span> <span class="toc-text">测试</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#前端环境搭建"><span class="toc-number">3.</span> <span class="toc-text">前端环境搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#vue-cli快速搭建应用"><span class="toc-number">3.1.</span> <span class="toc-text">vue-cli快速搭建应用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#插件安装"><span class="toc-number">3.2.</span> <span class="toc-text">插件安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vue-resource基本使用"><span class="toc-number">3.3.</span> <span class="toc-text">vue-resource基本使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vue-router基本使用"><span class="toc-number">3.4.</span> <span class="toc-text">vue-router基本使用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一些难点"><span class="toc-number">4.</span> <span class="toc-text">一些难点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#解决跨域"><span class="toc-number">4.1.</span> <span class="toc-text">解决跨域</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vue-resource发送带凭证的请求"><span class="toc-number">4.2.</span> <span class="toc-text">vue-resource发送带凭证的请求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vue-router-Cannot-find-element-app"><span class="toc-number">4.3.</span> <span class="toc-text">vue-router: Cannot find element: #app</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mongoose不能重复编译"><span class="toc-number">4.4.</span> <span class="toc-text">mongoose不能重复编译</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关于跨域的一点思考"><span class="toc-number">4.5.</span> <span class="toc-text">关于跨域的一点思考</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#更改vue项目的build目录"><span class="toc-number">4.6.</span> <span class="toc-text">更改vue项目的build目录</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#推荐工具"><span class="toc-number">5.</span> <span class="toc-text">推荐工具</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/javascript/" title="javascript">javascript<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/linux/" title="linux">linux<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/node-js/" title="node.js">node.js<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/乱七八糟/" title="乱七八糟">乱七八糟<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/前端/" title="前端">前端<sup>24</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构/" title="数据结构">数据结构<sup>2</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/javascript/" title="javascript">javascript<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/es6/" title="es6">es6<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/react/" title="react">react<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/express/" title="express">express<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/css/" title="css">css<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C">C<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/webpack/" title="webpack">webpack<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/File/" title="File">File<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/history/" title="history">history<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/redux/" title="redux">redux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/react-redux/" title="react-redux">react-redux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ajax/" title="ajax">ajax<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/TODOLIST/" title="TODOLIST">TODOLIST<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/node-js/" title="node.js">node.js<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/vue-js/" title="vue.js">vue.js<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/mongodb/" title="mongodb">mongodb<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">Links</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.ouc.edu.cn" target="_blank" title="中国海洋大学">中国海洋大学</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://weilai5432.github.io" target="_blank" title="魏来">魏来</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> No matter who gives up, i will not. <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/xwjgo" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="xuwenjiang">xuwenjiang</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"xwjgo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-93479022-1', 'xwjgo.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

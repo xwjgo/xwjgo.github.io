@@ -1,0 +1,683 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>ES6中promise对象 | xuwenjiang</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="xuwenjiang">
+    
+
+    
+    <meta name="description" content="网易互联网笔试昨天参加了网易互联网前端工程师的笔试，考的很渣-_-。一共20道选择题，3道编程题，1道问答题。 选择题考的还是挺杂的，不仅仅包括前端，还考到了二叉树的遍历、UDP/TCP等知识点。编程题3道，自己用node.js写了两道，在本地测试了几组用例都能够通过，但是提交到牛客网就出错。问答题没时间了就直接交卷，问题是大致是实现event的on和emit。 选择题中有两道是关于es6中的pr">
+<meta name="keywords" content="es6">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ES6中promise对象">
+<meta property="og:url" content="http://xwjgo.github.io/2016/08/14/js_es6中promise对象/index.html">
+<meta property="og:site_name" content="xuwenjiang">
+<meta property="og:description" content="网易互联网笔试昨天参加了网易互联网前端工程师的笔试，考的很渣-_-。一共20道选择题，3道编程题，1道问答题。 选择题考的还是挺杂的，不仅仅包括前端，还考到了二叉树的遍历、UDP/TCP等知识点。编程题3道，自己用node.js写了两道，在本地测试了几组用例都能够通过，但是提交到牛客网就出错。问答题没时间了就直接交卷，问题是大致是实现event的on和emit。 选择题中有两道是关于es6中的pr">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/three%20balls.gif">
+<meta property="og:updated_time" content="2017-09-14T15:27:56.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ES6中promise对象">
+<meta name="twitter:description" content="网易互联网笔试昨天参加了网易互联网前端工程师的笔试，考的很渣-_-。一共20道选择题，3道编程题，1道问答题。 选择题考的还是挺杂的，不仅仅包括前端，还考到了二叉树的遍历、UDP/TCP等知识点。编程题3道，自己用node.js写了两道，在本地测试了几组用例都能够通过，但是提交到牛客网就出错。问答题没时间了就直接交卷，问题是大致是实现event的on和emit。 选择题中有两道是关于es6中的pr">
+<meta name="twitter:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/three%20balls.gif">
+
+    
+    <link rel="alternative" href="/atom.xml" title="xuwenjiang" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="xuwenjiang" title="xuwenjiang"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="xuwenjiang">xuwenjiang</a></h1>
+				<h2 class="blog-motto">外面的繁华不是我的繁华</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="/tags">标签</a></li>
+					
+						<li><a href="/categories">分类</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Search" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/08/14/js_es6中promise对象/" title="ES6中promise对象" itemprop="url">ES6中promise对象</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="xuwenjiang" target="_blank" itemprop="author">xuwenjiang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-08-14T04:12:12.000Z" itemprop="datePublished"> Published 2016-08-14</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#网易互联网笔试"><span class="toc-number">1.</span> <span class="toc-text">网易互联网笔试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是Promise对象"><span class="toc-number">2.</span> <span class="toc-text">什么是Promise对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Promise对象的两个特点"><span class="toc-number">3.</span> <span class="toc-text">Promise对象的两个特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Promise对象的缺点"><span class="toc-number">4.</span> <span class="toc-text">Promise对象的缺点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基本用法"><span class="toc-number">5.</span> <span class="toc-text">基本用法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#几个常用方法"><span class="toc-number">6.</span> <span class="toc-text">几个常用方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Promise-prototype-then"><span class="toc-number">6.1.</span> <span class="toc-text">Promise.prototype.then()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Promise-prototype-catch"><span class="toc-number">6.2.</span> <span class="toc-text">Promise.prototype.catch()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Promise-all"><span class="toc-number">6.3.</span> <span class="toc-text">Promise.all()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Promise-race"><span class="toc-number">6.4.</span> <span class="toc-text">Promise.race()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Promise-resolve"><span class="toc-number">6.5.</span> <span class="toc-text">Promise.resolve()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Promise-reject"><span class="toc-number">6.6.</span> <span class="toc-text">Promise.reject()</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#简单应用"><span class="toc-number">7.</span> <span class="toc-text">简单应用</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="网易互联网笔试"><a href="#网易互联网笔试" class="headerlink" title="网易互联网笔试"></a>网易互联网笔试</h2><p>昨天参加了网易互联网前端工程师的笔试，考的很渣-_-。一共20道选择题，3道编程题，1道问答题。</p>
+<p>选择题考的还是挺杂的，不仅仅包括前端，还考到了二叉树的遍历、UDP/TCP等知识点。编程题3道，自己用node.js写了两道，在本地测试了几组用例都能够通过，但是提交到牛客网就出错。问答题没时间了就直接交卷，问题是大致是实现event的on和emit。</p>
+<p>选择题中有两道是关于es6中的promise对象的，虽然对promise有所耳闻，但是细节内容却没有掌握，这篇文章就总结了我对promise对象的一些理解。</p>
+<h2 id="什么是Promise对象"><a href="#什么是Promise对象" class="headerlink" title="什么是Promise对象"></a>什么是Promise对象</h2><p><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise" target="_blank" rel="external">Promise</a>是异步编程的一种解决方案。</p>
+<p><strong>一个Promise对象代表着一个还未完成，但是预期将来会完成的操作。</strong></p>
+<p>Promise对象是一个返回值的代理，这个返回值在promise对象创建时未必已知。它允许你为异步操作的成功或者失败指定处理方法。</p>
+<p>Promise对象拥有以下几种状态：</p>
+<hr>
+<ol>
+<li>pending———————–初始状态，既不是fulfilled，也不是rejected。</li>
+<li>fulfilled(resolved)———–成功的操作。</li>
+<li>rejected———————-失败的操作。</li>
+</ol>
+<hr>
+<h2 id="Promise对象的两个特点"><a href="#Promise对象的两个特点" class="headerlink" title="Promise对象的两个特点"></a>Promise对象的两个特点</h2><p>Promise对象拥有以下两个特点：</p>
+<hr>
+<ol>
+<li><strong>对象的状态不受外界影响。</strong>只有异步操作的结果，可以决定当前是哪一种状态，其他任何操作都无法改变这个状态。</li>
+<li><strong>一旦状态改变，就不会再变</strong>，任何时候都可以得到这个结果。Promise对象的状态改变，只有两种可能性，从<strong>pending变为resolved</strong>，或者从<strong>pending变为rejected</strong>。</li>
+</ol>
+<hr>
+<p>有了Promise对象，我们将可以将异步操作以同步操作的流程表达出来，避免了层层嵌套的回调函数。</p>
+<h2 id="Promise对象的缺点"><a href="#Promise对象的缺点" class="headerlink" title="Promise对象的缺点"></a>Promise对象的缺点</h2><hr>
+<ol>
+<li><strong>无法取消Promise</strong>，一旦新建，它就会立即执行，无法中途取消。</li>
+<li>如果不设置回调函数，Promise内部抛出的错误，<strong>不会反映到外部</strong>。</li>
+<li>当处于pending状态时，<strong>无法得知目前进展到哪一个阶段</strong>（刚刚开始还是即将完成）。</li>
+</ol>
+<hr>
+<h2 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法</h2><p>es6规定，Promise对象是一个构造函数，用来生成Promise实例。</p>
+<p>下面创建一个Promise实例：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> p1 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</div><div class="line">    setTimeout(<span class="function"><span class="keyword">function</span> (<span class="params">name</span>) </span>&#123;</div><div class="line">        resolve(name);</div><div class="line">    &#125;, <span class="number">2000</span>, <span class="string">'xuwenjiang'</span>); </div><div class="line">&#125;);</div><div class="line"></div><div class="line">p1.then(<span class="function"><span class="keyword">function</span> (<span class="params">msg</span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(msg);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p><strong>Promise构造函数接受一个函数作为参数</strong>，该函数的两个参数是resolve和reject。它们是两个函数，有JavaScript引擎提供，不用自己部署。</p>
+<p>resolve函数的作用是，将Promise对象的状态从<strong>”初始化“</strong>变为<strong>”成功“</strong>，即从<strong>pending</strong>变为<strong>resolved</strong>。在异步操作成功时调用。</p>
+<p>reject函数的作用是，将Promise对象的状态从<strong>”初始化“</strong>变为<strong>”失败“</strong>，即从<strong>pending</strong>变为<strong>rejected</strong>。在异步操作失败时调用。</p>
+<p>Promise实例生成后，可以用then方法分别指定resolved状态和rejected状态的回调函数。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">p1.then(<span class="function"><span class="keyword">function</span> (<span class="params">value</span>) </span>&#123;</div><div class="line">    <span class="comment">// success</span></div><div class="line">&#125;, <span class="function"><span class="keyword">function</span> (<span class="params">error</span>) </span>&#123;</div><div class="line">    <span class="comment">// failure    可选</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>reject方法的参数通常是Error对象的实例，而<strong>resolve方法的参数除了正常值以外，还可能是另一个Promise实例</strong>，比如下面：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> p1 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">reslove, reject</span>) </span>&#123;</div><div class="line">    setTimeout(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">        reject(<span class="string">'p1 reject...'</span>);</div><div class="line">    &#125;, <span class="number">2000</span>);</div><div class="line">&#125;).then(<span class="literal">undefined</span>, <span class="function"><span class="keyword">function</span> (<span class="params">msg</span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(msg);</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="keyword">var</span> p2 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">reslove, reject</span>) </span>&#123;</div><div class="line">    <span class="comment">// resolve参数设置为p1</span></div><div class="line">    resolve(p1);</div><div class="line">&#125;).then(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'p2 resolve...'</span>)</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>控制台在两秒钟之后，同时输入以下两条内容：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">p1 reject...</div><div class="line">p2 resolve...</div></pre></td></tr></table></figure>
+<p>上面代码中，p1和p2都是Promise的实例，但是p2的resolve方法将p1作为参数。</p>
+<p>注意，这时<strong>p1的状态就会传递给p2</strong>，也就是说，<strong>p1的状态决定了p2的状态</strong>。如果p1的状态是pending，那么p2的回调函数就会等待p1的状态改变，如果p1的状态已经为resolved或者rejected，那么p2的回调函数将会立刻执行。</p>
+<h2 id="几个常用方法"><a href="#几个常用方法" class="headerlink" title="几个常用方法"></a>几个常用方法</h2><h3 id="Promise-prototype-then"><a href="#Promise-prototype-then" class="headerlink" title="Promise.prototype.then()"></a><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise/then" target="_blank" rel="external">Promise.prototype.then()</a></h3><p>then方法返回的是一个新的Promise实例。因此可以采用链式写法，即then方法后面再调用一个then方法。</p>
+<p>分为两种情况，一种是<strong>直接返回非Promise对象</strong>的结果，一种是<strong>返回Promise对象</strong>的结果。</p>
+<hr>
+<p>返回非Promise对象：紧跟着then方法，resolve立即执行。并可使用前一个then方法返回的结果。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> promise = <span class="keyword">new</span> <span class="built_in">Promise</span> (<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</div><div class="line">  setTimeout(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    resolve(<span class="number">1</span>);</div><div class="line">  &#125;, <span class="number">2000</span>);</div><div class="line">&#125;);</div><div class="line"></div><div class="line">promise.then(<span class="function"><span class="keyword">function</span> (<span class="params">value</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(value);</div><div class="line">  <span class="comment">// 返回非Promise对象</span></div><div class="line">  <span class="keyword">return</span> value + <span class="number">1</span>;</div><div class="line">&#125;).then(<span class="function"><span class="keyword">function</span> (<span class="params">value</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(value);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>控制台在两秒钟后，同时输出两行数据：1,2</p>
+<p>上面代码中使用then方法，依次指定了两个回调函数。<strong>第一个回调函数完成之后，会将返回结果作为参数，传入第二个回调函数</strong>。</p>
+<hr>
+<p>返回promise对象</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> promise = <span class="keyword">new</span> <span class="built_in">Promise</span> (<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</div><div class="line">  setTimeout(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    resolve(<span class="number">1</span>);</div><div class="line">  &#125;, <span class="number">2000</span>);</div><div class="line">&#125;);</div><div class="line"></div><div class="line">promise.then(<span class="function"><span class="keyword">function</span> (<span class="params">value</span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> p = <span class="keyword">new</span> <span class="built_in">Promise</span> (<span class="function"><span class="keyword">function</span> (<span class="params">reslove, reject</span>) </span>&#123;</div><div class="line">      setTimeout(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">          reject(value + <span class="number">1</span>);</div><div class="line">      &#125;, <span class="number">2000</span>);</div><div class="line">    &#125;);</div><div class="line">    <span class="comment">// 返回一个promise对象</span></div><div class="line">    <span class="keyword">return</span> p;</div><div class="line">&#125;).then(<span class="literal">undefined</span>, <span class="function"><span class="keyword">function</span> (<span class="params">value</span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(value);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>控制台在两秒钟后，输出1，又过两秒钟，输出2。</p>
+<p>上面代码中，第一个then方法返回了一个Promise对象，这是第二个then方法指定的回调函数，就会等待这个新的Promise对象状态发生变化。</p>
+<hr>
+<h3 id="Promise-prototype-catch"><a href="#Promise-prototype-catch" class="headerlink" title="Promise.prototype.catch()"></a><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise/catch" target="_blank" rel="external">Promise.prototype.catch()</a></h3><p>Promise.prototype.catch方法是<strong>.then(null, rejection)</strong>的别名。</p>
+<p>catch()方法只处理<strong>Promise被拒绝</strong>的情况，并返回一个Promise。</p>
+<p><strong>如果异步操作发生错误，状态就会变为rejected</strong>，就会调用catch方法指定的回调函数，处理这个错误。</p>
+<p>另外，如果<strong>then方法指定的回调函数，如果运行中抛出错误，也会被catch方法捕获</strong>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 写法一</span></div><div class="line"></div><div class="line"><span class="keyword">var</span> p1 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span>(<span class="params">resolve, reject</span>) </span>&#123;</div><div class="line">  setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    resolve(<span class="number">1</span>);</div><div class="line">  &#125;, <span class="number">2000</span>);</div><div class="line">&#125;);</div><div class="line"></div><div class="line">p1.then(<span class="function"><span class="keyword">function</span> (<span class="params">value</span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(value);    <span class="comment">// 1</span></div><div class="line">    <span class="keyword">throw</span> <span class="string">'error...'</span>;</div><div class="line">&#125;).catch(<span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(e);    <span class="comment">// error...</span></div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// 写法二</span></div><div class="line"></div><div class="line"><span class="keyword">var</span> p1 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span>(<span class="params">resolve, reject</span>) </span>&#123;</div><div class="line">  setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    reject(<span class="number">1</span>);</div><div class="line">  &#125;, <span class="number">2000</span>);</div><div class="line">&#125;);</div><div class="line"></div><div class="line">p1.catch(<span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(e);    <span class="comment">// 1</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>通过以上可以看出，<strong>reject方法的作用，等同于抛出错误</strong>。</p>
+<p>一般来说，<strong>不要在then方法中定义rejected状态的回调函数（即不写第二个参数），总是使用catch方法</strong>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// bad</span></div><div class="line">promise.then(<span class="function"><span class="keyword">function</span> (<span class="params">value</span>) </span>&#123;</div><div class="line">  <span class="comment">// success</span></div><div class="line">&#125;, <span class="function"><span class="keyword">function</span> (<span class="params">err</span>) </span>&#123;</div><div class="line">  <span class="comment">// error</span></div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// good</span></div><div class="line">promise.then(<span class="function"><span class="keyword">function</span> (<span class="params">data</span>) </span>&#123;</div><div class="line">  <span class="comment">// success</span></div><div class="line">&#125;).catch(<span class="function"><span class="keyword">function</span> (<span class="params">err</span>) </span>&#123;</div><div class="line">  <span class="comment">// error</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h3 id="Promise-all"><a href="#Promise-all" class="headerlink" title="Promise.all()"></a><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise/all" target="_blank" rel="external">Promise.all()</a></h3><p>Promise.all方法将用于多个Promise实例，包装成一个新的Promise实例。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> p = <span class="built_in">Promise</span>.all([p1, p2, p3]);</div></pre></td></tr></table></figure>
+<p>在上面代码中，Promise.all接收一个数组作为参数，p1，p2，p3都是Promise对象的实例。</p>
+<p>p的状态由p1，p2，p3决定，分成两种情况：</p>
+<hr>
+<ol>
+<li>只有p1，p2，p3的状态<strong>都变为fulfilled，p的状态才会变成fulfilled</strong>。此时，p1，p2，p3的返回值组成一个<strong>数组</strong>，传递给p的回调函数。</li>
+<li>只要p1，p2，p3之中<strong>有一个被rejected，p的状态就变成rejected</strong>，此时<strong>第一个被reject的实例的返回值</strong>，会传递给p的回调函数。</li>
+</ol>
+<hr>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> p1 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</div><div class="line">  setTimeout(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    resolve(<span class="number">1</span>);</div><div class="line">  &#125;, <span class="number">2000</span>);</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="keyword">var</span> p2 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</div><div class="line">  setTimeout(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    resolve(<span class="number">2</span>);</div><div class="line">  &#125;, <span class="number">2000</span>);</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// 只有当p1和p2的状态都为fulfilled时，以下函数才能执行</span></div><div class="line"></div><div class="line"><span class="keyword">var</span> p = <span class="built_in">Promise</span>.all([p1,p2]).then(<span class="function"><span class="keyword">function</span> (<span class="params">value</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(value);    <span class="comment">// [1,2]</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h3 id="Promise-race"><a href="#Promise-race" class="headerlink" title="Promise.race()"></a><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise/race" target="_blank" rel="external">Promise.race()</a></h3><p>Promise.race方法同样是将多个Promise实例，包装成一个新的Promise实例。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> p = <span class="built_in">Promise</span>.race([p1, p2, p3]);</div></pre></td></tr></table></figure>
+<p>上面代码中，只要p1，p2，p3之中有一个实例<strong>率先改变状态，p的状态就跟着改变</strong>。那个率先改变Promise实例的返回值，就传递给p的回调函数。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> p1 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</div><div class="line">  setTimeout(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    resolve(<span class="number">1</span>);</div><div class="line">  &#125;, <span class="number">2000</span>);</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="keyword">var</span> p2 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</div><div class="line">  setTimeout(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    resolve(<span class="number">2</span>);</div><div class="line">  &#125;, <span class="number">3000</span>);</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// p1实例的状态先改变，所以p1实例的返回值，会传递给p的回调函数</span></div><div class="line"></div><div class="line"><span class="keyword">var</span> p = <span class="built_in">Promise</span>.race([p1,p2]).then(<span class="function"><span class="keyword">function</span> (<span class="params">value</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(value);    <span class="comment">// 1</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h3 id="Promise-resolve"><a href="#Promise-resolve" class="headerlink" title="Promise.resolve()"></a><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise/resolve" target="_blank" rel="external">Promise.resolve()</a></h3><p>如果需要将现有对象转换为Promise对象，Promise.resolve 方法就可以用到。</p>
+<p><strong>静态方法</strong>Promise.resolve返回一个promise对象，这个对象是被解析后（resolve）的。</p>
+<p>它的语法有以下四种：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">Promise</span>.resolve(value)              <span class="comment">// 参数不是thenable，也不是对象</span></div><div class="line"><span class="built_in">Promise</span>.resolve(promise)            <span class="comment">// 参数是一个promise实例</span></div><div class="line"><span class="built_in">Promise</span>.resolve(thenable)           <span class="comment">// thenable是一个具有then方法的对象</span></div><div class="line"><span class="built_in">Promise</span>.resolve()                   <span class="comment">// 可以快速拿到一个promise对象</span></div></pre></td></tr></table></figure>
+<p>示例代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 场景一：Promise.resolve(value)</span></div><div class="line"></div><div class="line"><span class="built_in">Promise</span>.resolve(<span class="string">'success'</span>).then(<span class="function"><span class="keyword">function</span> (<span class="params">value</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(value);    <span class="comment">// success</span></div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="built_in">Promise</span>.resolve([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]).then(<span class="function"><span class="keyword">function</span> (<span class="params">value</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(value);    <span class="comment">// [1,2,3]</span></div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// 场景二：Promise.resolve(promise)</span></div><div class="line"></div><div class="line"><span class="keyword">var</span> p1 = <span class="built_in">Promise</span>.resolve(<span class="literal">true</span>);</div><div class="line"><span class="keyword">var</span> p2 = <span class="built_in">Promise</span>.resolve(p1).then(<span class="function"><span class="keyword">function</span> (<span class="params">value</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(value);    <span class="comment">// true</span></div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// 场景三： Promise.resolve(thenable)</span></div><div class="line"></div><div class="line"><span class="keyword">var</span> promise = <span class="built_in">Promise</span>.resolve(&#123;</div><div class="line">  then: <span class="function"><span class="keyword">function</span> (<span class="params">onFulfill, onReject</span>) </span>&#123;</div><div class="line">    onFulfill(<span class="string">'fulfilled...'</span>);</div><div class="line">  &#125;</div><div class="line">&#125;).then(<span class="function"><span class="keyword">function</span> (<span class="params">value</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(value);    <span class="comment">// fulfilled...</span></div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// 场景四：Promise.resolve()</span></div><div class="line"></div><div class="line"><span class="keyword">var</span> p = <span class="built_in">Promise</span>.resolve();  <span class="comment">// 可以直接拿到一个promise对象</span></div><div class="line">p.then(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="comment">// ...</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>需要注意的是，<strong>立即resolve的promise对象，是在本轮“事件循环”（event loop）的结束时，而不是在下一轮“事件循环”的开始时</strong>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">setTimeout(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">'three'</span>);</div><div class="line">&#125;,<span class="number">0</span>);</div><div class="line"></div><div class="line"><span class="built_in">Promise</span>.resolve().then(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">'two'</span>);</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="built_in">console</span>.log(<span class="string">'one'</span>);</div><div class="line"></div><div class="line"><span class="comment">// one</span></div><div class="line"><span class="comment">// two</span></div><div class="line"><span class="comment">// three</span></div></pre></td></tr></table></figure>
+<p>上面代码中，setTimeout(fn,0)在下一轮”事件循环“开始时执行，Promise.resolve()在本轮”事件循环“结束时执行，console.log()则是立即执行。</p>
+<h3 id="Promise-reject"><a href="#Promise-reject" class="headerlink" title="Promise.reject()"></a><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise/reject" target="_blank" rel="external">Promise.reject()</a></h3><p>静态方法Promise.reject()方法返回一个用reason拒绝的Promise。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">Promise</span>.reject(<span class="string">'error...'</span>).then(<span class="literal">null</span>, <span class="function"><span class="keyword">function</span> (<span class="params">reason</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(reason);        <span class="comment">// error...</span></div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="built_in">Promise</span>.reject(<span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">'error!'</span>)).then(<span class="literal">null</span>, <span class="function"><span class="keyword">function</span> (<span class="params">reason</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(reason);        <span class="comment">// Error:error!</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h2 id="简单应用"><a href="#简单应用" class="headerlink" title="简单应用"></a>简单应用</h2><p>以下是最终效果图：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/three%20balls.gif" alt=""></p>
+<p>首先先不用Promise，核心代码如下:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">animate</span> (<span class="params">ball, distance, cb</span>) </span>&#123;</div><div class="line">  setTimeout(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> marginLeft = <span class="built_in">parseInt</span>(ball.style.marginLeft, <span class="number">10</span>);</div><div class="line">    <span class="keyword">if</span> (marginLeft === distance) &#123;</div><div class="line">      cb &amp;&amp; cb();</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">      <span class="keyword">if</span> (marginLeft &lt; distance) &#123;</div><div class="line">        marginLeft ++;</div><div class="line">      &#125; <span class="keyword">else</span> &#123;</div><div class="line">        marginLeft --;</div><div class="line">      &#125;</div><div class="line">      </div><div class="line">      ball.style.marginLeft = marginLeft + <span class="string">'px'</span>;</div><div class="line">      animate(ball, distance, cb);</div><div class="line">    &#125;</div><div class="line">    <span class="comment">// 一开始把这两行写在这里, 出错了</span></div><div class="line"><span class="comment">//  ball.style.marginLeft = marginLeft + 'px';</span></div><div class="line"><span class="comment">//  animate(ball, distance, cb);</span></div><div class="line">  &#125;, <span class="number">13</span>);</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// 层层回调</span></div><div class="line">animate(ball1, <span class="number">100</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">  animate(ball2, <span class="number">200</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    animate(ball3, <span class="number">300</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">      animate(ball3, <span class="number">150</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">        animate(ball2, <span class="number">150</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">          animate(ball1, <span class="number">150</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    </div><div class="line">          &#125;);</div><div class="line">        &#125;)</div><div class="line">      &#125;);</div><div class="line">    &#125;);</div><div class="line">  &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>在使用了promise之后，核心代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">promiseAnimate</span> (<span class="params">ball, distance</span>) </span>&#123;</div><div class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span> (<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">function</span> _animate (<span class="params"></span>) </span>&#123;</div><div class="line">      setTimeout(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">        <span class="keyword">var</span> marginLeft = <span class="built_in">parseInt</span>(ball.style.marginLeft, <span class="number">10</span>);</div><div class="line">        <span class="keyword">if</span> (marginLeft === distance) &#123;</div><div class="line">          resolve();</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">          <span class="keyword">if</span> (marginLeft &lt; distance) &#123;</div><div class="line">            marginLeft ++;</div><div class="line">          &#125; <span class="keyword">else</span> &#123;</div><div class="line">            marginLeft --;</div><div class="line">          &#125;</div><div class="line"></div><div class="line">          ball.style.marginLeft = marginLeft + <span class="string">'px'</span>;</div><div class="line">          _animate();</div><div class="line">        &#125;</div><div class="line">      &#125;, <span class="number">13</span>);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    _animate();</div><div class="line">  &#125;);</div><div class="line">&#125;</div><div class="line"></div><div class="line">promiseAnimate(ball1, <span class="number">100</span>)</div><div class="line">  .then(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> promiseAnimate(ball2, <span class="number">200</span>)</div><div class="line">  &#125;)</div><div class="line">  .then(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> promiseAnimate(ball3, <span class="number">300</span>)</div><div class="line">  &#125;)</div><div class="line">  .then(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> promiseAnimate(ball3, <span class="number">150</span>)</div><div class="line">  &#125;)</div><div class="line">  .then(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> promiseAnimate(ball2, <span class="number">150</span>)</div><div class="line">  &#125;)</div><div class="line">  .then(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> promiseAnimate(ball1, <span class="number">150</span>)</div><div class="line">  &#125;);</div></pre></td></tr></table></figure>
+<p>通过对比，可以看出使用Promise使得代码可读性高，并且容易维护。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/前端/">前端</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/es6/">es6</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://xwjgo.github.io/2016/08/14/js_es6中promise对象/" data-title="ES6中promise对象 | xuwenjiang" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/08/15/js_es6中箭头函数/" title="ES6箭头函数">
+  <strong>上一篇：</strong><br/>
+  <span>
+  ES6箭头函数</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/08/11/js_DOM知识点整理/"  title="DOM知识点整理">
+ <strong>下一篇：</strong><br/> 
+ <span>DOM知识点整理
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/08/14/js_es6中promise对象/" data-title="ES6中promise对象" data-url="http://xwjgo.github.io/2016/08/14/js_es6中promise对象/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#网易互联网笔试"><span class="toc-number">1.</span> <span class="toc-text">网易互联网笔试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是Promise对象"><span class="toc-number">2.</span> <span class="toc-text">什么是Promise对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Promise对象的两个特点"><span class="toc-number">3.</span> <span class="toc-text">Promise对象的两个特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Promise对象的缺点"><span class="toc-number">4.</span> <span class="toc-text">Promise对象的缺点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基本用法"><span class="toc-number">5.</span> <span class="toc-text">基本用法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#几个常用方法"><span class="toc-number">6.</span> <span class="toc-text">几个常用方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Promise-prototype-then"><span class="toc-number">6.1.</span> <span class="toc-text">Promise.prototype.then()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Promise-prototype-catch"><span class="toc-number">6.2.</span> <span class="toc-text">Promise.prototype.catch()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Promise-all"><span class="toc-number">6.3.</span> <span class="toc-text">Promise.all()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Promise-race"><span class="toc-number">6.4.</span> <span class="toc-text">Promise.race()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Promise-resolve"><span class="toc-number">6.5.</span> <span class="toc-text">Promise.resolve()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Promise-reject"><span class="toc-number">6.6.</span> <span class="toc-text">Promise.reject()</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#简单应用"><span class="toc-number">7.</span> <span class="toc-text">简单应用</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/javascript/" title="javascript">javascript<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/linux/" title="linux">linux<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/node-js/" title="node.js">node.js<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/乱七八糟/" title="乱七八糟">乱七八糟<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/前端/" title="前端">前端<sup>24</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构/" title="数据结构">数据结构<sup>2</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/javascript/" title="javascript">javascript<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/es6/" title="es6">es6<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/react/" title="react">react<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/express/" title="express">express<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/css/" title="css">css<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C">C<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/webpack/" title="webpack">webpack<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/File/" title="File">File<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/history/" title="history">history<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/redux/" title="redux">redux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/react-redux/" title="react-redux">react-redux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ajax/" title="ajax">ajax<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/TODOLIST/" title="TODOLIST">TODOLIST<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/node-js/" title="node.js">node.js<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/vue-js/" title="vue.js">vue.js<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/mongodb/" title="mongodb">mongodb<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">Links</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.ouc.edu.cn" target="_blank" title="中国海洋大学">中国海洋大学</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://weilai5432.github.io" target="_blank" title="魏来">魏来</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> No matter who gives up, i will not. <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/xwjgo" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="xuwenjiang">xuwenjiang</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"xwjgo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-93479022-1', 'xwjgo.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

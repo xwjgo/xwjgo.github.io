@@ -1,0 +1,683 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>webpack打包react应用 | xuwenjiang</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="xuwenjiang">
+    
+
+    
+    <meta name="description" content="前段时间学习redux写了一个简单的react单页应用，使用了jsx，es6，less等语法，并且引用了一些第三方的npm模块，比如redux，react-redux，lodash，moment等，构建工具选择的是webpack2，这里就来整理一下其中关于webpack打包的相关知识。 源代码可以点击这里访问。 使用loaders每引入一种loader，就相当于告诉了webpack：当遇到某种类型">
+<meta name="keywords" content="react,webpack">
+<meta property="og:type" content="article">
+<meta property="og:title" content="webpack打包react应用">
+<meta property="og:url" content="http://xwjgo.github.io/2017/03/01/webpack打包react应用/index.html">
+<meta property="og:site_name" content="xuwenjiang">
+<meta property="og:description" content="前段时间学习redux写了一个简单的react单页应用，使用了jsx，es6，less等语法，并且引用了一些第三方的npm模块，比如redux，react-redux，lodash，moment等，构建工具选择的是webpack2，这里就来整理一下其中关于webpack打包的相关知识。 源代码可以点击这里访问。 使用loaders每引入一种loader，就相当于告诉了webpack：当遇到某种类型">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/webpack.gif">
+<meta property="og:updated_time" content="2017-09-14T15:27:56.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="webpack打包react应用">
+<meta name="twitter:description" content="前段时间学习redux写了一个简单的react单页应用，使用了jsx，es6，less等语法，并且引用了一些第三方的npm模块，比如redux，react-redux，lodash，moment等，构建工具选择的是webpack2，这里就来整理一下其中关于webpack打包的相关知识。 源代码可以点击这里访问。 使用loaders每引入一种loader，就相当于告诉了webpack：当遇到某种类型">
+<meta name="twitter:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/webpack.gif">
+
+    
+    <link rel="alternative" href="/atom.xml" title="xuwenjiang" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="xuwenjiang" title="xuwenjiang"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="xuwenjiang">xuwenjiang</a></h1>
+				<h2 class="blog-motto">外面的繁华不是我的繁华</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="/tags">标签</a></li>
+					
+						<li><a href="/categories">分类</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Search" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/03/01/webpack打包react应用/" title="webpack打包react应用" itemprop="url">webpack打包react应用</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="xuwenjiang" target="_blank" itemprop="author">xuwenjiang</a>
+		
+  <p class="article-time">
+    <time datetime="2017-03-01T04:12:12.000Z" itemprop="datePublished"> Published 2017-03-01</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#使用loaders"><span class="toc-number">1.</span> <span class="toc-text">使用loaders</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#less"><span class="toc-number">1.1.</span> <span class="toc-text">less</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jsx以及es6"><span class="toc-number">1.2.</span> <span class="toc-text">jsx以及es6</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#提取css"><span class="toc-number">2.</span> <span class="toc-text">提取css</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#extract-text-webpack-plugin"><span class="toc-number">2.1.</span> <span class="toc-text">extract-text-webpack-plugin</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#一点副作用"><span class="toc-number">2.2.</span> <span class="toc-text">一点副作用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#提取第三方js模块"><span class="toc-number">3.</span> <span class="toc-text">提取第三方js模块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#多个入口"><span class="toc-number">3.1.</span> <span class="toc-text">多个入口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CommonsChunkPlugin"><span class="toc-number">3.2.</span> <span class="toc-text">CommonsChunkPlugin</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#manifest"><span class="toc-number">3.3.</span> <span class="toc-text">manifest</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#按需加载"><span class="toc-number">4.</span> <span class="toc-text">按需加载</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#import"><span class="toc-number">4.1.</span> <span class="toc-text">import()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#require-ensure"><span class="toc-number">4.2.</span> <span class="toc-text">require.ensure()</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更愉快的开发"><span class="toc-number">5.</span> <span class="toc-text">更愉快的开发</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#webpack-dev-middleware"><span class="toc-number">5.1.</span> <span class="toc-text">webpack-dev-middleware</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#webpack-hot-middleware"><span class="toc-number">5.2.</span> <span class="toc-text">webpack-hot-middleware</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#react-hot-loader"><span class="toc-number">5.3.</span> <span class="toc-text">react-hot-loader</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#source-map"><span class="toc-number">5.4.</span> <span class="toc-text">source-map</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最后"><span class="toc-number">6.</span> <span class="toc-text">最后</span></a></li></ol>
+		
+		</div>
+		
+		<p>前段时间学习redux写了一个简单的react单页应用，使用了jsx，es6，less等语法，并且引用了一些第三方的npm模块，比如<code>redux</code>，<code>react-redux</code>，<code>lodash</code>，<code>moment</code>等，构建工具选择的是<code>webpack2</code>，这里就来整理一下其中关于webpack打包的相关知识。</p>
+<p>源代码可以点击<a href="https://github.com/xwjgo/redux-learning" target="_blank" rel="external">这里</a>访问。</p>
+<h2 id="使用loaders"><a href="#使用loaders" class="headerlink" title="使用loaders"></a>使用loaders</h2><p>每引入一种loader，就相当于告诉了webpack：当遇到某种类型的文件时，就使用该loader来解析。</p>
+<h3 id="less"><a href="#less" class="headerlink" title="less"></a>less</h3><p>项目中使用了less，解析less文件需要使用3个loader:<code>style-loader</code>，<code>css-loader</code>，以及<code>less-loader</code>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ npm install style-loader css-loader less-loader less --save-dev</div></pre></td></tr></table></figure>
+<p>其中less-loader用来将less解析为css，css-loader能够解析<code>import</code>以及<code>url()</code>的语法，而style-loader可以将生成的css插入到HTML文档中（注意最后只生成一个bundle.js）。</p>
+<p>所以<code>webpack.config.js</code>中解析less的配置如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// options.module</span></div><div class="line"><span class="built_in">module</span>: &#123;</div><div class="line">    rules: [</div><div class="line">        &#123;</div><div class="line">            test: <span class="string">'/\.less$/'</span>, <span class="comment">// 要解析的文件类型</span></div><div class="line">            use: [<span class="string">'style-loader'</span>, <span class="string">'css-loader'</span>, <span class="string">'less-loader'</span>] <span class="comment">// 要使用的loaders，注意顺序</span></div><div class="line">        &#125;</div><div class="line">    ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="jsx以及es6"><a href="#jsx以及es6" class="headerlink" title="jsx以及es6"></a>jsx以及es6</h3><p>因为webpack默认是可以解析<code>commonJS</code>，<code>AMD</code>以及<code>es6</code>的模块语法的，所以即使不使用任何的laoder，<code>import</code>以及<code>require</code>语法也可以直接使用。但是除了<code>import/export</code>这些模块语法，webpack是不会动你其他代码的。所以，如果我们在项目中使用es6、JSX等语法，还需要添加<code>babel-loader</code>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ npm install babel-core babel-loader babel-preset-es2015 babel-preset-react --save-dev</div></pre></td></tr></table></figure>
+<p>webpack.config.js中解析jsx以及es6的配置如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// options.module</span></div><div class="line"><span class="built_in">module</span>: &#123;</div><div class="line">    rules: [</div><div class="line">        test: <span class="regexp">/\.(js|jsx)$/</span>,</div><div class="line">        exclude: <span class="regexp">/node_modules/</span>, <span class="comment">// 这里面的不解析</span></div><div class="line">        loader: <span class="string">'babel-loader'</span>,</div><div class="line">        query: [  <span class="comment">// 相当于babel的options</span></div><div class="line">            presets: [<span class="string">'react'</span>, <span class="string">'es2015'</span>]</div><div class="line">        ]</div><div class="line">    ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="提取css"><a href="#提取css" class="headerlink" title="提取css"></a>提取css</h2><p>通过上面的配置，我们可以愉快地在项目中使用es6以及jsx语法了，并且最终会打包出唯一的一个<code>bundle.js</code>文件，然后再html中引用bundle.js即可。</p>
+<p>但是，还有一点不足。项目中所有的样式都被打包到了bundle.js文件中，所以浏览器必须等待bundle.js完全加载完毕之后，才可以给文档加上样式，这样一来，我们就没办法利用浏览器的<strong>异步加载css</strong>以及<strong>并行加载</strong>的优势了。</p>
+<h3 id="extract-text-webpack-plugin"><a href="#extract-text-webpack-plugin" class="headerlink" title="extract-text-webpack-plugin"></a>extract-text-webpack-plugin</h3><p>所以，我们可以把所有的css打包到一个单独的样式文件中。这就需要一个webpack插件，叫做<code>extract-text-webpack-plugin</code>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ npm install extract-text-webpack-plugin</div></pre></td></tr></table></figure>
+<p>在修改我们的webpack.config.js如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> ExtractTextPlugin = <span class="built_in">require</span>(<span class="string">'extract-text-webpack-plugin'</span>);</div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">    entry: <span class="string">'./index.js'</span>,    <span class="comment">// 项目入口文件</span></div><div class="line">    output: &#123;</div><div class="line">        filename: <span class="string">'bundle.js'</span>,</div><div class="line">        path: path.join(__dirname, <span class="string">'public'</span>),</div><div class="line">    &#125;,</div><div class="line">    <span class="built_in">module</span>: &#123;</div><div class="line">        rules: [</div><div class="line">               &#123;</div><div class="line">                    test: <span class="regexp">/\.less$/</span>,</div><div class="line">                    use: ExtractTextPlugin.extract(&#123;</div><div class="line">                         fallback: <span class="string">'style-loader'</span>,</div><div class="line">                         use: [<span class="string">'css-loader'</span>, <span class="string">'less-loader'</span>]</div><div class="line">                    &#125;)</div><div class="line">               &#125;</div><div class="line">        ]</div><div class="line">    &#125;,</div><div class="line">    plugins: [</div><div class="line">        <span class="keyword">new</span> ExtractTextPlugin(<span class="string">'index.css'</span>)  <span class="comment">// 最终会在public目录下生成index.css</span></div><div class="line">    ]</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>现在在控制台运行<code>webpack --config webpack.config.js</code>，我们会发现生成了一个bundle.js，还有一个index.css，可以将它们直接引入html中去。</p>
+<h3 id="一点副作用"><a href="#一点副作用" class="headerlink" title="一点副作用"></a>一点副作用</h3><p>extract-text-webpack-plugin可能会让css无法实现热重载（后面会讲到），所以我们最好只在<strong>生产环境</strong>中使用这个插件。</p>
+<p>详细信息参见<a href="https://github.com/css-modules/webpack-demo/issues/8" target="_blank" rel="external">这里</a>。</p>
+<h2 id="提取第三方js模块"><a href="#提取第三方js模块" class="headerlink" title="提取第三方js模块"></a>提取第三方js模块</h2><p>上面我们把css单独提取出来了，但是<code>bundle.js</code>依旧可能是一个很大的文件，因为我们将一些第三方库打包了进去，比如<code>lodash</code>和<code>react</code>等。</p>
+<p>这样做依旧有一个缺点： 每次修改了项目代码，哪怕只是一点点，整个bundle.js必须重新打包，浏览器也必须重新从服务器拉取新的bundle.js，这样就<strong>无法利用浏览器缓存静态资源的优势</strong>。</p>
+<p>假如我们将不经常变化的第三方js库和我们的项目代码分开打包为<code>vendor.js</code>和<code>app.js</code>，那么当我们修改了项目代码并重新打包，只有<code>app.js</code>发生了变化，这样浏览器就只需要重新从服务器拉取新的app.js就可以了。</p>
+<p>接下来我们就来这样做。</p>
+<h3 id="多个入口"><a href="#多个入口" class="headerlink" title="多个入口"></a>多个入口</h3><p>修改<code>options.entry</code>以及<code>options.output</code>如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">entry: &#123;</div><div class="line">    app: <span class="string">'./index.js'</span>,    <span class="comment">// 项目代码入口</span></div><div class="line">    vendor: [<span class="string">'react'</span>, <span class="string">'react-dom'</span>, <span class="string">'redux'</span>, <span class="string">'react-redux'</span>] <span class="comment">// 第三方js库</span></div><div class="line">&#125;</div><div class="line">output: &#123;</div><div class="line">    filename: <span class="string">'[name].[chunkHash]js'</span>,  <span class="comment">// 对于多入口，这里必须使用占位符</span></div><div class="line">    path: path.join(__dirname, <span class="string">'public'</span>),</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>再次打包，在public目录下生成了两个js文件（当然还有index.css）：<code>vendor.[hash].js</code>以及<code>app.[hash].js</code>。文件名中的<code>[hash]</code>代表的是根据文件的内容所生成的hash值。</p>
+<h3 id="CommonsChunkPlugin"><a href="#CommonsChunkPlugin" class="headerlink" title="CommonsChunkPlugin"></a>CommonsChunkPlugin</h3><p>但是我们发现，<strong>第三方的js库竟然同时打包进了这两个js文件中</strong>。这是因为webpack将从每个入口文件开始分析依赖，这将得到多颗独立的依赖树，并且分别打包，互不干扰。如果我们指向将第三方模块打包到vendor.js中，我们还需要使用<code>CommonsChunkPlugin</code>这个插件。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> webpack = <span class="built_in">require</span>(<span class="string">'webpack'</span>);</div><div class="line"></div><div class="line"><span class="comment">// options.plugins</span></div><div class="line">plugins: [</div><div class="line">    <span class="keyword">new</span> webpack.optimize.CommonsChunkPlugin(&#123;</div><div class="line">        name: <span class="string">'vendor'</span>    <span class="comment">// 指定模块的名称</span></div><div class="line">    &#125;)</div><div class="line">]</div></pre></td></tr></table></figure>
+<p>运行webpack，发现公共的js库只打包在了<code>vendor.[hash].js</code>中，而app.[hash].js减小了很多。</p>
+<h3 id="manifest"><a href="#manifest" class="headerlink" title="manifest"></a>manifest</h3><p>现在终于可以安心的改项目代码了，可是，当我们改了一点项目代码，重新使用webpack来打包时，发现public目录下竟然又多出了两个文件<code>app.[hash].js</code>以及<code>vendor.[hash].js</code>。这与我们预想的不同，vendor应该保持不变才对，为什么又重新打包了一份呢？这也意味着我们没办法享受到浏览器缓存带来的好处，因为vendor的hash变了，我们每build一次，浏览器必须要重新加载vendor。</p>
+<p>翻阅wepack的官方文档，对这个问题解释如下：</p>
+<p>每次build，webpack都生成一些<strong>webpack运行时代码</strong>来帮助webpack完成它的工作。当只打包出一个文件时，这些运行时代码自然就在这个文件中，如果我们像上面那样打包出两个文件，那么运行时代码将被打包到公共模块中，正是vendor.js中。</p>
+<p>为了解决这个问题，我们需要把这些运行时代码单独提到一个manifest.js中。尽管我们又多打包了一个文件，但是我们的vendor.js再也不会发生变化了，这使得我们可以享受浏览器缓存带来的性能提升。</p>
+<p>修改配置文件如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// options.plugins</span></div><div class="line">plugins: [</div><div class="line">    <span class="keyword">new</span> webpack.optimize.CommonsChunkPlugin(&#123;</div><div class="line">        names: [<span class="string">'vendor'</span>, <span class="string">'manifest'</span>]    <span class="comment">// 指明公共模块的名称</span></div><div class="line">    &#125;)</div><div class="line">]</div></pre></td></tr></table></figure>
+<h2 id="按需加载"><a href="#按需加载" class="headerlink" title="按需加载"></a>按需加载</h2><p>通过以上配置，我们已经可以使用webpack来完成最基本的打包工作了。但是，浏览器加载的资源总比它实际用得到的多，如果我们能在应用中实现<strong>按需加载（懒加载）</strong>，那么，我们应用的性能可能再进一步提升。</p>
+<p>我们有两种方式可以实现按需加载，下面将一一介绍，不过在此之前，可以先看一下这篇<a href="https://dzone.com/articles/lazy-loading-es2015-modules-in-the-browser" target="_blank" rel="external">文章</a>。</p>
+<h3 id="import"><a href="#import" class="headerlink" title="import()"></a>import()</h3><p>import()方法是es6中关于模块加载的一个规范，用于在<strong>运行时动态加载模块</strong>。该函数将一个模块名当作参数，并且返回一个Promise对象，这意味着当模块加载没有成功时，我们可以作出一些处理。</p>
+<p>webpack把<code>import()</code>当作一个代码分离点，并且把通过<code>import</code>引入的模块，单独打包到一个chunk。</p>
+<p>下面看import()在项目代码中的使用：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 只有点击提交按钮之后才会触发，如果不点击，我们希望里面的js模块不用不加载</span></div><div class="line">handleSubmit () &#123;</div><div class="line">    <span class="keyword">import</span>(<span class="string">'moment'</span>)    <span class="comment">// 代码分离点，将单独打包到一个chunk中</span></div><div class="line">        .then(<span class="function"><span class="params">moment</span> =&gt;</span> &#123;</div><div class="line">            <span class="built_in">console</span>.log(moment().format(<span class="string">'MMMM Do YYYY, h:mm:ss a'</span>));</div><div class="line">        &#125;)</div><div class="line">        .catch(<span class="function"><span class="params">err</span> =&gt;</span> &#123;</div><div class="line">            <span class="built_in">console</span>.log(<span class="string">'模块加载失败！'</span>)</div><div class="line">        &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>现在我们来配置webpack，让其支持这种动态加载模块语法。首先，需要安装<code>bebel-plugin-syntax-dynamic-import</code>插件：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 注意，我们之前已经安装过bable-core babel-loader等插件</span></div><div class="line">$ npm install babel-plugin-syntax-dynamic-<span class="keyword">import</span> --save-dev</div><div class="line"><span class="comment">// 同时安装moment.js</span></div><div class="line">$ npm install moment --save</div></pre></td></tr></table></figure>
+<p>然后配置webpack如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// options.module.rules</span></div><div class="line">&#123;</div><div class="line">    test: <span class="regexp">/\.(js|jsx)$/</span>,</div><div class="line">    exclude: <span class="regexp">/node_modules/</span>,</div><div class="line">    use: [&#123;</div><div class="line">        loader: <span class="string">'babel-loader'</span>,</div><div class="line">        query: &#123;</div><div class="line">            presets: [<span class="string">'react'</span>, <span class="string">'es2015'</span>],</div><div class="line">            plugins: [<span class="string">'syntax-dynamic-import'</span>]    <span class="comment">// 注意这里的变化</span></div><div class="line">        &#125;</div><div class="line">    &#125;]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>运行wepack，发现除了<code>manifest.js</code>，<code>vendor.js</code>，<code>app.js</code>，<code>index.css</code>以外，还生成了<code>0.js</code>，打开0.js可以发现，其中包含了moment模块的所有代码，这样，在应用初次加载的时候，是不需要加载<code>0.js</code>的，只有当用户点击了提交按钮之后，0.js才会从浏览器拉取并执行。</p>
+<p>此外我们还可以给这些按需加载的代码块规定名称；</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// options.output</span></div><div class="line">output: &#123;</div><div class="line">    filename: [name].js,</div><div class="line">    path: path.join(__dirname, <span class="string">'public'</span>),</div><div class="line">    chunkFileName: <span class="string">'[id].chunk.js'</span>    <span class="comment">// 这样生成的代码块名称将是 0.chunk.js</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="require-ensure"><a href="#require-ensure" class="headerlink" title="require.ensure()"></a>require.ensure()</h3><p>除了es6的提案中的<code>import()</code>，webpack还为我们提供了<code>require.ensure()</code>的方式，并且这种方式不需要额外安装插件，还可以指定打包的chunk名称。</p>
+<p>其api如下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">require</span>.ensure(dependencies: <span class="built_in">String</span>[], <span class="attr">callback</span>: <span class="function"><span class="keyword">function</span>(<span class="params">require</span>), <span class="title">chunkeName</span>: <span class="title">string</span>);</span></div><div class="line"><span class="function">// 一个<span class="title">require</span>.<span class="title">ensure</span>指定一个代码分离点</span></div><div class="line"><span class="function">// <span class="title">dependencies</span> 依赖模块列表，只会被加载，加载完毕之后，才可以在<span class="title">callback</span>中执行</span></div><div class="line"><span class="function">// <span class="title">callback</span> 所有<span class="title">dependencies</span>加载完毕之后，<span class="title">callback</span>函数会立即执行</span></div><div class="line">// chunkName 对应webpack配置中output.chunkFilename中的[name]占位符，并且如果require.ensure指定同一个chunkName，那么将合并为一个chunk</div></pre></td></tr></table></figure>
+<p>我们要明白的一点是：<strong>require.ensure()只会加载dependencies中指定的依赖模块，但不执行。如果想执行，可以在callback中调用require</strong>。</p>
+<p>现在来看一个案例，假设在<code>testModules</code>目录下有3js文件，名称和内容如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// a.js</span></div><div class="line"><span class="built_in">console</span>.log(<span class="string">'aaaaaaaaaaaaaaaaaaaa'</span>);</div><div class="line"><span class="comment">// b.js</span></div><div class="line"><span class="built_in">console</span>.log(<span class="string">'bbbbbbbbbbbbbbbbbbbb'</span>);</div><div class="line"><span class="comment">// c.js</span></div><div class="line"><span class="built_in">console</span>.log(<span class="string">'ccccccccccccccccccc'</span>);</div></pre></td></tr></table></figure>
+<p>下面我们再另外一个js模块中的<code>handleSubmit()</code>中按需加载这3个模块：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 场景1，dependencies为空数组</span></div><div class="line"><span class="comment">// 将a和b两个模块单独打包到1.test.chunk.js中</span></div><div class="line"><span class="comment">// a和b模块都执行了</span></div><div class="line"><span class="built_in">require</span>.ensure([], <span class="built_in">require</span> =&gt; &#123;</div><div class="line">    <span class="built_in">require</span>(<span class="string">'../testModules/a'</span>);</div><div class="line">    <span class="built_in">require</span>(<span class="string">'../testModules/b'</span>);</div><div class="line">&#125;, <span class="string">'test'</span>); <span class="comment">// 'test'对应chunkFilename中的[name]</span></div><div class="line"></div><div class="line"><span class="comment">// 场景2，a和b两个模块作为dependencies</span></div><div class="line"><span class="comment">// 将a,b,c模块打包到1.test.chunk.js文件中</span></div><div class="line"><span class="comment">// 但是只有b和c模块执行了，a模块没有执行</span></div><div class="line"><span class="comment">// a模块如果想执行，必须require()</span></div><div class="line"><span class="built_in">require</span>.ensure([<span class="string">'../testModules/a'</span>, <span class="string">'../testModules/b'</span>], <span class="built_in">require</span> =&gt; &#123;</div><div class="line">    <span class="built_in">require</span>(<span class="string">'../testModules/b'</span>);</div><div class="line">    <span class="built_in">require</span>(<span class="string">'../testModules/c'</span>);</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>以上还需要在实践中多多体验。</p>
+<h2 id="更愉快的开发"><a href="#更愉快的开发" class="headerlink" title="更愉快的开发"></a>更愉快的开发</h2><p>到目前位置，我们可以使用es6，less，jsx等语法以及按需加载的功能了，但是对于开发环境来讲，这种体验还不是很好。因为我们每次修改完代码，都必须手动执行<code>webpack --config webpack.config.js</code>，等待webpack打包出新文件之后，我们再去浏览器刷新页面，才能看到效果。</p>
+<p>我们想要的效果应该是这个样子：</p>
+<ol>
+<li>每次修改完less，按下<code>ctrl+s</code>，浏览器不会整页刷新，而是直接把新样式运用到页面中</li>
+<li>每次修改完js，保存后，浏览器自动整页刷新</li>
+<li>有source-map，方便排除bug</li>
+</ol>
+<p>如果是纯前端项目，使用<code>webpack-dev-server</code>就可以实现热重载了，不过现在我们要把它整合到一个后台使用<code>express</code>的项目中。</p>
+<p>下面我们来一一实现，先介绍热重载依靠的两个插件<a href="https://github.com/webpack/webpack-dev-middleware" target="_blank" rel="external">webpack-dev-middleware</a>和<a href="https://github.com/glenjamin/webpack-hot-middleware" target="_blank" rel="external">webpack-hot-middleware</a>。</p>
+<h3 id="webpack-dev-middleware"><a href="#webpack-dev-middleware" class="headerlink" title="webpack-dev-middleware"></a>webpack-dev-middleware</h3><p>这是一个只应该在开发环境中使用的webpack插件，它可以监听项目代码的变化，自动打包文件到内存中，并且server这些文件。<br>当自动编译还未完成的时候，如果浏览器已经发来了请求，那么这个请求将会被阻塞，直到文件编译完成。这看起来就像网速很慢，卡住了一样。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ npm install webpack-dev-middleware --save-dev</div></pre></td></tr></table></figure>
+<p>配置webpack.dev.config.js如下；</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// options.output</span></div><div class="line">output: &#123;</div><div class="line">    filename: [name].js,</div><div class="line">    path: path.join(__dirname, <span class="string">'public'</span>),</div><div class="line">    chunkFilename: <span class="string">'[id].[name].chunk.js'</span>,</div><div class="line">    publicPath: <span class="string">'/assets/'</span>    <span class="comment">// 服务器server文件的地址，/assets可能并不实际存在磁盘中</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上面配置中的<a href="https://webpack.js.org/configuration/output/#output-publicpath" target="_blank" rel="external">publicPath</a>字段比较难理解，它指明了浏览器按需加载或者加载外部资源（图片，文件）时候的路径。在这里我们配置它，是为指明了webpack-dev-middleware serve 内存文件的路径（继续往下看）。</p>
+<p>现在我们可以在html中这样引用资源了，并且按需加载文件的url也会指向<code>/assets/1.test.chunk.js</code>这样的。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"/assert/manifest.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"/assert/vendor.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"/assert/app.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>最后，我们来正式使用<code>webpack-dev-middleware</code>:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> path = requrie(<span class="string">'path'</span>);</div><div class="line"><span class="keyword">const</span> express = rquire(<span class="string">'express'</span>);</div><div class="line"><span class="keyword">const</span> webpack = <span class="built_in">require</span>(<span class="string">'webpack'</span>);</div><div class="line"><span class="keyword">const</span> webpackDevMiddleware = rquire(<span class="string">'webpack-dev-middleware'</span>);</div><div class="line"><span class="keyword">const</span> webpackCofig = <span class="built_in">require</span>(<span class="string">'./webpack.dev.config.js'</span>);</div><div class="line"><span class="keyword">const</span> app = express();</div><div class="line"></div><div class="line"><span class="keyword">const</span> compiler = webpack(webpackConfig);</div><div class="line">app.use(webpackDevMiddleware(&#123;</div><div class="line">    publicPath: webpackConfig.output.publicPath    <span class="comment">// 该参数必须指定</span></div><div class="line">&#125;));</div><div class="line"></div><div class="line">app.get(<span class="string">'/'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">req, res</span>) </span>&#123;</div><div class="line">    res.sendFile(path.join(__dirname, <span class="string">'index.html'</span>));</div><div class="line">&#125;);</div><div class="line"></div><div class="line">app.listen(<span class="number">3000</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'listening on port 3000'</span>);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>现在我们可以在3000端口访问应用了，并且每修改完代码，按下<code>ctrl+s</code>或者直接刷新浏览器，webpack都会自动打包文件到内存中。<br>这样，就不用每次都运行<code>webpack --config webpaack.dev.config.js</code>了，打包速度也快了很多。</p>
+<h3 id="webpack-hot-middleware"><a href="#webpack-hot-middleware" class="headerlink" title="webpack-hot-middleware"></a>webpack-hot-middleware</h3><p>美中不足的是我们还需要手动刷新浏览器，现在我们通过<code>wepack-hot-middleware</code>来实现<a href="http://webpack.js.org/concepts/hot-module-replacement/" target="_blank" rel="external">HMR</a>。</p>
+<p>webpack-hot-middleware只关心将一个客户端和一个服务器连接起来，并且订阅服务端资源的更新，最终将更新的资源应用与客户端（通过webpack的HMR api）。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ npm install --save-dev webpack-hot-middleware</div></pre></td></tr></table></figure>
+<p>更改webpack的配置文件:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> HotMiddlewareScript = <span class="string">'webpack-hot-middleware/client?reload=true'</span>;</div><div class="line"><span class="comment">// options.entry，每个进入点之后，都加HotMiddlewareScript</span></div><div class="line">entry: &#123;</div><div class="line">    app: [<span class="string">'index.js'</span>, HotMiddlewareScript],</div><div class="line">    vendor: [<span class="string">'react'</span>, <span class="string">'react-dom'</span>, <span class="string">'redux'</span>, <span class="string">'react-redux'</span>, HotMiddlewareScript]</div><div class="line">&#125;</div><div class="line"><span class="comment">// options.plugins</span></div><div class="line">plugins: [</div><div class="line">    <span class="keyword">new</span> webpack.HotModuleReplacementPlugin()</div><div class="line">]</div></pre></td></tr></table></figure>
+<p>配置app.js:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> webpackHotMiddleware = rquire(<span class="string">'webpack-hot-middleware'</span>);</div><div class="line">app.use(webpackHotMIddleware(compiler));</div></pre></td></tr></table></figure>
+<p>现在重启app.js，并在浏览器中访问3000端口，发现控制台出现了<code>[HMR] connected</code>字样。并且我们修改js，发现webpack会自动打包，并通知浏览器刷新。</p>
+<p>但是，当我们<strong>修改了less文件之后，却发现webpack只是自动打包了，新样式并没有被应用到浏览器中</strong>。</p>
+<p>这是为什么呢？其实前面在讲<code>extract-text-webpack-plugin</code>的时候，我们已经提到过了：extract-text-webpack-plugin并不适合在开发环境中只用，它会导致css的热重载失效。</p>
+<p>所以，我们把webpack.dev.config.js中关于extarct-text-webpack-plugin的部分去掉之后，发现一切跟我们预想的一样！</p>
+<h3 id="react-hot-loader"><a href="#react-hot-loader" class="headerlink" title="react-hot-loader"></a>react-hot-loader</h3><p>除此之外，针对react，还有一个可以实现热重载的工具，即<code>react-hot-loader</code>，这里就不详细介绍了，到<a href="http://gaearon.github.io/react-hot-loader/" target="_blank" rel="external">官网</a>看去吧！</p>
+<h3 id="source-map"><a href="#source-map" class="headerlink" title="source-map"></a>source-map</h3><p>source-map可以快速帮助我们定位bug，对于提升开发效率有很好的提升。</p>
+<p>通过webpack来实现source-map非常简单，只需要添加一行配置：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// options.devtool</span></div><div class="line">devtool: <span class="string">'cheap-eval-source-map'</span></div></pre></td></tr></table></figure>
+<p>devtool的值有8种，它们的特性以及适用环境都有很多不同。详细信息就看<a href="https://webpack.js.org/configuration/devtool/" target="_blank" rel="external">这里</a>。</p>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>webpack的基本应用到这里就先告一段落，还有很多高级的特性没有涉及，以后还需要在实践中慢慢摸索。</p>
+<p>最后，放上工作成果图：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/webpack.gif" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/前端/">前端</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/react/">react</a><a href="/tags/webpack/">webpack</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://xwjgo.github.io/2017/03/01/webpack打包react应用/" data-title="webpack打包react应用 | xuwenjiang" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2017/03/06/密码技术/" title="密码技术">
+  <strong>上一篇：</strong><br/>
+  <span>
+  密码技术</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/02/26/es6中的module/"  title="es6中的module">
+ <strong>下一篇：</strong><br/> 
+ <span>es6中的module
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2017/03/01/webpack打包react应用/" data-title="webpack打包react应用" data-url="http://xwjgo.github.io/2017/03/01/webpack打包react应用/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#使用loaders"><span class="toc-number">1.</span> <span class="toc-text">使用loaders</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#less"><span class="toc-number">1.1.</span> <span class="toc-text">less</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jsx以及es6"><span class="toc-number">1.2.</span> <span class="toc-text">jsx以及es6</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#提取css"><span class="toc-number">2.</span> <span class="toc-text">提取css</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#extract-text-webpack-plugin"><span class="toc-number">2.1.</span> <span class="toc-text">extract-text-webpack-plugin</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#一点副作用"><span class="toc-number">2.2.</span> <span class="toc-text">一点副作用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#提取第三方js模块"><span class="toc-number">3.</span> <span class="toc-text">提取第三方js模块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#多个入口"><span class="toc-number">3.1.</span> <span class="toc-text">多个入口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CommonsChunkPlugin"><span class="toc-number">3.2.</span> <span class="toc-text">CommonsChunkPlugin</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#manifest"><span class="toc-number">3.3.</span> <span class="toc-text">manifest</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#按需加载"><span class="toc-number">4.</span> <span class="toc-text">按需加载</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#import"><span class="toc-number">4.1.</span> <span class="toc-text">import()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#require-ensure"><span class="toc-number">4.2.</span> <span class="toc-text">require.ensure()</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更愉快的开发"><span class="toc-number">5.</span> <span class="toc-text">更愉快的开发</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#webpack-dev-middleware"><span class="toc-number">5.1.</span> <span class="toc-text">webpack-dev-middleware</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#webpack-hot-middleware"><span class="toc-number">5.2.</span> <span class="toc-text">webpack-hot-middleware</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#react-hot-loader"><span class="toc-number">5.3.</span> <span class="toc-text">react-hot-loader</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#source-map"><span class="toc-number">5.4.</span> <span class="toc-text">source-map</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最后"><span class="toc-number">6.</span> <span class="toc-text">最后</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/javascript/" title="javascript">javascript<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/linux/" title="linux">linux<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/node-js/" title="node.js">node.js<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/乱七八糟/" title="乱七八糟">乱七八糟<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/前端/" title="前端">前端<sup>24</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构/" title="数据结构">数据结构<sup>2</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/javascript/" title="javascript">javascript<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/es6/" title="es6">es6<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/react/" title="react">react<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/express/" title="express">express<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/css/" title="css">css<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C">C<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/webpack/" title="webpack">webpack<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/File/" title="File">File<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/history/" title="history">history<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/redux/" title="redux">redux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/react-redux/" title="react-redux">react-redux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ajax/" title="ajax">ajax<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/TODOLIST/" title="TODOLIST">TODOLIST<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/node-js/" title="node.js">node.js<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/vue-js/" title="vue.js">vue.js<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/mongodb/" title="mongodb">mongodb<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">Links</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.ouc.edu.cn" target="_blank" title="中国海洋大学">中国海洋大学</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://weilai5432.github.io" target="_blank" title="魏来">魏来</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> No matter who gives up, i will not. <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/xwjgo" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="xuwenjiang">xuwenjiang</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"xwjgo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-93479022-1', 'xwjgo.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

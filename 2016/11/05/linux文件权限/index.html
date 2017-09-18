@@ -1,0 +1,743 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>linux文件权限 | xuwenjiang</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="xuwenjiang">
+    
+
+    
+    <meta name="description" content="linux的文件权限，可以从三个方面来总结，即基本权限、默认权限和特殊权限。 在真正理解这些权限之前，我们先来理解下用户和用户组的基本概念。 用户和用户组linux下有不同的身份等级，包括以下三种身份：   文件所有者（user） 用户组（group） 其他人（others）   另外，linux中所有的用户账号，包括root相关信息，都记录在/etc/passwd文件内。 至于用户账号的密码，则">
+<meta name="keywords" content="linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux文件权限">
+<meta property="og:url" content="http://xwjgo.github.io/2016/11/05/linux文件权限/index.html">
+<meta property="og:site_name" content="xuwenjiang">
+<meta property="og:description" content="linux的文件权限，可以从三个方面来总结，即基本权限、默认权限和特殊权限。 在真正理解这些权限之前，我们先来理解下用户和用户组的基本概念。 用户和用户组linux下有不同的身份等级，包括以下三种身份：   文件所有者（user） 用户组（group） 其他人（others）   另外，linux中所有的用户账号，包括root相关信息，都记录在/etc/passwd文件内。 至于用户账号的密码，则">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/shell_ls.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/chgrp.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/chown.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/%E9%BB%98%E8%AE%A4%E6%9D%83%E9%99%90.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/umask.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/%E6%9B%B4%E6%94%B9umask.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/%E7%89%B9%E6%AE%8A%E6%9D%83%E9%99%90.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/SUID.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/locate.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/SGID%E5%BA%94%E7%94%A8.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/SGIDtest.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/SGIDtest2.png">
+<meta property="og:updated_time" content="2017-09-14T15:27:56.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="linux文件权限">
+<meta name="twitter:description" content="linux的文件权限，可以从三个方面来总结，即基本权限、默认权限和特殊权限。 在真正理解这些权限之前，我们先来理解下用户和用户组的基本概念。 用户和用户组linux下有不同的身份等级，包括以下三种身份：   文件所有者（user） 用户组（group） 其他人（others）   另外，linux中所有的用户账号，包括root相关信息，都记录在/etc/passwd文件内。 至于用户账号的密码，则">
+<meta name="twitter:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/shell_ls.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="xuwenjiang" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="xuwenjiang" title="xuwenjiang"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="xuwenjiang">xuwenjiang</a></h1>
+				<h2 class="blog-motto">外面的繁华不是我的繁华</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="/tags">标签</a></li>
+					
+						<li><a href="/categories">分类</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Search" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/11/05/linux文件权限/" title="linux文件权限" itemprop="url">linux文件权限</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="xuwenjiang" target="_blank" itemprop="author">xuwenjiang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-11-05T04:12:12.000Z" itemprop="datePublished"> Published 2016-11-05</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#用户和用户组"><span class="toc-number">1.</span> <span class="toc-text">用户和用户组</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基本权限"><span class="toc-number">2.</span> <span class="toc-text">基本权限</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#对文件的意义"><span class="toc-number">2.1.</span> <span class="toc-text">对文件的意义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#对目录的意义"><span class="toc-number">2.2.</span> <span class="toc-text">对目录的意义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#chmod修改文件权限"><span class="toc-number">2.3.</span> <span class="toc-text">chmod修改文件权限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#改变文件所有者和用户组"><span class="toc-number">2.4.</span> <span class="toc-text">改变文件所有者和用户组</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#默认权限"><span class="toc-number">3.</span> <span class="toc-text">默认权限</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#特殊权限"><span class="toc-number">4.</span> <span class="toc-text">特殊权限</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SUID"><span class="toc-number">4.1.</span> <span class="toc-text">SUID</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SGID"><span class="toc-number">4.2.</span> <span class="toc-text">SGID</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SBIT"><span class="toc-number">4.3.</span> <span class="toc-text">SBIT</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SUID-SGID-SBIT的权限设置"><span class="toc-number">4.4.</span> <span class="toc-text">SUID/SGID/SBIT的权限设置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一个案例"><span class="toc-number">5.</span> <span class="toc-text">一个案例</span></a></li></ol>
+		
+		</div>
+		
+		<p>linux的文件权限，可以从三个方面来总结，即<strong>基本权限</strong>、<strong>默认权限</strong>和<strong>特殊权限</strong>。</p>
+<p>在真正理解这些权限之前，我们先来理解下<strong>用户和用户组</strong>的基本概念。</p>
+<h2 id="用户和用户组"><a href="#用户和用户组" class="headerlink" title="用户和用户组"></a>用户和用户组</h2><p>linux下有不同的身份等级，包括以下三种身份：</p>
+<hr>
+<ol>
+<li>文件所有者（user）</li>
+<li>用户组（group）</li>
+<li>其他人（others）</li>
+</ol>
+<hr>
+<p>另外，linux中所有的用户账号，包括root相关信息，都记录在<code>/etc/passwd</code>文件内。</p>
+<p>至于用户账号的密码，则是记录在<code>/etc/shadow</code>这个文件中。</p>
+<p>而所有的用户组信息则记录在<code>/etc/group</code>这个文件内。</p>
+<hr>
+<p>下面我们使用<code>ls -al</code>这个命令来查看下某个文件下的文件属性：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/shell_ls.png" alt=""></p>
+<p>其中第一列即代表文件的类型和权限，其中<strong>第一位说明了文件类型，后面9个字符，每3位为一组</strong>，分别代表<code>user</code>，<code>group</code>，<code>others</code>这三种身份的文件权限。</p>
+<p>比如<code>add.sh</code>这个文件来说，其文件所有者（user）对应的权限为<code>rw-</code>，用户组（group）对应的文件权限为<code>rw-</code>，而其他人（others）对应的用户权限为<code>r--</code>。</p>
+<p>另外，第二列和第三列分别对用该文件的文件所有者和用户组，这里都为xwj。</p>
+<h2 id="基本权限"><a href="#基本权限" class="headerlink" title="基本权限"></a>基本权限</h2><p>上面提到的<code>rwx</code>即为文件的三种基本权限，它们对文件和目录具有不同的意义：</p>
+<h3 id="对文件的意义"><a href="#对文件的意义" class="headerlink" title="对文件的意义"></a>对文件的意义</h3><p><code>r（read）</code>：可读取此文件的内容<br><code>w（write）</code>：可以编辑此文件内容（并不代表可以删除该文件）<br><code>x（execute）</code>：可以执行该文件</p>
+<h3 id="对目录的意义"><a href="#对目录的意义" class="headerlink" title="对目录的意义"></a>对目录的意义</h3><p>文件用于存放实际数据，而目录用于<strong>记录文件名列表</strong>。</p>
+<p>基本权限对于目录</p>
+<p><code>r（read contents in directory）</code>：具有读取目录结构列表的权限，所以当你具有某个目录的r权限时，可以<strong>利用ls来将该目录的所有文件名显示出来</strong>（如果仅有r权限，仅可以显示文件名）。</p>
+<p><code>w（modify contents of directory）</code>：具有更改目录结构列表的权限，比如<strong>在该目录下新建、删除、重命名文件等</strong>。</p>
+<p><code>x（access directory）</code>：具有进入该目录的权限，即可以cd来将此目录当作工作目录。</p>
+<h3 id="chmod修改文件权限"><a href="#chmod修改文件权限" class="headerlink" title="chmod修改文件权限"></a>chmod修改文件权限</h3><p>以上简要介绍了3中基本文件权限，我们可以使用<code>chmod</code>命令来修改文件权限。</p>
+<p>下面是修改文件基本权限的两种方法：</p>
+<p><strong>一、符号类型改变文件权限</strong></p>
+<p>比如还是上图的<code>add.sh</code>，它的权限为<code>rw-rw-r--</code>，即文件所有者和用户拥有该文件的读写权限，而其他人仅具有读的权限。</p>
+<p>我们现在要将它的权限更改为<code>rwxr-x--x</code>，要如何更改呢？</p>
+<p>可以通过以下这条命令：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ chmod u=rwx,g=rx,o=x add.sh</div></pre></td></tr></table></figure>
+<p>或者这样也可以：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ chmod u+x,g-w+x,o-r+x add.sh</div></pre></td></tr></table></figure>
+<p><strong>二、 数字类型改变文件权限</strong></p>
+<p>linux中每个权限对应一个数字分值，如下：</p>
+<hr>
+<ul>
+<li>r：4</li>
+<li>w：2</li>
+<li>x：1</li>
+</ul>
+<hr>
+<p>假如同样要将某个文件的权限由<code>rw-rw-r--</code>更改为<code>rwxr-x--x</code>，那么我们可以使用以下命令：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ chmod 751 add.sh</div></pre></td></tr></table></figure>
+<h3 id="改变文件所有者和用户组"><a href="#改变文件所有者和用户组" class="headerlink" title="改变文件所有者和用户组"></a>改变文件所有者和用户组</h3><p>除了更改文件权限之外，我们当然也可以更改文件的<strong>文件所有者</strong>以及<strong>所属用户组</strong>。</p>
+<p><strong>一、更改文件所属用户组</strong></p>
+<p>使用<code>chgrp</code>可以更改文件的用户组，比如我们要将<code>add.sh</code>这个文件的用户组从<code>xwj</code>更改为<code>root</code>。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ chgrp root add.sh</div></pre></td></tr></table></figure>
+<p>更改结果如下：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/chgrp.png" alt=""></p>
+<p>注意，需要使用<code>su</code>来切换账号到<code>root</code>才可以完成上面操作。</p>
+<p>另外，如果想将整个文件夹及其子目录下的所有文件和目录都改变用户组的话，需要加上<code>-R</code>参数。</p>
+<p><strong>二、更改文件所有者</strong></p>
+<p>如果我们想将<code>add.sh</code>的文件所有者也改成<code>root</code>呢？</p>
+<p>可以使用<code>chown</code>进行如下操作：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ chown root add.sh</div></pre></td></tr></table></figure>
+<p>结果如下：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/chown.png" alt=""></p>
+<p>同样，这条命令也可以加上<code>-R</code>参数来对目录进行递归操作。</p>
+<p>另外，chown还可以<strong>同时更改文件所有者和用户组</strong>，如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ chown xwj:xwj add.sh</div></pre></td></tr></table></figure>
+<p>以上命令，又将<code>add.sh</code>的文件所有者和用户组改回xwj。</p>
+<h2 id="默认权限"><a href="#默认权限" class="headerlink" title="默认权限"></a>默认权限</h2><p>除了上面提到的文件基本权限<code>rwx</code>之外，在linux中，还存在<strong>默认权限</strong>。</p>
+<p><strong>默认权限代表：目前用户在新建文件或者目录时候的默认权限值</strong>。</p>
+<p>我们可以先新建一个文件和目录查看一下默认权限：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/%E9%BB%98%E8%AE%A4%E6%9D%83%E9%99%90.png" alt=""></p>
+<p>以上我们看到了新建文件和目录时的默认权限，当然，我们也可以通过<code>umask</code>这条命令来查看用户默认权限：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/umask.png" alt=""></p>
+<p>对比上面两张图，我们可以明白：<strong>umask分数是指最大权限需要减去的权限</strong>。</p>
+<hr>
+<ul>
+<li><p>对于一般文件来说，其最大权限为666，即<code>rw-rw-rw-</code>，而umask的后三位是<code>002</code>，则代表<strong>从others的权限中拿掉分数为2的写权限w</strong>。所以，文件的默认权限为<code>rw-rw-r--</code>。</p>
+</li>
+<li><p>对于目录来说，由于x与是否可以进入该目录有关，所以其最大权限为777，即<code>rwxrwxrwx</code>。根据umask的值，也很容易得出目录的默认权限为<code>rwxrwxr-x</code>。</p>
+</li>
+</ul>
+<hr>
+<p>假设两个用户属于同一个用户组，并且他们不想自己新建的文件或者目录被其他人修改。</p>
+<p>那么，他们如何修改新建文件和目录的默认权限呢？方法如下：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/%E6%9B%B4%E6%94%B9umask.png" alt=""></p>
+<p>注意：对于umask来说，有效的设定值为后三位，第一位恒为0。</p>
+<h2 id="特殊权限"><a href="#特殊权限" class="headerlink" title="特殊权限"></a>特殊权限</h2><p>linux中，除了<code>rwx</code>这三个基本文件权限之外，还会有特殊权限，比如：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/%E7%89%B9%E6%AE%8A%E6%9D%83%E9%99%90.png" alt=""></p>
+<p>下面就来总结一下三种特殊的文件权限：<code>SUID</code>、<code>SGID</code>、<code>SBIT</code>。</p>
+<h3 id="SUID"><a href="#SUID" class="headerlink" title="SUID"></a>SUID</h3><p>当<code>s</code>的标志出现在文件所有者的<code>x</code>权限上时，比如<code>/usr/bin/passwd</code>这个文件的权限状态<code>rwsr-xr-x</code>，此时就被称为<code>set UID</code>，简称为<code>SUID</code>的特殊权限。</p>
+<p>它具有以下几点限制和功能：</p>
+<hr>
+<ol>
+<li>SUID权限<strong>仅对二进制文件有效</strong>。</li>
+<li>执行者对于该程序<strong>需要有x的可执行权限</strong>。</li>
+<li>SUID权限<strong>仅在执行该程序的过程中有效</strong>。</li>
+<li>执行者<strong>将具有程序所有者的权限</strong>。</li>
+</ol>
+<hr>
+<p>就拿<code>passwd</code>这个命令来说，它会修改<code>/etc/shadow</code>中的第二个字段，即用户密码字段。</p>
+<p>而<code>/etc/shadow</code>这么重要的文件，自然为root所有，普通用户没有读写权限。</p>
+<p>但是实际上每个用户都可以通过passwd<code>这个命令来修改自己账户的密码，同时也就修改了</code>/etc/shadow` 这个文件的内容。</p>
+<p>为什么呢？这就是SUID的功能！是<strong>SUID让用户在执行passwd这个命令的过程中，暂时获得了root的权限了</strong>。</p>
+<p>以上，用一张图来展示：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/SUID.png" alt=""></p>
+<h3 id="SGID"><a href="#SGID" class="headerlink" title="SGID"></a>SGID</h3><p>当s标志在用户所有者的x位置时为SUID，那么<strong>s在用户组的x位置时成为Set GID，简称SGID</strong>。</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/locate.png" alt=""></p>
+<p>与SUID不同，<strong>SGID不仅可以用在二进制程序上，还可以用在文件或者目录上</strong>。</p>
+<p>SGID对二进制文件具有以下限制或作用：</p>
+<hr>
+<ol>
+<li>程序执行者<strong>需要对二进制程序具备x权限</strong>。</li>
+<li>与SUID类似，执行者在执行的过程中将<strong>获得改程序用户组的支持</strong>。</li>
+</ol>
+<hr>
+<p>除了二进制文件之外，SGID也经常用在目录上，这使得目录具有以下功能：</p>
+<hr>
+<blockquote>
+<ol>
+<li>用户在此目录下的<strong>有效用户组（effictive group）</strong>将会变成该目录的用户组。</li>
+<li>用户在此目录下<strong>创建新文件的用户组与此目录的用户组相同</strong>。</li>
+</ol>
+<hr>
+</blockquote>
+<p>关于GID的应用见最后的案例。</p>
+<h3 id="SBIT"><a href="#SBIT" class="headerlink" title="SBIT"></a>SBIT</h3><p>SBIT是<code>Strick Bit</code>的简称。</p>
+<p><strong>它只针对目录有效</strong>：当用户在目录下创建文件或者目录时，<strong>仅有自己与root才有权力删除该文件</strong>。</p>
+<p>所以，当给某个目录加上SBIT权限之后，某个普通用户再也无法随便删除别人创建的文件了，比如我们的<code>/tmp</code>目录。</p>
+<h3 id="SUID-SGID-SBIT的权限设置"><a href="#SUID-SGID-SBIT的权限设置" class="headerlink" title="SUID/SGID/SBIT的权限设置"></a>SUID/SGID/SBIT的权限设置</h3><p>跟<code>rwx</code>权限具有不同的分值一样，<strong>SUID</strong>，<strong>SGID</strong>，<strong>SBIT</strong>也分别具有不同的分值：</p>
+<hr>
+<p><strong>SUID</strong>：4<br><strong>SGID</strong>：2<br><strong>SBIT</strong>：1</p>
+<hr>
+<p>假如我们想给某个目录<code>/test</code>加上<code>SGID</code>的权限，使其权限变为<code>rwxr-sr-x</code>。</p>
+<p>则执行以下命令：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ chmod 2755 /<span class="built_in">test</span></div></pre></td></tr></table></figure>
+<h2 id="一个案例"><a href="#一个案例" class="headerlink" title="一个案例"></a>一个案例</h2><p>最后来看一个小小的案例：</p>
+<p>在我的系统中有一个用户组<code>users</code>，并且该用户组下有两个用户<code>xwj</code>和<code>hyy</code>。<br>现在要求<code>root</code>账户为这两个普通用户新建一个用于共同开发的目录<code>/srv/project</code>，要求该目录不允许其他人查阅，那么应该如何设置呢？</p>
+<p>首先我们使用<code>root</code>新建目录<code>/srv/project</code>，并且将其支持用户组改为<code>users</code>，权限设置为<code>rwxrwx---</code>。</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/SGID%E5%BA%94%E7%94%A8.png" alt=""></p>
+<p>然后先用<code>xwj</code>去创建一个文件<code>init.sh</code>，然后用账户<code>hyy</code>去尝试修改这个文件：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/SGIDtest.png" alt=""></p>
+<p>我们发现，<code>xwj</code>新建的文件，<code>hyy</code>是没办法修改的！因为<code>init.sh</code>对于其他人的权限是只读。</p>
+<p><strong>这时候，SGID就派上用场啦！</strong></p>
+<p>我们回到<code>root</code>账户，将目录<code>/srv/project</code>加上<code>SGID</code>的权限：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ chmod 2770 /srv/project</div></pre></td></tr></table></figure>
+<p>然后使用<code>xwj</code>账户再新建一个文件<code>init2.sh</code>：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/SGIDtest2.png" alt=""></p>
+<p>我们看到文件<code>init2.sh</code>所支持的用户组变为了<code>users</code>，这样账户<code>hyy</code>因为属于<code>users</code>用户组，自然可以更改<code>init2.sh</code>了。</p>
+<p>两个人终于可以愉快地一块开发了！</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/linux/">linux</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/linux/">linux</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://xwjgo.github.io/2016/11/05/linux文件权限/" data-title="linux文件权限 | xuwenjiang" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/11/10/Linux中EXT2文件系统/" title="EXT2文件系统">
+  <strong>上一篇：</strong><br/>
+  <span>
+  EXT2文件系统</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/11/01/linux下的磁盘分区/"  title="linux下的磁盘分区">
+ <strong>下一篇：</strong><br/> 
+ <span>linux下的磁盘分区
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/11/05/linux文件权限/" data-title="linux文件权限" data-url="http://xwjgo.github.io/2016/11/05/linux文件权限/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#用户和用户组"><span class="toc-number">1.</span> <span class="toc-text">用户和用户组</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基本权限"><span class="toc-number">2.</span> <span class="toc-text">基本权限</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#对文件的意义"><span class="toc-number">2.1.</span> <span class="toc-text">对文件的意义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#对目录的意义"><span class="toc-number">2.2.</span> <span class="toc-text">对目录的意义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#chmod修改文件权限"><span class="toc-number">2.3.</span> <span class="toc-text">chmod修改文件权限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#改变文件所有者和用户组"><span class="toc-number">2.4.</span> <span class="toc-text">改变文件所有者和用户组</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#默认权限"><span class="toc-number">3.</span> <span class="toc-text">默认权限</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#特殊权限"><span class="toc-number">4.</span> <span class="toc-text">特殊权限</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SUID"><span class="toc-number">4.1.</span> <span class="toc-text">SUID</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SGID"><span class="toc-number">4.2.</span> <span class="toc-text">SGID</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SBIT"><span class="toc-number">4.3.</span> <span class="toc-text">SBIT</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SUID-SGID-SBIT的权限设置"><span class="toc-number">4.4.</span> <span class="toc-text">SUID/SGID/SBIT的权限设置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一个案例"><span class="toc-number">5.</span> <span class="toc-text">一个案例</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/javascript/" title="javascript">javascript<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/linux/" title="linux">linux<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/node-js/" title="node.js">node.js<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/乱七八糟/" title="乱七八糟">乱七八糟<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/前端/" title="前端">前端<sup>24</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构/" title="数据结构">数据结构<sup>2</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/javascript/" title="javascript">javascript<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/es6/" title="es6">es6<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/react/" title="react">react<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/express/" title="express">express<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/css/" title="css">css<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C">C<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/webpack/" title="webpack">webpack<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/File/" title="File">File<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/history/" title="history">history<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/redux/" title="redux">redux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/react-redux/" title="react-redux">react-redux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ajax/" title="ajax">ajax<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/TODOLIST/" title="TODOLIST">TODOLIST<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/node-js/" title="node.js">node.js<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/vue-js/" title="vue.js">vue.js<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/mongodb/" title="mongodb">mongodb<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">Links</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.ouc.edu.cn" target="_blank" title="中国海洋大学">中国海洋大学</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://weilai5432.github.io" target="_blank" title="魏来">魏来</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> No matter who gives up, i will not. <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/xwjgo" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="xuwenjiang">xuwenjiang</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"xwjgo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-93479022-1', 'xwjgo.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

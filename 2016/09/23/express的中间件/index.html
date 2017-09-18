@@ -1,0 +1,643 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>express的中间件 | xuwenjiang</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="xuwenjiang">
+    
+
+    
+    <meta name="description" content="最近在开发一个简单的购书平台，后端采用node.js+express+mongoDB+mogoose来向前端输出数据（api），而前端则采用vue.js以及相关vue插件（比如vue-resource和vue-router等）来实现逻辑和UI。 等这个小Demo完成之后，我会再从头捋一遍，并且整理下这个过程中遇到的技术难点。而今天，就简单总结以下对express框架中间件的学习和理解。 expre">
+<meta name="keywords" content="express">
+<meta property="og:type" content="article">
+<meta property="og:title" content="express的中间件">
+<meta property="og:url" content="http://xwjgo.github.io/2016/09/23/express的中间件/index.html">
+<meta property="og:site_name" content="xuwenjiang">
+<meta property="og:description" content="最近在开发一个简单的购书平台，后端采用node.js+express+mongoDB+mogoose来向前端输出数据（api），而前端则采用vue.js以及相关vue插件（比如vue-resource和vue-router等）来实现逻辑和UI。 等这个小Demo完成之后，我会再从头捋一遍，并且整理下这个过程中遇到的技术难点。而今天，就简单总结以下对express框架中间件的学习和理解。 expre">
+<meta property="og:updated_time" content="2017-09-14T15:27:56.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="express的中间件">
+<meta name="twitter:description" content="最近在开发一个简单的购书平台，后端采用node.js+express+mongoDB+mogoose来向前端输出数据（api），而前端则采用vue.js以及相关vue插件（比如vue-resource和vue-router等）来实现逻辑和UI。 等这个小Demo完成之后，我会再从头捋一遍，并且整理下这个过程中遇到的技术难点。而今天，就简单总结以下对express框架中间件的学习和理解。 expre">
+
+    
+    <link rel="alternative" href="/atom.xml" title="xuwenjiang" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="xuwenjiang" title="xuwenjiang"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="xuwenjiang">xuwenjiang</a></h1>
+				<h2 class="blog-motto">外面的繁华不是我的繁华</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="/tags">标签</a></li>
+					
+						<li><a href="/categories">分类</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Search" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/09/23/express的中间件/" title="express的中间件" itemprop="url">express的中间件</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="xuwenjiang" target="_blank" itemprop="author">xuwenjiang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-09-23T04:12:12.000Z" itemprop="datePublished"> Published 2016-09-23</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#express简介"><span class="toc-number">1.</span> <span class="toc-text">express简介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是express"><span class="toc-number">1.1.</span> <span class="toc-text">什么是express</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#express安装"><span class="toc-number">1.2.</span> <span class="toc-text">express安装</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#express中间件"><span class="toc-number">2.</span> <span class="toc-text">express中间件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是中间件"><span class="toc-number">2.1.</span> <span class="toc-text">什么是中间件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#中间件的功能"><span class="toc-number">2.2.</span> <span class="toc-text">中间件的功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#应用级中间件"><span class="toc-number">2.3.</span> <span class="toc-text">应用级中间件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#路由级中间件"><span class="toc-number">2.4.</span> <span class="toc-text">路由级中间件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#错误处理中间件"><span class="toc-number">2.5.</span> <span class="toc-text">错误处理中间件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#内置中间件"><span class="toc-number">2.6.</span> <span class="toc-text">内置中间件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#第三方中间件"><span class="toc-number">2.7.</span> <span class="toc-text">第三方中间件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#跳过中间件"><span class="toc-number">3.</span> <span class="toc-text">跳过中间件</span></a></li></ol>
+		
+		</div>
+		
+		<p>最近在开发一个简单的购书平台，后端采用node.js+express+mongoDB+mogoose来向前端输出数据（api），而前端则采用vue.js以及相关vue插件（比如vue-resource和vue-router等）来实现逻辑和UI。</p>
+<p>等这个小Demo完成之后，我会再从头捋一遍，并且整理下这个过程中遇到的技术难点。而今天，就简单总结以下对<strong>express框架中间件</strong>的学习和理解。</p>
+<h2 id="express简介"><a href="#express简介" class="headerlink" title="express简介"></a>express简介</h2><h3 id="什么是express"><a href="#什么是express" class="headerlink" title="什么是express"></a>什么是express</h3><p><a href="http://www.expressjs.com.cn/" target="_blank" rel="external">express</a>是基于node.js的一个web开发框架，它提供了丰富的http方法和任意排列组合的中间件，让我们可以方便地创建健壮、友好的API。</p>
+<h3 id="express安装"><a href="#express安装" class="headerlink" title="express安装"></a>express安装</h3><p>我们可以通过以下两条命令，在我们的项目中安装express：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ npm init</div><div class="line">$ npm install express --save       <span class="comment">//安装express并且将依赖写入package.json</span></div></pre></td></tr></table></figure>
+<p>这样我们只是局部安装了express，项目的目录结构还未能初始化，我们需要手动建立。</p>
+<p>现在，我们有了<strong>express-generator</strong>这个工具，它可以帮我们快速<strong>创建一个应用的骨架</strong>：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 全局安装express-generator</span></div><div class="line">$ npm install express-generator -g</div><div class="line"><span class="comment">// 创建一个命名为myapp的应用</span></div><div class="line">$ express myapp</div><div class="line">$ cd myapp</div><div class="line"><span class="comment">// 安装所有依赖</span></div><div class="line">$ npm install</div><div class="line"><span class="comment">// 启动项目，supervisor会监听项目代码变化，并且自动帮我们重启项目</span></div><div class="line">$ supervisor app.js</div></pre></td></tr></table></figure>
+<h2 id="express中间件"><a href="#express中间件" class="headerlink" title="express中间件"></a>express中间件</h2><p>从本质上来说，Express就是在调用各种中间件。</p>
+<h3 id="什么是中间件"><a href="#什么是中间件" class="headerlink" title="什么是中间件"></a>什么是中间件</h3><p><a href="http://www.expressjs.com.cn/guide/using-middleware.html" target="_blank" rel="external">中间件</a>（Middleware）是<strong>一个函数</strong>，它可以访问<strong>请求对象（req）、响应对象（res）</strong>，和<strong>web应用中处于请求-响应循环流程中的中间件</strong>，一般被命名为<strong>next</strong>变量。</p>
+<p>中间件函数的形式如下；</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>)</span></div></pre></td></tr></table></figure>
+<p>给某个路径应用中间件函数的典型场景如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">app.use(<span class="string">'/api'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>)) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(req.baseUrl);</div><div class="line">  next();</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h3 id="中间件的功能"><a href="#中间件的功能" class="headerlink" title="中间件的功能"></a>中间件的功能</h3><hr>
+<ol>
+<li>执行任何代码</li>
+<li>修改请求和响应对象</li>
+<li>终结请求-响应循环</li>
+<li>调用堆栈中的下一个中间件</li>
+</ol>
+<hr>
+<h3 id="应用级中间件"><a href="#应用级中间件" class="headerlink" title="应用级中间件"></a>应用级中间件</h3><p>应用级中间件绑定到<strong>app对象</strong>上，使用<strong>app.use()</strong>和<strong>app.METHOD()</strong>来加载。其中，METHOD是需要处理的<strong>http请求</strong>的方法，如GET、POST、PUT、DELETE等，<strong>全部小写</strong>。</p>
+<hr>
+<p>我们先来看app.use()。</p>
+<p>express中通过<a href="http://www.expressjs.com.cn/4x/api.html#app.use" target="_blank" rel="external">use方法</a>来注册中间件。</p>
+<p>而use方法允许<strong>将请求网址写在第一个参数</strong>。这代表，之后<strong>请求路径匹配这个参数，后面的中间件才会生效</strong>。</p>
+<p>当然也可以不写网址，那么只要<strong>该中间件在请求-响应流程中</strong>，那么该中间件<strong>总会被执行</strong>。</p>
+<hr>
+<p>再来看一下app.METHOD()形式的路由方法。</p>
+<p>它的基本使用模式如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 其中callback的行为类似中间件</span></div><div class="line"><span class="comment">// 其唯一的区别就是这些回调函数可以调用next('route')方法而略过其他路由回调函数</span></div><div class="line">app.METHOD(path, [callback...], callback);</div></pre></td></tr></table></figure>
+<p><strong>app.all()</strong>是一个特殊的路由方法，没有任何HTTP方法与其对应，它的作用是<strong>对于一个路径上的所有请求加载中间件</strong>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 只要请求路径为/secret，无论是GET、POST或是其他请求，都执行中间件函数</span></div><div class="line">app.all(<span class="string">'/secret'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">'secret...'</span>);</div><div class="line">  next(); </div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<hr>
+<p>下面是一个基本的使用场景：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> app = express();</div><div class="line"></div><div class="line"><span class="comment">// 没有挂载路径的中间件，应用的每个请求都会执行该中间件</span></div><div class="line">app.use(<span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">'Request Type:'</span>, req.method);</div><div class="line">  next();</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// 挂载至/user/:id的中间件，任何指向/user/:id的请求都会执行它</span></div><div class="line">app.use(<span class="string">'/user/:id'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">  res.send(<span class="string">'hello...'</span>);      <span class="comment">// 此次请求-响应的循环结束，后面的中间件不会执行</span></div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// 一个中间件栈，对指向/home的GET请求作出处理</span></div><div class="line">app.get(<span class="string">'/home'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">'Request URL:'</span>, req.originalUrl);</div><div class="line">  next();                   <span class="comment">// 调用中间件栈中的下一个中间件</span></div><div class="line">&#125;, <span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">  res.end(<span class="string">'end...'</span>);        <span class="comment">// 此次请求-响应的循环结束，后面中间件不会执行</span></div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// 只有上面路径没有匹配到，才执行这个中间件</span></div><div class="line"><span class="comment">// 参数中的*表示对所有路径有效</span></div><div class="line">app.get(<span class="string">'*'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">  response.writeHead(<span class="number">404</span>, &#123; <span class="string">"Content-Type"</span>: <span class="string">"text/plain"</span> &#125;);</div><div class="line">  response.end(<span class="string">"404 error!"</span>);</div><div class="line">&#125;); </div></pre></td></tr></table></figure>
+<h3 id="路由级中间件"><a href="#路由级中间件" class="headerlink" title="路由级中间件"></a>路由级中间件</h3><p>路由级中间件和应用级中间件一样，只是它绑定的对象为<strong>express.Router()</strong>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> router = express.Router();</div></pre></td></tr></table></figure>
+<p>路由级中间件使用<strong>router.use()</strong>或者<strong>router.VERB()</strong>加载。</p>
+<p>上面的应用场景可以改写为以下的样子：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> app = express();</div><div class="line"><span class="keyword">var</span> router = express.Router();</div><div class="line"></div><div class="line"><span class="comment">// 没有挂载路径的中间件，通过该路由的所有请求都会执行该中间件</span></div><div class="line">router.use(<span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">'Request Type:'</span>, req.method);</div><div class="line">  next();</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// 挂载至/user/:id的中间件，任何指向/user/:id的请求都会执行它</span></div><div class="line">router.use(<span class="string">'/user/:id'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">'id:'</span> + req.params.id);</div><div class="line">  res.send(<span class="string">'hello...'</span>);      <span class="comment">// 此次请求-响应的循环结束，后面的中间件不会执行</span></div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// 一个中间件栈，对指向/home的GET请求作出处理</span></div><div class="line">router.get(<span class="string">'/home'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">'Request URL:'</span>, req.originalUrl);</div><div class="line">  next();                   <span class="comment">// 调用中间件栈中的下一个中间件</span></div><div class="line">&#125;, <span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">  res.end(<span class="string">'end...'</span>);        <span class="comment">// 此次请求-响应的循环结束，后面中间件不会执行</span></div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// 只有上面路径没有匹配到，才执行这个中间件</span></div><div class="line">router.get(<span class="string">'*'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">  response.writeHead(<span class="number">404</span>, &#123; <span class="string">"Content-Type"</span>: <span class="string">"text/plain"</span> &#125;);</div><div class="line">  response.end(<span class="string">"404 error!"</span>);</div><div class="line">&#125;); </div><div class="line"></div><div class="line"><span class="comment">// 将路由挂载至应用</span></div><div class="line"><span class="comment">// 相当于为/api/home和/api/user/:id这两个请求路径，指定了回调函数</span></div><div class="line">app.use(<span class="string">'/api'</span>, router)</div><div class="line"></div></pre></td></tr></table></figure>
+<p>另外，<strong>router.route()</strong>方法可以接受访问路径作为参数，它等同于<strong>app.route()</strong>，它其实是express.Router()的缩写形式。</p>
+<p>通过<strong>router.route()或者app.route()</strong>，我们可以<strong>链式地处理对一个路径的不同请求</strong>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">app.route(<span class="string">'/login'</span>)</div><div class="line">  .get(<span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</div><div class="line">    res.send(<span class="string">'get login success...'</span>);</div><div class="line">  &#125;)</div><div class="line">  .post(<span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</div><div class="line">    res.send(<span class="string">'post login success...'</span>);</div><div class="line">  &#125;);</div></pre></td></tr></table></figure>
+<h3 id="错误处理中间件"><a href="#错误处理中间件" class="headerlink" title="错误处理中间件"></a>错误处理中间件</h3><p>错误处理中间件和其他中间件类似，不过必须使用4个参数，而不是3个。其使用场景如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">app.use(<span class="function"><span class="keyword">function</span>(<span class="params">err, req, res, next</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.error(err.stack);</div><div class="line">  res.status(<span class="number">500</span>).send(<span class="string">'error...'</span>);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h3 id="内置中间件"><a href="#内置中间件" class="headerlink" title="内置中间件"></a>内置中间件</h3><p><a href="">express static()</a>是Express唯一内置的中间件。它主要负责在Express应用中托管静态资源。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">express.static(root, [options]);</div></pre></td></tr></table></figure>
+<p>其中参数root指<strong>提供静态资源的根目录</strong>。<br>options为可选参数，详细可以参考<a href="http://www.expressjs.com.cn/4x/api.html#express" target="_blank" rel="external">这里</a>。</p>
+<h3 id="第三方中间件"><a href="#第三方中间件" class="headerlink" title="第三方中间件"></a>第三方中间件</h3><p>第三方中间件需要我们手动安装对应的node模块，并且在应用中加载。<br>比如cookie-parser这个中间件：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ npm install cookie-parser --save</div></pre></td></tr></table></figure>
+<p>然后在应用中使用：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> express = <span class="built_in">require</span>(<span class="string">'express'</span>);</div><div class="line"><span class="keyword">var</span> cookieParser = <span class="built_in">require</span>(<span class="string">'cookie-parser'</span>);</div><div class="line"></div><div class="line"><span class="comment">// 加载用于解析cookie的中间件</span></div><div class="line"><span class="keyword">var</span> app = express();</div><div class="line">app.use(cookieParser());</div></pre></td></tr></table></figure>
+<p><a href="http://www.expressjs.com.cn/resources/middleware.html" target="_blank" rel="external">这里</a>可以查看经常用到的第三方中间件。</p>
+<h2 id="跳过中间件"><a href="#跳过中间件" class="headerlink" title="跳过中间件"></a>跳过中间件</h2><p>如果想要在中间件栈中跳过某个中间件，我们可以调用<code>next(&#39;route&#39;)</code>方法将控制权交给下一个路由。</p>
+<p>不过要注意的是，next(‘route’)<strong>只对使用app.VERB()或者router.VERB()加载的中间件有效。</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 一个中间件栈，处理指向 /user/:id 的 GET 请求</span></div><div class="line">app.get(<span class="string">'/user/:id'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">  <span class="comment">// 如果 user id 为 0, 跳到下一个路由</span></div><div class="line">  <span class="keyword">if</span> (req.params.id == <span class="number">0</span>) next(<span class="string">'route'</span>);</div><div class="line">  <span class="comment">// 否则将控制权交给栈中下一个中间件</span></div><div class="line">  <span class="keyword">else</span> next(); <span class="comment">//</span></div><div class="line">&#125;, <span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">  <span class="comment">// 渲染常规页面</span></div><div class="line">  res.render(<span class="string">'regular'</span>);</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// 处理 /user/:id， 渲染一个特殊页面</span></div><div class="line">app.get(<span class="string">'/user/:id'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">  res.render(<span class="string">'special'</span>);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>完。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/node-js/">node.js</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/express/">express</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://xwjgo.github.io/2016/09/23/express的中间件/" data-title="express的中间件 | xuwenjiang" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/10/04/动态链表的创建/" title="动态链表的创建">
+  <strong>上一篇：</strong><br/>
+  <span>
+  动态链表的创建</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/09/23/webpack+babel实现在浏览器端使用es6模块语法/"  title="webpack+babel加载es6模块">
+ <strong>下一篇：</strong><br/> 
+ <span>webpack+babel加载es6模块
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/09/23/express的中间件/" data-title="express的中间件" data-url="http://xwjgo.github.io/2016/09/23/express的中间件/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#express简介"><span class="toc-number">1.</span> <span class="toc-text">express简介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是express"><span class="toc-number">1.1.</span> <span class="toc-text">什么是express</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#express安装"><span class="toc-number">1.2.</span> <span class="toc-text">express安装</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#express中间件"><span class="toc-number">2.</span> <span class="toc-text">express中间件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是中间件"><span class="toc-number">2.1.</span> <span class="toc-text">什么是中间件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#中间件的功能"><span class="toc-number">2.2.</span> <span class="toc-text">中间件的功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#应用级中间件"><span class="toc-number">2.3.</span> <span class="toc-text">应用级中间件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#路由级中间件"><span class="toc-number">2.4.</span> <span class="toc-text">路由级中间件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#错误处理中间件"><span class="toc-number">2.5.</span> <span class="toc-text">错误处理中间件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#内置中间件"><span class="toc-number">2.6.</span> <span class="toc-text">内置中间件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#第三方中间件"><span class="toc-number">2.7.</span> <span class="toc-text">第三方中间件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#跳过中间件"><span class="toc-number">3.</span> <span class="toc-text">跳过中间件</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/javascript/" title="javascript">javascript<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/linux/" title="linux">linux<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/node-js/" title="node.js">node.js<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/乱七八糟/" title="乱七八糟">乱七八糟<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/前端/" title="前端">前端<sup>24</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构/" title="数据结构">数据结构<sup>2</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/javascript/" title="javascript">javascript<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/es6/" title="es6">es6<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/react/" title="react">react<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/express/" title="express">express<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/css/" title="css">css<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C">C<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/webpack/" title="webpack">webpack<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/File/" title="File">File<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/history/" title="history">history<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/redux/" title="redux">redux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/react-redux/" title="react-redux">react-redux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ajax/" title="ajax">ajax<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/TODOLIST/" title="TODOLIST">TODOLIST<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/node-js/" title="node.js">node.js<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/vue-js/" title="vue.js">vue.js<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/mongodb/" title="mongodb">mongodb<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">Links</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.ouc.edu.cn" target="_blank" title="中国海洋大学">中国海洋大学</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://weilai5432.github.io" target="_blank" title="魏来">魏来</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> No matter who gives up, i will not. <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/xwjgo" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="xuwenjiang">xuwenjiang</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"xwjgo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-93479022-1', 'xwjgo.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

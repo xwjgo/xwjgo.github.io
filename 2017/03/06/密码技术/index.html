@@ -1,0 +1,813 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>密码技术 | xuwenjiang</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="xuwenjiang">
+    
+
+    
+    <meta name="description" content="在之前的TODOLIST提到过两本关于密码学的书籍《漫画密码学》以及《图解密码技术》，其实在寒假开始之前就读完了，但是因为拖延症一直没有抽出时间来整理。这次，正好趁着刚刚开学没有太多事情，再回顾一下与密码学学相关的知识。 密码学家的工具箱《图解密码技术》中给出了密码学家的工具箱，包括六种技术：  对称密码（symmetric cryptography） 公钥密码（public-key crypto">
+<meta name="keywords" content="密码学">
+<meta property="og:type" content="article">
+<meta property="og:title" content="密码技术">
+<meta property="og:url" content="http://xwjgo.github.io/2017/03/06/密码技术/index.html">
+<meta property="og:site_name" content="xuwenjiang">
+<meta property="og:description" content="在之前的TODOLIST提到过两本关于密码学的书籍《漫画密码学》以及《图解密码技术》，其实在寒假开始之前就读完了，但是因为拖延症一直没有抽出时间来整理。这次，正好趁着刚刚开学没有太多事情，再回顾一下与密码学学相关的知识。 密码学家的工具箱《图解密码技术》中给出了密码学家的工具箱，包括六种技术：  对称密码（symmetric cryptography） 公钥密码（public-key crypto">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/feistel_one_round.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/ECB.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/CBC.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/CFB.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/OFB.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/CTR.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/rsa%E5%AF%86%E9%92%A5%E5%AF%B9.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/%E6%B7%B7%E5%90%88%E5%AF%86%E7%A0%81%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%8A%A0%E5%AF%86%E5%92%8C%E8%A7%A3%E5%AF%86.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/%E5%8D%95%E5%90%91%E6%95%A3%E5%88%97%E5%87%BD%E6%95%B0%E5%92%8C%E6%B6%88%E6%81%AF%E8%AE%A4%E8%AF%81%E7%A0%81%E7%9A%84%E6%AF%94%E8%BE%83.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/%E7%9B%B4%E6%8E%A5%E5%AF%B9%E6%B6%88%E6%81%AF%E8%BF%9B%E8%A1%8C%E7%AD%BE%E5%90%8D.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/%E5%AF%B9%E6%B6%88%E6%81%AF%E7%9A%84%E6%95%A3%E5%88%97%E5%80%BC%E7%AD%BE%E5%90%8D.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/certificate.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/PBE%E7%9A%84%E5%8A%A0%E5%AF%86%E8%BF%87%E7%A8%8B.png">
+<meta property="og:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/PBE%E8%A7%A3%E5%AF%86%E8%BF%87%E7%A8%8B.png">
+<meta property="og:updated_time" content="2017-09-14T15:27:56.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="密码技术">
+<meta name="twitter:description" content="在之前的TODOLIST提到过两本关于密码学的书籍《漫画密码学》以及《图解密码技术》，其实在寒假开始之前就读完了，但是因为拖延症一直没有抽出时间来整理。这次，正好趁着刚刚开学没有太多事情，再回顾一下与密码学学相关的知识。 密码学家的工具箱《图解密码技术》中给出了密码学家的工具箱，包括六种技术：  对称密码（symmetric cryptography） 公钥密码（public-key crypto">
+<meta name="twitter:image" content="http://7xvlvo.com1.z0.glb.clouddn.com/feistel_one_round.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="xuwenjiang" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="xuwenjiang" title="xuwenjiang"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="xuwenjiang">xuwenjiang</a></h1>
+				<h2 class="blog-motto">外面的繁华不是我的繁华</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="/tags">标签</a></li>
+					
+						<li><a href="/categories">分类</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Search" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/03/06/密码技术/" title="密码技术" itemprop="url">密码技术</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="xuwenjiang" target="_blank" itemprop="author">xuwenjiang</a>
+		
+  <p class="article-time">
+    <time datetime="2017-03-06T04:12:12.000Z" itemprop="datePublished"> Published 2017-03-06</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#密码学家的工具箱"><span class="toc-number">1.</span> <span class="toc-text">密码学家的工具箱</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#密码与信息安全常识"><span class="toc-number">2.</span> <span class="toc-text">密码与信息安全常识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#对称密码"><span class="toc-number">3.</span> <span class="toc-text">对称密码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#DES"><span class="toc-number">3.1.</span> <span class="toc-text">DES</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AES"><span class="toc-number">3.2.</span> <span class="toc-text">AES</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分组密码的模式"><span class="toc-number">3.3.</span> <span class="toc-text">分组密码的模式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#ECB模式（不应使用）"><span class="toc-number">3.3.1.</span> <span class="toc-text">ECB模式（不应使用）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#CBC模式（推荐使用）"><span class="toc-number">3.3.2.</span> <span class="toc-text">CBC模式（推荐使用）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#CFB模式（推荐用CTR代替）"><span class="toc-number">3.3.3.</span> <span class="toc-text">CFB模式（推荐用CTR代替）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#OFB模式（推荐用CTR代替）"><span class="toc-number">3.3.4.</span> <span class="toc-text">OFB模式（推荐用CTR代替）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#CTR模式（推荐使用）"><span class="toc-number">3.3.5.</span> <span class="toc-text">CTR模式（推荐使用）</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#公钥密码"><span class="toc-number">4.</span> <span class="toc-text">公钥密码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#RSA"><span class="toc-number">4.1.</span> <span class="toc-text">RSA</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#对RSA的攻击"><span class="toc-number">4.2.</span> <span class="toc-text">对RSA的攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#对N进行质因数分解"><span class="toc-number">4.2.1.</span> <span class="toc-text">对N进行质因数分解</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#中间人攻击"><span class="toc-number">4.2.2.</span> <span class="toc-text">中间人攻击</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#公钥密码的问题"><span class="toc-number">4.3.</span> <span class="toc-text">公钥密码的问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#混合密码系统"><span class="toc-number">5.</span> <span class="toc-text">混合密码系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#单向散列函数"><span class="toc-number">6.</span> <span class="toc-text">单向散列函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#单向散列函数的性质"><span class="toc-number">6.1.</span> <span class="toc-text">单向散列函数的性质</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#抗碰撞性"><span class="toc-number">6.2.</span> <span class="toc-text">抗碰撞性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#单向散列函数的实例"><span class="toc-number">6.3.</span> <span class="toc-text">单向散列函数的实例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#单向单列函数无法解决的问题"><span class="toc-number">6.4.</span> <span class="toc-text">单向单列函数无法解决的问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#消息认证码"><span class="toc-number">7.</span> <span class="toc-text">消息认证码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#消息认证码的实现"><span class="toc-number">7.1.</span> <span class="toc-text">消息认证码的实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#消息认证码的问题"><span class="toc-number">7.2.</span> <span class="toc-text">消息认证码的问题</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#密码配送"><span class="toc-number">7.2.1.</span> <span class="toc-text">密码配送</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#重放攻击"><span class="toc-number">7.2.2.</span> <span class="toc-text">重放攻击</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#对第三方证明-amp-防止否认"><span class="toc-number">7.2.3.</span> <span class="toc-text">对第三方证明&防止否认</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数字签名"><span class="toc-number">8.</span> <span class="toc-text">数字签名</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#数字签名的方法"><span class="toc-number">8.1.</span> <span class="toc-text">数字签名的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#如何防止否认"><span class="toc-number">8.2.</span> <span class="toc-text">如何防止否认</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数字签名无法解决的问题"><span class="toc-number">8.3.</span> <span class="toc-text">数字签名无法解决的问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#证书"><span class="toc-number">9.</span> <span class="toc-text">证书</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#证书的应用场景"><span class="toc-number">9.1.</span> <span class="toc-text">证书的应用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#证书标准规范X-509"><span class="toc-number">9.2.</span> <span class="toc-text">证书标准规范X.509</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#公钥基础设施"><span class="toc-number">9.3.</span> <span class="toc-text">公钥基础设施</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于口令的密码"><span class="toc-number">10.</span> <span class="toc-text">基于口令的密码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#PBE的加密和解密"><span class="toc-number">10.1.</span> <span class="toc-text">PBE的加密和解密</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#盐的作用"><span class="toc-number">10.2.</span> <span class="toc-text">盐的作用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#随机数"><span class="toc-number">11.</span> <span class="toc-text">随机数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#随机数的性质"><span class="toc-number">11.1.</span> <span class="toc-text">随机数的性质</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#伪随机数生成器"><span class="toc-number">11.2.</span> <span class="toc-text">伪随机数生成器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最后"><span class="toc-number">12.</span> <span class="toc-text">最后</span></a></li></ol>
+		
+		</div>
+		
+		<p>在之前的<a href="http://xwjgo.github.io/2017/01/06/TODOLIST/">TODOLIST</a>提到过两本关于密码学的书籍《漫画密码学》以及《图解密码技术》，其实在寒假开始之前就读完了，但是因为拖延症一直没有抽出时间来整理。这次，正好趁着刚刚开学没有太多事情，再回顾一下与密码学学相关的知识。</p>
+<h2 id="密码学家的工具箱"><a href="#密码学家的工具箱" class="headerlink" title="密码学家的工具箱"></a>密码学家的工具箱</h2><p>《图解密码技术》中给出了密码学家的工具箱，包括六种技术：</p>
+<ol>
+<li>对称密码（symmetric cryptography）</li>
+<li>公钥密码（public-key cryptography）</li>
+<li>单向散列函数（one-way hash function）</li>
+<li>消息认证码（message authentication code）</li>
+<li>数字签名（digital signature）</li>
+<li>伪随机数生成器（pseudo random number generator）</li>
+</ol>
+<p>接下来会对这6中密码技术一一讲解。但是在此之前，我们需要理解几条<strong>密码与信息安全常识</strong>。</p>
+<h2 id="密码与信息安全常识"><a href="#密码与信息安全常识" class="headerlink" title="密码与信息安全常识"></a>密码与信息安全常识</h2><ul>
+<li><p>不要使用保密的密码算法。因为密码算法的秘密迟早会公诸于世（有历史证明），另外开发高强度的密码算法是非常困难的。而现在世界上公开的被认为强度较高的密码算法，几乎都是经过密码破译者长期破解未果而存活下来的，如果你认为自己开发的密码系统更强，那只能说你可能高估自己的能力了。<strong>试图通过对密码算法本身进行保密来确保安全性的行为，称为隐蔽式安全（security by obscurity），这种行为是危险且愚蠢的</strong>。</p>
+</li>
+<li><p>使用低强度的密码比不进行任何加密更危险。这是因为用户容易通过“密码”一词获得一种”错误的安全感“，这通常会导致用户在处理一些机密信息的时候麻痹大意。</p>
+</li>
+<li><p>任何密码总有一天会被破解。无论使用任何密码算法所生成的密文，只要将所有可能都密钥全部尝试一遍，总有一天可以破译出来。但是严格来说，绝对不会被破解的密码算法是存在的，这种算法称为<strong>一次性密码本</strong>，但它并不是一种现实可用的算法。</p>
+</li>
+</ul>
+<h2 id="对称密码"><a href="#对称密码" class="headerlink" title="对称密码"></a>对称密码</h2><p>对称密码又称<strong>共享密钥密码</strong>，它使用相同的密钥进行加密和解密。</p>
+<h3 id="DES"><a href="#DES" class="headerlink" title="DES"></a>DES</h3><p>DES，即<code>Data Encryption Standard</code>，是1977年提出的一种对称密码。但是现在已经可以在短时间内（小于24小时）对DES的密文进行破解，因此除了用它来解密以前的密文外，将来我们不应该再使用DES了。</p>
+<p>DES是以<code>64bit</code>为一个单位来进行加密的对称密码算法，它将64bit的明文通过64bit的密钥（实际为<code>56bit</code>，每隔7bit会设置一个用于错误检查的bit）加密成64bit的密文。</p>
+<p>这个64bit的单位称为<code>分组</code>，如果待加密的明文很长，就需要对明文进行迭代（反复），而迭代的具体方式就称为<code>模式</code>。下一小节，我们将着重讲解模式。</p>
+<p>DES的是一种16轮循环的Feistel网络，其中Feistel网络的一轮的计算流程如下；</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/feistel_one_round.png" alt=""></p>
+<p>在一个Festel网络中，每一轮都要使用不同的子密钥，并且每一轮结束后，都需要将左侧和右侧数据<strong>对调</strong>之后，才能作为下一轮的输入。</p>
+<p>从XOR的运算性质可知，将每一轮的输出重新作为输入，总会还原出最初的输入（右侧数据、轮函数、子密钥不变，意味着和左侧数据进行XOR的数据也不变）。</p>
+<p>下面是Feistel网络的一些性质：</p>
+<ol>
+<li>Feistel网络的轮数可以任意增加。</li>
+<li>加密是无论使用任何函数作为轮函数都可以正确解密，也就是说，轮函数可以无需考虑解密的问题。</li>
+<li>加密和解密都可以使用相同的结构实现，只需要把子密钥使用的顺序颠倒。</li>
+</ol>
+<p>因为DES已经可以在现实的时间内被暴力破解，所以<strong>三重DES</strong>，即<code>triple-DES</code>被开发出来，用来加强DES的强度。我们需要的知道的是，三种DES并不是连续进行三次DES加密，而是<strong>加密-解密-加密</strong>的过程。</p>
+<h3 id="AES"><a href="#AES" class="headerlink" title="AES"></a>AES</h3><p>AES，即<code>Advanced Encryption Standard</code>，是取代其前任标准DES而成为新标准的一种对称密码算法。全世界的企业和密码学家提交了多个对称密码算法作为AES的候选，最终在2000年选出了名为<code>Rijndael</code>的对称密码算法，并将其确定为AES。</p>
+<p>不同与DES使用Feistel网络作为其基本结构，Rijndael使用<strong>SPN结构</strong>，并且也是又多个轮组成的，具体的算法就不在这里详述了。</p>
+<p>到目前为止还没有出现针对Rijndael的有效攻击。所以，AES将是我们今后对称加密的首选。</p>
+<h3 id="分组密码的模式"><a href="#分组密码的模式" class="headerlink" title="分组密码的模式"></a>分组密码的模式</h3><p>上面介绍的DES和AES都属于分组密码，如果需要对很长的密文进行加密，就需要对分组密码进行迭代，迭代方法称为分组密码的<strong>模式</strong>。</p>
+<p>模式有很多种，分组密码主要涉及以下5种：</p>
+<ol>
+<li>ECB模式：Electronic CodeBook mode（电子密码本模式）</li>
+<li>CBC模式：Cipher Block Chaining mode（密码分组链接模式）</li>
+<li>CFB模式：Cipher FeedBack mode（密文反馈模式）</li>
+<li>OFB模式：Output FeedBack mode（输出反馈模式）</li>
+<li>CTR模式：Counter mode（计数器模式）</li>
+</ol>
+<h4 id="ECB模式（不应使用）"><a href="#ECB模式（不应使用）" class="headerlink" title="ECB模式（不应使用）"></a>ECB模式（不应使用）</h4><p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/ECB.png" alt=""></p>
+<p>当最后一个明文分组小于分组长度时，需要使用一些特定的数据来进行<strong>填充（padding）</strong>。</p>
+<p>在ECB模式中，明文分组和密文分组时一一对应的关系，所以只要观察一下密文，就可以知道明文中存在怎样的重复组合，并且可以以此为线索来破译密码。</p>
+<p>另外，攻击者无需破译密文就可以操纵明文，因为他只需要改变密文分组的顺序（或者删除、复制某些密文分组），那么相应的明文分组的组合也会被改变。比如某银行的转账请求，本来是A账户向B账户转账1亿元，那么攻击者在不知道明文的情况下，可能修改为B账户向A账户转账1亿元。</p>
+<h4 id="CBC模式（推荐使用）"><a href="#CBC模式（推荐使用）" class="headerlink" title="CBC模式（推荐使用）"></a>CBC模式（推荐使用）</h4><p>在CBC模式中，首先<strong>将明文分组与前一个密文分组进行XOR运算，然后在进行加密运算</strong>。当加密第一个明文分组时，由于密文分组不存在，所以需要事先准备一个比特序列，称为<strong>初始化向量（initialization vector）</strong>。</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/CBC.png" alt=""></p>
+<p>使用了CBC模式后，即便明文分组1和明文分组2是相等的，密文分组1和密文分组2的值也不一定相等。这就解决了ECB模式中的缺陷。</p>
+<p>在CBC模式中，密文分组和明文分组不是一一对应的关系。如果要生成密文分组3，则必须要凑齐明文分组1,2,3才行。另外如果密文分组2损坏，则会导致明文分组2和3都无法复原。</p>
+<h4 id="CFB模式（推荐用CTR代替）"><a href="#CFB模式（推荐用CTR代替）" class="headerlink" title="CFB模式（推荐用CTR代替）"></a>CFB模式（推荐用CTR代替）</h4><p>在CFB模式中，<strong>前一个密文分组会被送回到密码算法的输入端</strong>。</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/CFB.png" alt=""></p>
+<p>在CFB模式中，并没有对明文分组直接进行加密，从明文分组到密文分组，<strong>只有一个XOR运算</strong>。</p>
+<p>对于CFB模式，可以进行<strong>重放攻击（replay attack）</strong>。假如Alice跟Bob通信，第一次发送的4个密文分组被Mallory截获并保存了最后3个分组，第二天，Alice又使用同样的密钥向Bob发送了4个密文分组，而这次Mallory将这次密文分组的后3个替换为昨天截获的分组。那么Bob收到密文后解密，发现第二个明文分组出错，其他明文分组正常。这时候，Bob可能无法判断明文的可靠性，因为Bob不知道第二个分组是通信错误还是人为攻击。</p>
+<h4 id="OFB模式（推荐用CTR代替）"><a href="#OFB模式（推荐用CTR代替）" class="headerlink" title="OFB模式（推荐用CTR代替）"></a>OFB模式（推荐用CTR代替）</h4><p>在OFB模式中，密码算法的输出会反馈到密码算法的输入中。</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/OFB.png" alt=""></p>
+<p>OFB和CFB模式的区别仅在于<strong>密码算法的输入源（反馈）不同</strong>。CFB中反馈为上一个密文分组，而OFB中反馈为密码算法的前一个输出。</p>
+<p>在OFB模式中，和明文XOR所需的比特序列（钥匙流）可以事先通过密码算法生成，这样在加密或者解密的过程中，只需要进行XOR运算就行了，而XOR和运算速度是很快的。换个角度讲，<strong>生成密钥流的操作可以和进行XOR的操作并行</strong>。</p>
+<h4 id="CTR模式（推荐使用）"><a href="#CTR模式（推荐使用）" class="headerlink" title="CTR模式（推荐使用）"></a>CTR模式（推荐使用）</h4><p>CTR模式是一种通过<strong>将逐次累加的计数器进行加密来生成密钥流的流密码</strong>。</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/CTR.png" alt=""></p>
+<p>每次加密都会生成一个不同的值<code>nonce</code>来作为计数器的初始值。当分组长度为128bit，即16字节时，前8个字节位nonce，这个值在每次加密时必须是不同的。后8个字节为分组序号，会逐次累加。</p>
+<p>CTR模式和OFB模式一样，都属于<strong>流密码</strong>。</p>
+<h2 id="公钥密码"><a href="#公钥密码" class="headerlink" title="公钥密码"></a>公钥密码</h2><p>公钥密码又称为非对称密码（asymmetric cryptography），<strong>使用公钥加密，用私钥解密，或者使用私钥加密，使用公钥解密</strong>。</p>
+<p>在对称密码中，由于加密和解密的密钥是相同，因此必须向接收者配送密钥。这一问题称为<strong>密钥配送问题</strong>。</p>
+<p>而使用公钥密码，则无需向接收者配送用于解密的密钥，这样就解决了密钥配送问题。</p>
+<h3 id="RSA"><a href="#RSA" class="headerlink" title="RSA"></a>RSA</h3><p>RSA是一种公钥密码算法，它的名字是由它的三位开发者姓氏首字母组成。RSA可以被用于公钥密码和数字签名。</p>
+<p>RSA的加密和解密过程如下；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">密文 = 明文 E mod N    （RSA加密，明文的E次方求mod N 的结果）</div><div class="line">明文 = 密文 D mod N    （RSA解密，密文的D次方求mod N 的结果）</div></pre></td></tr></table></figure>
+<p>加密需要的E和N两个数字，即为公钥<code>(E, N)</code>，其中E是<code>Encryption</code>的缩写。解密需要的D和N两个数组，即为私钥<code>(D, N)</code>，其中D是<code>Decryption</code>的缩写。公钥和私钥合称为<code>密钥对</code>。</p>
+<p>当然，D和E并非所有的数字都可以，他们两个有紧密的联系，下面来看如何生成密钥对。</p>
+<ul>
+<li>求N</li>
+</ul>
+<p>用伪随机数生成器（Pseudo Random Number Generator）来生成两个很大的质数<code>p</code>和<code>q</code>（512bit）。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">N = p*q</div></pre></td></tr></table></figure>
+<ul>
+<li>求L（仅在生成密钥对的过程中使用）</li>
+</ul>
+<p>L是<code>q-1</code>和<code>p-1</code>的最小公倍数，即least common multiple。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">L = lcm（p<span class="number">-1</span>, q- <span class="number">1</span>)</div></pre></td></tr></table></figure>
+<ul>
+<li>求E</li>
+</ul>
+<p>E是一个比1大，比L小的数，此外，E和L的最大公约数（greatest common divisor）为1，即<strong>E和L互质</strong>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="number">1</span> &lt; E &lt; L，且gcd(E,L) = <span class="number">1</span></div></pre></td></tr></table></figure>
+<ul>
+<li>求D</li>
+</ul>
+<p>D是由E计算得到的，D、E、L之间必须具备以下关系：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="number">1</span> &lt; D &lt; L，且 E*D mod L = <span class="number">1</span></div></pre></td></tr></table></figure>
+<p>这样N，E，D都求出来了，密钥对自然也就得到了。其中<strong>公钥(E, N)是可以任意公开的，私钥(D,N)必须妥善保管</strong>。</p>
+<p>下图形象地展示了密钥对的生成过程：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/rsa%E5%AF%86%E9%92%A5%E5%AF%B9.png" alt=""></p>
+<h3 id="对RSA的攻击"><a href="#对RSA的攻击" class="headerlink" title="对RSA的攻击"></a>对RSA的攻击</h3><p>关于RSA，我们还需要明白以下几点：</p>
+<ol>
+<li>公钥(E,N)和加密解密算法是公开的，任何人都知道。</li>
+<li>虽然私钥(D,N)是由公钥(E,N)计算而来，但是却不能由公钥算出私钥。</li>
+<li>质数p和q不能被RSA攻击者知道，把p和q交给密码破译者与把私钥交给密码破译者是等价的。</li>
+</ol>
+<h4 id="对N进行质因数分解"><a href="#对N进行质因数分解" class="headerlink" title="对N进行质因数分解"></a>对N进行质因数分解</h4><p>p和q是破译密码的一个关键点，而N作为公钥的一部分是公开的，且N = p*q。所以，由N求p和q只能通过<strong>将N进行质因数分解来完成</strong>。我们可以说：</p>
+<p><strong>只要发现了对于大整数进行质因数分解的高效算法，RSA就能够被破译</strong>。</p>
+<p>然而，我们目前还没有这样的算法出现，而且也尚未证明质因数分解是否真的是非常困难的问题，甚至也不知道是否存在一种分解质因数的简单方法。</p>
+<h4 id="中间人攻击"><a href="#中间人攻击" class="headerlink" title="中间人攻击"></a>中间人攻击</h4><p>除了通过分解N来进行攻击之外，还有一种<strong>中间人攻击（man-in-the-middle attack）</strong>的攻击方法。</p>
+<p>比如Alice想向Bob发送一封情书，于是先发邮件跟Bob要他的公钥，在Bob将自己公钥发送给Alice的过程中，中间人Mallory截获了邮件，并且将Bob的公钥替换为了自己的公钥，并且偷偷保存了Bob的公钥。</p>
+<p>Alice在收到Bob的公钥后（其实是Mallory的公钥），将”To Bob: I love you. From Alice”通过公钥加密，并发送给Bob，Mallory再次截获邮件，用自己的私钥解密（因为明文使用自己公钥加密的），看到了”To Bob: I love you. From Alice”。</p>
+<p>这时，Mallory冒充Alice重新写了一封邮件”To Bob: I hate you. From Alice”，并用Bob的公钥加密后发送给Bob。</p>
+<p>Bob收到邮件后用自己私钥解密，看到””To Bob: I hate you. From Alice”，伤心极了。</p>
+<h3 id="公钥密码的问题"><a href="#公钥密码的问题" class="headerlink" title="公钥密码的问题"></a>公钥密码的问题</h3><p>公钥密码虽然解决了私钥密码存在的密码配送问题，但是依旧有两个很大的问题；</p>
+<ol>
+<li>公钥密码的处理速度远远低于对称密码</li>
+<li>公钥密码难以抵御中间人攻击</li>
+</ol>
+<p>要解决第一个问题，可以使用混合密码系统，要解决第二个问题，则需要对公钥进行认证。</p>
+<h2 id="混合密码系统"><a href="#混合密码系统" class="headerlink" title="混合密码系统"></a>混合密码系统</h2><p>混合密码系统，即<code>hybrid cryptosystem</code>，<strong>用对称密码来加密明文，用公钥密码来加密对称密码中使用的密钥</strong>。</p>
+<p>混合密码系统使用了伪随机数生成器、私钥密码、公钥密码这3种技术。其加密和解密过程如下；</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/%E6%B7%B7%E5%90%88%E5%AF%86%E7%A0%81%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%8A%A0%E5%AF%86%E5%92%8C%E8%A7%A3%E5%AF%86.png" alt=""></p>
+<h2 id="单向散列函数"><a href="#单向散列函数" class="headerlink" title="单向散列函数"></a>单向散列函数</h2><p>单向散列函数可以用来<strong>获取消息的指纹</strong>，使用它可以确保信息的完整性（integrity），达到<strong>防篡改</strong>的功效。</p>
+<p>单向散列函数有一个输入和一个输出，输入成为<strong>消息（message）</strong>，输出称为<strong>散列值（hash value），摘要（digest），或者指纹（fingerprint）</strong>。</p>
+<h3 id="单向散列函数的性质"><a href="#单向散列函数的性质" class="headerlink" title="单向散列函数的性质"></a>单向散列函数的性质</h3><ol>
+<li>根据任意长度的消息计算出固定长度的散列值。比如SHA-1单向散列函数为例，其计算出的散列值永远是<strong>160bit（20字节）</strong>。</li>
+<li>能够快速计算出散列值。</li>
+<li>消息不同，散列值也不同。消息中哪怕只有1bit的不同，也必须有很高的概率产生不同的散列值。</li>
+<li>具备单向性，即无法通过散列值反算出消息。（注意，单向散列函数并不是一种加密函数，因为无法通过解密将散列值还原为原来的消息。</li>
+</ol>
+<h3 id="抗碰撞性"><a href="#抗碰撞性" class="headerlink" title="抗碰撞性"></a>抗碰撞性</h3><p>两个不同的消息产生同一个散列值的情况称为碰撞（collision）。难以发现碰撞的性质称为抗碰撞性（collision resistance）。</p>
+<p>单向散列函数必须确保要找到和该条消息具有相同散列值的另外一条消息是非常困难的，这一性质称为<strong>弱抗碰撞性</strong>。</p>
+<p>与弱抗碰撞性相对，要找到散列值相同的两条不同的消息是非常困难的，这一性质称为<strong>强抗碰撞性</strong>。</p>
+<p>密码技术中所使用的单向散列函数，不仅需要有弱抗碰撞性，还需要具有强抗碰撞性。</p>
+<h3 id="单向散列函数的实例"><a href="#单向散列函数的实例" class="headerlink" title="单向散列函数的实例"></a>单向散列函数的实例</h3><p>MD4和MD5，均能够产生128bit（16字节）的散列值。由于现在已经能够产生具有相同散列值的亮条不同的消息，因此它们已经不安全了。</p>
+<p>其中MD是消息摘要<code>Message Digest</code>的缩写。</p>
+<p>SHA-1、SHA-256、SHA-384、SHA-512都是由NIST设计的单向散列函数，它们的散列值长度分别为160bit，256bit，384bit、512bit。</p>
+<h3 id="单向单列函数无法解决的问题"><a href="#单向单列函数无法解决的问题" class="headerlink" title="单向单列函数无法解决的问题"></a>单向单列函数无法解决的问题</h3><p>单向散列函数能够辨别出“篡改”，但是无法辨别出“伪装”。</p>
+<p>当我们不仅需要验证文件的完整性，同时还有确认这个文件是否真的属于某个发送者时，仅靠完整性检查时不够的，我们还需要<strong>认证</strong>。</p>
+<p>用于认证的技术包括<strong>消息验证码</strong>和<strong>数字签名</strong>。消息认证码能够向通信对象保证消息没有被篡改，而数字签名不仅能够向通信对象保证消息没有被篡改，还能够向所有的第三方作出这样的保证。</p>
+<h2 id="消息认证码"><a href="#消息认证码" class="headerlink" title="消息认证码"></a>消息认证码</h2><p>消息认证码，即<code>Message authenticatioin code</code>，简称<code>MAC</code>，是一种确认完整性，并且对通信对象进行认证的技术。</p>
+<p>消息认证码的输入包括任意长度的消息和一个发送者与接受者之间共享的密钥，它可以输出固定长度的数据，这个数据称为MAC值。在使用消息认证码时，消息会和MAC值一起发送，然后消息接收者根据接收到的消息以及共享密钥计算出MAC值，并与接收到的MAC值进行比较。若相同，则通过认证。</p>
+<p>我们可以这样认为：消息认证码是一种<strong>与共享密钥相关联的单向散列函数</strong>，正式因为密钥的存在，才使得除了通信双方以外的冒充者无法通过认证。</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/%E5%8D%95%E5%90%91%E6%95%A3%E5%88%97%E5%87%BD%E6%95%B0%E5%92%8C%E6%B6%88%E6%81%AF%E8%AE%A4%E8%AF%81%E7%A0%81%E7%9A%84%E6%AF%94%E8%BE%83.png" alt=""></p>
+<h3 id="消息认证码的实现"><a href="#消息认证码的实现" class="headerlink" title="消息认证码的实现"></a>消息认证码的实现</h3><p>消息认证码可以使用单向散列函数来实现（<strong>HMAC</strong>），也可是使用DES、AES之类的分组密码来实现。具体的实现方法就不在这里详述。</p>
+<h3 id="消息认证码的问题"><a href="#消息认证码的问题" class="headerlink" title="消息认证码的问题"></a>消息认证码的问题</h3><h4 id="密码配送"><a href="#密码配送" class="headerlink" title="密码配送"></a>密码配送</h4><p>消息认证码需要发送者和接收者之间共享密钥，这个共享密钥不能被外人获取。</p>
+<p>这样一来，就像对称密码中共享密钥一样，就遇到了<strong>密钥配送问题</strong>，但是我们可以使用公钥密码来解决这个问题。</p>
+<h4 id="重放攻击"><a href="#重放攻击" class="headerlink" title="重放攻击"></a>重放攻击</h4><p>另外一个问题是，消息认证码可能遭遇到重放攻击（replay attack）。</p>
+<p>比如Alice银行向Bob银行发起了一笔转账请求：”向Mallory账户转账100万”。Mallory保存了这个请求的消息和MAC值，并且连续向Bob银行发送100次该请求，Bob银行每收到消息，就生成MAC值，与收到的MAC比较，总是相等，所以都会通过认证。最终Mallory的账户从100万变成了一亿。</p>
+<h4 id="对第三方证明-amp-防止否认"><a href="#对第三方证明-amp-防止否认" class="headerlink" title="对第三方证明&amp;防止否认"></a>对第三方证明&amp;防止否认</h4><p>假如Alice借给了Bob 1亿元，但是Bob却死不承认。于是Alice拿出Bob发给它的借条消息和MAC值，以及Alice和Bob共享的密钥，提供给第三方验证者Victor来帮忙证明消息确实是Bob发送的。</p>
+<p>但是纵然MAC值是正确的，Victor也无法确定消息发送者是Bob，因为Alice也可以发出这条消息（万一是Alice捏造的消息呢）。</p>
+<p>Bob可以向Victor声称”<strong>我没有发送过这条消息</strong>“，这样的行为就称为”<strong>否认（repudiation）</strong>。</p>
+<p>所以，消息认证码无法<strong>对第三方提供证明</strong>，也无法<strong>防止否认（nonrepudiation）</strong>。</p>
+<p>而数字签名可以解决这个问题。</p>
+<h2 id="数字签名"><a href="#数字签名" class="headerlink" title="数字签名"></a>数字签名</h2><p>数字签名就是通过将公钥密码“反过来”使用而实现的，在公钥密码机制中，公钥用来加密，私钥用来解密。但是在数字签名时，<strong>发送者通过自己的私钥生成消息签名（表示自己认可该消息），而接收者以及第三方验证者可以通过公钥来验证数字签名</strong>。</p>
+<p>其中，用私钥加密相当于生成签名，用公钥解密相当于验证签名。由于公钥时公开的，所以任何人都可以使用公钥来验证签名。</p>
+<h3 id="数字签名的方法"><a href="#数字签名的方法" class="headerlink" title="数字签名的方法"></a>数字签名的方法</h3><p>下面来介绍两种生成和验证数字签名的方法。</p>
+<ul>
+<li>直接对消息签名</li>
+</ul>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/%E7%9B%B4%E6%8E%A5%E5%AF%B9%E6%B6%88%E6%81%AF%E8%BF%9B%E8%A1%8C%E7%AD%BE%E5%90%8D.png" alt=""></p>
+<ul>
+<li>对消息的散列值签名</li>
+</ul>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/%E5%AF%B9%E6%B6%88%E6%81%AF%E7%9A%84%E6%95%A3%E5%88%97%E5%80%BC%E7%AD%BE%E5%90%8D.png" alt=""></p>
+<h3 id="如何防止否认"><a href="#如何防止否认" class="headerlink" title="如何防止否认"></a>如何防止否认</h3><p>消息认证码无法放置否认，那为什么数字签名可以防止否认呢？</p>
+<p>其实，数字签名是利用了“没有私钥的人事实上无法生成签名”这一性质来实现的，这意味着，<strong>只有持有该私钥的人，才能生成该签名</strong>。因此，发送者就无法声称“这个签名不是我的”了。</p>
+<h3 id="数字签名无法解决的问题"><a href="#数字签名无法解决的问题" class="headerlink" title="数字签名无法解决的问题"></a>数字签名无法解决的问题</h3><p>数字签名既可以识别出篡改和伪装，还可以防止否认。也就是说，我们同时实现了确认消息的完整性、进行认证和防止否认。</p>
+<p>然而，要正确使用数字签名，有一个重要前提，那就是<strong>用于验证签名的公钥必须属于真正的发送者</strong>。</p>
+<p>为了能够确认自己得到的公钥是否合法，我们需要使用<strong>公钥证书</strong>，所谓公钥证书，就是将公钥当作一条消息，由一个可信的第三方对其签名的结果。</p>
+<h2 id="证书"><a href="#证书" class="headerlink" title="证书"></a>证书</h2><p>公钥证书（Public-Key Certificate, PKC），简称证书（certificate），除了包含<strong>公钥</strong>之外，还记有姓名、组织、邮箱、地址等<strong>个人信息</strong>，以及认证机构（Certification Authority, CA)所施加的<strong>数字签名</strong>。</p>
+<p>认证机构，就是能够认定“公钥确实属于此人”并能够生成数字签名的个人或者组织。比如世界著名的<a href="https://www.symantec.com/" target="_blank" rel="external">Symantec</a>以及<a href="https://www.comodo.com/" target="_blank" rel="external">Comodo</a>公司。</p>
+<h3 id="证书的应用场景"><a href="#证书的应用场景" class="headerlink" title="证书的应用场景"></a>证书的应用场景</h3><p>下图展示了Alice通过认证机构（Trent）获取Bob的公钥，并且将消息经过Bob公钥加密并传递给Bob的过程。</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF.png" alt=""></p>
+<h3 id="证书标准规范X-509"><a href="#证书标准规范X-509" class="headerlink" title="证书标准规范X.509"></a>证书标准规范X.509</h3><p>证书是由认证机构颁发的，如果证书的格式千奇百怪就很不方便。鱼人，X.509规范便应运而生。</p>
+<p>X.509规范大体包含以下3部分内容：</p>
+<ol>
+<li>签名前的证书：签名对象的信息</li>
+<li>数字签名算法</li>
+<li>数字签名</li>
+</ol>
+<p>我们可以从浏览器中导出证书，保存成base64格式，大致如下：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/certificate.png" alt=""></p>
+<h3 id="公钥基础设施"><a href="#公钥基础设施" class="headerlink" title="公钥基础设施"></a>公钥基础设施</h3><p>仅指定证书的规范还不足以支持公钥的实际运用，我们还需要其他很多的规范，比如证书应该由谁来颁发，如何颁发，私钥泄露是应该如何作废证书等。这一系列的工作将交由公钥基础设施（Public-Key Infrastructre, PKI）来制定。</p>
+<p>上一小节我们提到的X.509这样的规范就是PKI的一种。关于PKI更详细的内容，这里就不详述。</p>
+<h2 id="基于口令的密码"><a href="#基于口令的密码" class="headerlink" title="基于口令的密码"></a>基于口令的密码</h2><p>基于口令的密码（Password Based Encryption, PBE），顾名思义，就是一种<strong>根据口令来生成密钥，并用该密钥进行加密的方法</strong>。</p>
+<p>在PBE中，我们通过口令和盐生成KEK，再用这个密钥来生成CEK，最后使用CEK来加密消息。</p>
+<h3 id="PBE的加密和解密"><a href="#PBE的加密和解密" class="headerlink" title="PBE的加密和解密"></a>PBE的加密和解密</h3><p>使用PBE加密的过程如下：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/PBE%E7%9A%84%E5%8A%A0%E5%AF%86%E8%BF%87%E7%A8%8B.png" alt=""></p>
+<p>使用PBE解密的过程如下：</p>
+<p><img src="http://7xvlvo.com1.z0.glb.clouddn.com/PBE%E8%A7%A3%E5%AF%86%E8%BF%87%E7%A8%8B.png" alt=""></p>
+<h3 id="盐的作用"><a href="#盐的作用" class="headerlink" title="盐的作用"></a>盐的作用</h3><p>盐是由伪随机数生成器生成的随机数。在生成KEK时，盐和口令一起被输入单向散列函数。</p>
+<p>盐是用来<strong>防御字典攻击的</strong>，在生成KEK时加盐，盐的长度越大，候选KEK的数量也就越大，暴力破解也就越难。</p>
+<h2 id="随机数"><a href="#随机数" class="headerlink" title="随机数"></a>随机数</h2><p>随机数是<strong>不可预测性（unpredictability）的源泉</strong>。回忆上面讲到的知识，以下场景可能会用到随机数：</p>
+<ol>
+<li>生成密钥：用于对称密码和消息认证码</li>
+<li>生成密钥对：用于公钥密码和数字签名</li>
+<li>生成初始化向量：用于分组密码的CBC、CFB、OFB模式</li>
+<li>生成nonce：用于分组密码的CTR模式</li>
+<li>生成盐：用于基于口令的密码（PBE）</li>
+</ol>
+<h3 id="随机数的性质"><a href="#随机数的性质" class="headerlink" title="随机数的性质"></a>随机数的性质</h3><p>我们将随机数的性质分为3类：</p>
+<ol>
+<li>随机性：不存在统计学偏差，是完全杂乱的序列（弱伪随机数）</li>
+<li>不可预测性：不能从过去的数列推测下一个出现的数（强伪随机数）</li>
+<li>不可重现性：除非将数列本身保存下来，否则不能重现相同的数列（真随机数）</li>
+</ol>
+<p>上面的性质从上到下，越来越严格。在密码技术中使用的随机数，仅具有随机性是远远不够的，至少还要具备不可预测性。</p>
+<p>另外，我们需要明白，<strong>仅靠软件是无法生成真随机数的</strong>，因为运行软件的计算机本身仅具备有限的内部状态。如果要生成具备不可重现性的随机数列，只能<strong>从不可重现的物理现象中</strong>获取信息，比如周围的温度和声音的变化，用户鼠标移动的位置信息等。</p>
+<h3 id="伪随机数生成器"><a href="#伪随机数生成器" class="headerlink" title="伪随机数生成器"></a>伪随机数生成器</h3><p>可以生成伪随机数的软件称为伪随机数生成器（Pseudo Random Number Generator，PRNG）。</p>
+<p>伪随机数生成器需要外部输入一个<strong>种子（seed）</strong>来生成伪随机数列。伪随机数种子是一串随机的比特序列，根据种子就可以生成专属于自己的伪随机数列，因此，<strong>种子需要自己保密</strong>。</p>
+<p>具体的伪随机数生成方法有很多种，比如线性同余法（不能用于密码技术）、单向散列函数法、密码法等，这里就不详述。</p>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>以上就是密码技术的基础部分，我们可以通过PGP（Pretty Good Privacy）这个将密码技术完美结合到一起的软件来进行实践。</p>
+<p>除此之外，关于密码技术的应用还有待继续学习，比如SSL/TLS（Secure Socket Layer/Transport Layer Security）的相关知识。</p>
+<p>总之，只有完美的密码，没有完美的人。在安全问题中，人就是一个特点巨大的弱点。所以，提高安全意识才是王道。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/乱七八糟/">乱七八糟</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/密码学/">密码学</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://xwjgo.github.io/2017/03/06/密码技术/" data-title="密码技术 | xuwenjiang" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2017/03/15/搭建hardware RAID5服务器/" title="搭建hardware RAID5服务器">
+  <strong>上一篇：</strong><br/>
+  <span>
+  搭建hardware RAID5服务器</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/03/01/webpack打包react应用/"  title="webpack打包react应用">
+ <strong>下一篇：</strong><br/> 
+ <span>webpack打包react应用
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2017/03/06/密码技术/" data-title="密码技术" data-url="http://xwjgo.github.io/2017/03/06/密码技术/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#密码学家的工具箱"><span class="toc-number">1.</span> <span class="toc-text">密码学家的工具箱</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#密码与信息安全常识"><span class="toc-number">2.</span> <span class="toc-text">密码与信息安全常识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#对称密码"><span class="toc-number">3.</span> <span class="toc-text">对称密码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#DES"><span class="toc-number">3.1.</span> <span class="toc-text">DES</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AES"><span class="toc-number">3.2.</span> <span class="toc-text">AES</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分组密码的模式"><span class="toc-number">3.3.</span> <span class="toc-text">分组密码的模式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#ECB模式（不应使用）"><span class="toc-number">3.3.1.</span> <span class="toc-text">ECB模式（不应使用）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#CBC模式（推荐使用）"><span class="toc-number">3.3.2.</span> <span class="toc-text">CBC模式（推荐使用）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#CFB模式（推荐用CTR代替）"><span class="toc-number">3.3.3.</span> <span class="toc-text">CFB模式（推荐用CTR代替）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#OFB模式（推荐用CTR代替）"><span class="toc-number">3.3.4.</span> <span class="toc-text">OFB模式（推荐用CTR代替）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#CTR模式（推荐使用）"><span class="toc-number">3.3.5.</span> <span class="toc-text">CTR模式（推荐使用）</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#公钥密码"><span class="toc-number">4.</span> <span class="toc-text">公钥密码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#RSA"><span class="toc-number">4.1.</span> <span class="toc-text">RSA</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#对RSA的攻击"><span class="toc-number">4.2.</span> <span class="toc-text">对RSA的攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#对N进行质因数分解"><span class="toc-number">4.2.1.</span> <span class="toc-text">对N进行质因数分解</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#中间人攻击"><span class="toc-number">4.2.2.</span> <span class="toc-text">中间人攻击</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#公钥密码的问题"><span class="toc-number">4.3.</span> <span class="toc-text">公钥密码的问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#混合密码系统"><span class="toc-number">5.</span> <span class="toc-text">混合密码系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#单向散列函数"><span class="toc-number">6.</span> <span class="toc-text">单向散列函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#单向散列函数的性质"><span class="toc-number">6.1.</span> <span class="toc-text">单向散列函数的性质</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#抗碰撞性"><span class="toc-number">6.2.</span> <span class="toc-text">抗碰撞性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#单向散列函数的实例"><span class="toc-number">6.3.</span> <span class="toc-text">单向散列函数的实例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#单向单列函数无法解决的问题"><span class="toc-number">6.4.</span> <span class="toc-text">单向单列函数无法解决的问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#消息认证码"><span class="toc-number">7.</span> <span class="toc-text">消息认证码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#消息认证码的实现"><span class="toc-number">7.1.</span> <span class="toc-text">消息认证码的实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#消息认证码的问题"><span class="toc-number">7.2.</span> <span class="toc-text">消息认证码的问题</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#密码配送"><span class="toc-number">7.2.1.</span> <span class="toc-text">密码配送</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#重放攻击"><span class="toc-number">7.2.2.</span> <span class="toc-text">重放攻击</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#对第三方证明-amp-防止否认"><span class="toc-number">7.2.3.</span> <span class="toc-text">对第三方证明&防止否认</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数字签名"><span class="toc-number">8.</span> <span class="toc-text">数字签名</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#数字签名的方法"><span class="toc-number">8.1.</span> <span class="toc-text">数字签名的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#如何防止否认"><span class="toc-number">8.2.</span> <span class="toc-text">如何防止否认</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数字签名无法解决的问题"><span class="toc-number">8.3.</span> <span class="toc-text">数字签名无法解决的问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#证书"><span class="toc-number">9.</span> <span class="toc-text">证书</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#证书的应用场景"><span class="toc-number">9.1.</span> <span class="toc-text">证书的应用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#证书标准规范X-509"><span class="toc-number">9.2.</span> <span class="toc-text">证书标准规范X.509</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#公钥基础设施"><span class="toc-number">9.3.</span> <span class="toc-text">公钥基础设施</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于口令的密码"><span class="toc-number">10.</span> <span class="toc-text">基于口令的密码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#PBE的加密和解密"><span class="toc-number">10.1.</span> <span class="toc-text">PBE的加密和解密</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#盐的作用"><span class="toc-number">10.2.</span> <span class="toc-text">盐的作用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#随机数"><span class="toc-number">11.</span> <span class="toc-text">随机数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#随机数的性质"><span class="toc-number">11.1.</span> <span class="toc-text">随机数的性质</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#伪随机数生成器"><span class="toc-number">11.2.</span> <span class="toc-text">伪随机数生成器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最后"><span class="toc-number">12.</span> <span class="toc-text">最后</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/javascript/" title="javascript">javascript<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/linux/" title="linux">linux<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/node-js/" title="node.js">node.js<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/乱七八糟/" title="乱七八糟">乱七八糟<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/前端/" title="前端">前端<sup>24</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构/" title="数据结构">数据结构<sup>2</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/javascript/" title="javascript">javascript<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/es6/" title="es6">es6<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/react/" title="react">react<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/express/" title="express">express<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/css/" title="css">css<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C">C<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/webpack/" title="webpack">webpack<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/File/" title="File">File<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/history/" title="history">history<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/redux/" title="redux">redux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/react-redux/" title="react-redux">react-redux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ajax/" title="ajax">ajax<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/TODOLIST/" title="TODOLIST">TODOLIST<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/node-js/" title="node.js">node.js<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/vue-js/" title="vue.js">vue.js<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/mongodb/" title="mongodb">mongodb<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">Links</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.ouc.edu.cn" target="_blank" title="中国海洋大学">中国海洋大学</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://weilai5432.github.io" target="_blank" title="魏来">魏来</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> No matter who gives up, i will not. <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/xwjgo" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="xuwenjiang">xuwenjiang</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"xwjgo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-93479022-1', 'xwjgo.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
