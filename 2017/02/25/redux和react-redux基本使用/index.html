@@ -18,7 +18,7 @@
 <meta property="og:url" content="http://xwjgo.github.io/2017/02/25/redux和react-redux基本使用/index.html">
 <meta property="og:site_name" content="xuwenjiang">
 <meta property="og:description" content="redux是一个状态管理工具，它可以不限于react的很多框架结合使用。本文就着重整理出readux的基本理念，以及react-redux在react应用中简单使用。 redux使用场景如果我们的应用交互很简单，那我们可能并不需要redux，如果非要牛刀小用，可能为带来更多的复杂性。 redux的使用场景为多交互、多数据源。 从组件角度看，下面几种场景可以考虑使用redux：  某个组件的状态，需">
-<meta property="og:updated_time" content="2017-09-14T15:27:56.000Z">
+<meta property="og:updated_time" content="2017-09-23T12:21:52.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="redux和react-redux基本应用">
 <meta name="twitter:description" content="redux是一个状态管理工具，它可以不限于react的很多框架结合使用。本文就着重整理出readux的基本理念，以及react-redux在react应用中简单使用。 redux使用场景如果我们的应用交互很简单，那我们可能并不需要redux，如果非要牛刀小用，可能为带来更多的复杂性。 redux的使用场景为多交互、多数据源。 从组件角度看，下面几种场景可以考虑使用redux：  某个组件的状态，需">
@@ -168,7 +168,7 @@
 <li>是stateless的，不需要和redux的store有直接的联系，一般被当作功能组件。</li>
 <li>需要程序员手写实现，比如Page，SideBar，UserInfo等组件。</li>
 </ol>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> Link = <span class="function">(<span class="params">&#123;active, children, onClick&#125;</span>) =&gt;</span> &#123;</div><div class="line">    <span class="keyword">if</span> (active) &#123;</div><div class="line">        <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">span</span>&gt;</span>&#123;children&#125;<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> (</div><div class="line">        &lt;a href=<span class="string">"#"</span> onClick=&#123;e =&gt; &#123;</div><div class="line">            e.preventDefault();</div><div class="line">            onClick();</div><div class="line">        &#125;&#125;&gt;</div><div class="line">            &#123;children&#125;</div><div class="line">        &lt;<span class="regexp">/a&gt;</span></div><div class="line"><span class="regexp">   );</span></div><div class="line"><span class="regexp">&#125;;</span></div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> Link = <span class="function">(<span class="params">&#123;active, children, onClick&#125;</span>) =&gt;</span> &#123;</div><div class="line">    <span class="keyword">if</span> (active) &#123;</div><div class="line">        <span class="keyword">return</span> &lt;span&gt;&#123;children&#125;&lt;/span&gt;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> (</div><div class="line">        &lt;a href=<span class="string">"#"</span> onClick=&#123;e =&gt; &#123;</div><div class="line">            e.preventDefault();</div><div class="line">            onClick();</div><div class="line">        &#125;&#125;&gt;</div><div class="line">            &#123;children&#125;</div><div class="line">        &lt;<span class="regexp">/a&gt;</span></div><div class="line"><span class="regexp">   );</span></div><div class="line"><span class="regexp">&#125;;</span></div></pre></td></tr></table></figure>
 <h3 id="Container组件"><a href="#Container组件" class="headerlink" title="Container组件"></a>Container组件</h3><p>Container组件与redux息息相关，并且通过subscribe redux的store来获取数据，通过dispatch redux的action来更新数据。</p>
 <p>它具有以下特点：</p>
 <ol>
@@ -246,7 +246,7 @@
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/前端/">前端</a>
+  <a class="article-category-link" href="/categories/react/">react</a>
 </div>
 
 
@@ -331,11 +331,15 @@
 		  
 		
 		  
+			<li><a href="/categories/react/" title="react">react<sup>4</sup></a></li>
+		  
+		
+		  
 			<li><a href="/categories/乱七八糟/" title="乱七八糟">乱七八糟<sup>3</sup></a></li>
 		  
 		
 		  
-			<li><a href="/categories/前端/" title="前端">前端<sup>24</sup></a></li>
+			<li><a href="/categories/前端/" title="前端">前端<sup>21</sup></a></li>
 		  
 		
 		  
@@ -360,11 +364,11 @@
 			
 		
 			
-				<li><a href="/tags/linux/" title="linux">linux<sup>4</sup></a></li>
+				<li><a href="/tags/react/" title="react">react<sup>4</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/react/" title="react">react<sup>3</sup></a></li>
+				<li><a href="/tags/linux/" title="linux">linux<sup>4</sup></a></li>
 			
 		
 			
