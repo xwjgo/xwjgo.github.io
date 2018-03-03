@@ -54,7 +54,7 @@
 				<h1 class="site-name"><a href="/" title="xuwenjiang">xuwenjiang</a></h1>
 				<h2 class="blog-motto">外面的繁华不是我的繁华</h2>
 			</div>
-			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
 			</a></div>
 			<nav class="animated">
 				<ul>
@@ -72,7 +72,7 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Search" />
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="搜索" />
 					</form>
 					
 					</li>
@@ -94,14 +94,14 @@
 		<a href="/about" title="xuwenjiang" target="_blank" itemprop="author">xuwenjiang</a>
 		
   <p class="article-time">
-    <time datetime="2016-09-15T02:08:03.000Z" itemprop="datePublished"> Published 2016-09-15</time>
+    <time datetime="2016-09-15T02:08:03.000Z" itemprop="datePublished"> 发表于 2016-09-15</time>
     
   </p>
 </header>
 	<div class="article-content">
 		
 		<div id="toc" class="toc-article">
-			<strong class="toc-title">Contents</strong>
+			<strong class="toc-title">文章目录</strong>
 		
 			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是Flex布局"><span class="toc-number">1.</span> <span class="toc-text">什么是Flex布局</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基本概念"><span class="toc-number">2.</span> <span class="toc-text">基本概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#容器的6个属性"><span class="toc-number">3.</span> <span class="toc-text">容器的6个属性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#flex-direction"><span class="toc-number">3.1.</span> <span class="toc-text">flex-direction</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#flex-wrap"><span class="toc-number">3.2.</span> <span class="toc-text">flex-wrap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#flex-flow"><span class="toc-number">3.3.</span> <span class="toc-text">flex-flow</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#justify-content"><span class="toc-number">3.4.</span> <span class="toc-text">justify-content</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#align-items"><span class="toc-number">3.5.</span> <span class="toc-text">align-items</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#align-content"><span class="toc-number">3.6.</span> <span class="toc-text">align-content</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#项目的6个属性"><span class="toc-number">4.</span> <span class="toc-text">项目的6个属性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#order"><span class="toc-number">4.1.</span> <span class="toc-text">order</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#flex-grow"><span class="toc-number">4.2.</span> <span class="toc-text">flex-grow</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#flex-shrink"><span class="toc-number">4.3.</span> <span class="toc-text">flex-shrink</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#flex-basis"><span class="toc-number">4.4.</span> <span class="toc-text">flex-basis</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#flex"><span class="toc-number">4.5.</span> <span class="toc-text">flex</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#align-self"><span class="toc-number">4.6.</span> <span class="toc-text">align-self</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他一些CSS属性"><span class="toc-number">5.</span> <span class="toc-text">其他一些CSS属性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#box-sizing"><span class="toc-number">5.1.</span> <span class="toc-text">box-sizing</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#box-shadow"><span class="toc-number">5.2.</span> <span class="toc-text">box-shadow</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#背景渐变"><span class="toc-number">5.3.</span> <span class="toc-text">背景渐变</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考资料"><span class="toc-number">6.</span> <span class="toc-text">参考资料</span></a></li></ol>
 		
@@ -233,23 +233,27 @@
 
 
 </div>  
-      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 
   <div id="toc" class="toc-aside">
-  <strong class="toc-title">Contents</strong>
+  <strong class="toc-title">文章目录</strong>
  
  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是Flex布局"><span class="toc-number">1.</span> <span class="toc-text">什么是Flex布局</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基本概念"><span class="toc-number">2.</span> <span class="toc-text">基本概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#容器的6个属性"><span class="toc-number">3.</span> <span class="toc-text">容器的6个属性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#flex-direction"><span class="toc-number">3.1.</span> <span class="toc-text">flex-direction</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#flex-wrap"><span class="toc-number">3.2.</span> <span class="toc-text">flex-wrap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#flex-flow"><span class="toc-number">3.3.</span> <span class="toc-text">flex-flow</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#justify-content"><span class="toc-number">3.4.</span> <span class="toc-text">justify-content</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#align-items"><span class="toc-number">3.5.</span> <span class="toc-text">align-items</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#align-content"><span class="toc-number">3.6.</span> <span class="toc-text">align-content</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#项目的6个属性"><span class="toc-number">4.</span> <span class="toc-text">项目的6个属性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#order"><span class="toc-number">4.1.</span> <span class="toc-text">order</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#flex-grow"><span class="toc-number">4.2.</span> <span class="toc-text">flex-grow</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#flex-shrink"><span class="toc-number">4.3.</span> <span class="toc-text">flex-shrink</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#flex-basis"><span class="toc-number">4.4.</span> <span class="toc-text">flex-basis</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#flex"><span class="toc-number">4.5.</span> <span class="toc-text">flex</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#align-self"><span class="toc-number">4.6.</span> <span class="toc-text">align-self</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他一些CSS属性"><span class="toc-number">5.</span> <span class="toc-text">其他一些CSS属性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#box-sizing"><span class="toc-number">5.1.</span> <span class="toc-text">box-sizing</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#box-shadow"><span class="toc-number">5.2.</span> <span class="toc-text">box-shadow</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#背景渐变"><span class="toc-number">5.3.</span> <span class="toc-text">背景渐变</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考资料"><span class="toc-number">6.</span> <span class="toc-text">参考资料</span></a></li></ol>
  
   </div>
 
 <div id="asidepart">
-<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
 <aside class="clearfix">
 
   
 <div class="categorieslist">
-	<p class="asidetitle">Categories</p>
+	<p class="asidetitle">分类</p>
 		<ul>
+		
+		  
+			<li><a href="/categories/graphql/" title="graphql">graphql<sup>1</sup></a></li>
+		  
 		
 		  
 			<li><a href="/categories/javascript/" title="javascript">javascript<sup>1</sup></a></li>
@@ -268,7 +272,7 @@
 		  
 		
 		  
-			<li><a href="/categories/乱七八糟/" title="乱七八糟">乱七八糟<sup>3</sup></a></li>
+			<li><a href="/categories/乱七八糟/" title="乱七八糟">乱七八糟<sup>4</sup></a></li>
 		  
 		
 		  
@@ -285,7 +289,7 @@
 
   
 <div class="tagslist">
-	<p class="asidetitle">Tags</p>
+	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
 		
 			
@@ -305,7 +309,7 @@
 			
 		
 			
-				<li><a href="/tags/webpack/" title="webpack">webpack<sup>2</sup></a></li>
+				<li><a href="/tags/C/" title="C">C<sup>2</sup></a></li>
 			
 		
 			
@@ -313,19 +317,19 @@
 			
 		
 			
-				<li><a href="/tags/C/" title="C">C<sup>2</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/express/" title="express">express<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/mongodb/" title="mongodb">mongodb<sup>1</sup></a></li>
+				<li><a href="/tags/webpack/" title="webpack">webpack<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/history/" title="history">history<sup>1</sup></a></li>
+				<li><a href="/tags/TODOLIST/" title="TODOLIST">TODOLIST<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/mongoose/" title="mongoose">mongoose<sup>1</sup></a></li>
 			
 		
 			
@@ -341,7 +345,7 @@
 			
 		
 			
-				<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+				<li><a href="/tags/history/" title="history">history<sup>1</sup></a></li>
 			
 		
 			
@@ -349,7 +353,7 @@
 			
 		
 			
-				<li><a href="/tags/node-js/" title="node.js">node.js<sup>1</sup></a></li>
+				<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
 			
 		
 			
@@ -357,7 +361,7 @@
 			
 		
 			
-				<li><a href="/tags/TODOLIST/" title="TODOLIST">TODOLIST<sup>1</sup></a></li>
+				<li><a href="/tags/mongodb/" title="mongodb">mongodb<sup>1</sup></a></li>
 			
 		
 			
@@ -373,7 +377,7 @@
 
 
   <div class="linkslist">
-  <p class="asidetitle">Links</p>
+  <p class="asidetitle">友情链接</p>
     <ul>
         
           <li>
@@ -392,7 +396,7 @@
 </div>
 
   <div class="rsspart">
-	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
 </div>
 
 </aside>
@@ -429,7 +433,7 @@
 		
 
 		<p class="copyright">
-		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
 		
 		<a href="/about" target="_blank" title="xuwenjiang">xuwenjiang</a>
 		
@@ -638,7 +642,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
 	</div>
 	<script src="/js/totop.js"></script>
 

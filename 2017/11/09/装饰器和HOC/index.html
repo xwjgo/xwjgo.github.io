@@ -49,7 +49,7 @@
 				<h1 class="site-name"><a href="/" title="xuwenjiang">xuwenjiang</a></h1>
 				<h2 class="blog-motto">外面的繁华不是我的繁华</h2>
 			</div>
-			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
 			</a></div>
 			<nav class="animated">
 				<ul>
@@ -67,7 +67,7 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Search" />
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="搜索" />
 					</form>
 					
 					</li>
@@ -89,14 +89,14 @@
 		<a href="/about" title="xuwenjiang" target="_blank" itemprop="author">xuwenjiang</a>
 		
   <p class="article-time">
-    <time datetime="2017-11-09T02:08:03.000Z" itemprop="datePublished"> Published 2017-11-09</time>
+    <time datetime="2017-11-09T02:08:03.000Z" itemprop="datePublished"> 发表于 2017-11-09</time>
     
   </p>
 </header>
 	<div class="article-content">
 		
 		<div id="toc" class="toc-article">
-			<strong class="toc-title">Contents</strong>
+			<strong class="toc-title">文章目录</strong>
 		
 			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#js中的装饰器"><span class="toc-number">1.</span> <span class="toc-text">js中的装饰器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#babel配置"><span class="toc-number">1.1.</span> <span class="toc-text">babel配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修饰类"><span class="toc-number">1.2.</span> <span class="toc-text">修饰类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修饰类的方法"><span class="toc-number">1.3.</span> <span class="toc-text">修饰类的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#装饰器可以实现哪些功能？"><span class="toc-number">1.4.</span> <span class="toc-text">装饰器可以实现哪些功能？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HOC"><span class="toc-number">2.</span> <span class="toc-text">HOC</span></a></li></ol>
 		
@@ -217,6 +217,14 @@
 	
 <nav class="article-nav clearfix">
  
+ <div class="prev" >
+ <a href="/2018/02/14/搭建graphql服务器/" title="搭建一个简单的graphql服务器">
+  <strong>上一篇：</strong><br/>
+  <span>
+  搭建一个简单的graphql服务器</span>
+</a>
+</div>
+
 
 <div class="next">
 <a href="/2017/10/26/XSS和CSRF/"  title="理解XSS和CSRF原理">
@@ -235,23 +243,27 @@
 
 
 </div>  
-      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 
   <div id="toc" class="toc-aside">
-  <strong class="toc-title">Contents</strong>
+  <strong class="toc-title">文章目录</strong>
  
  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#js中的装饰器"><span class="toc-number">1.</span> <span class="toc-text">js中的装饰器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#babel配置"><span class="toc-number">1.1.</span> <span class="toc-text">babel配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修饰类"><span class="toc-number">1.2.</span> <span class="toc-text">修饰类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修饰类的方法"><span class="toc-number">1.3.</span> <span class="toc-text">修饰类的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#装饰器可以实现哪些功能？"><span class="toc-number">1.4.</span> <span class="toc-text">装饰器可以实现哪些功能？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HOC"><span class="toc-number">2.</span> <span class="toc-text">HOC</span></a></li></ol>
  
   </div>
 
 <div id="asidepart">
-<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
 <aside class="clearfix">
 
   
 <div class="categorieslist">
-	<p class="asidetitle">Categories</p>
+	<p class="asidetitle">分类</p>
 		<ul>
+		
+		  
+			<li><a href="/categories/graphql/" title="graphql">graphql<sup>1</sup></a></li>
+		  
 		
 		  
 			<li><a href="/categories/javascript/" title="javascript">javascript<sup>1</sup></a></li>
@@ -270,7 +282,7 @@
 		  
 		
 		  
-			<li><a href="/categories/乱七八糟/" title="乱七八糟">乱七八糟<sup>3</sup></a></li>
+			<li><a href="/categories/乱七八糟/" title="乱七八糟">乱七八糟<sup>4</sup></a></li>
 		  
 		
 		  
@@ -287,7 +299,7 @@
 
   
 <div class="tagslist">
-	<p class="asidetitle">Tags</p>
+	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
 		
 			
@@ -307,7 +319,7 @@
 			
 		
 			
-				<li><a href="/tags/webpack/" title="webpack">webpack<sup>2</sup></a></li>
+				<li><a href="/tags/C/" title="C">C<sup>2</sup></a></li>
 			
 		
 			
@@ -315,19 +327,19 @@
 			
 		
 			
-				<li><a href="/tags/C/" title="C">C<sup>2</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/express/" title="express">express<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/mongodb/" title="mongodb">mongodb<sup>1</sup></a></li>
+				<li><a href="/tags/webpack/" title="webpack">webpack<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/history/" title="history">history<sup>1</sup></a></li>
+				<li><a href="/tags/TODOLIST/" title="TODOLIST">TODOLIST<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/mongoose/" title="mongoose">mongoose<sup>1</sup></a></li>
 			
 		
 			
@@ -343,7 +355,7 @@
 			
 		
 			
-				<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+				<li><a href="/tags/history/" title="history">history<sup>1</sup></a></li>
 			
 		
 			
@@ -351,7 +363,7 @@
 			
 		
 			
-				<li><a href="/tags/node-js/" title="node.js">node.js<sup>1</sup></a></li>
+				<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
 			
 		
 			
@@ -359,7 +371,7 @@
 			
 		
 			
-				<li><a href="/tags/TODOLIST/" title="TODOLIST">TODOLIST<sup>1</sup></a></li>
+				<li><a href="/tags/mongodb/" title="mongodb">mongodb<sup>1</sup></a></li>
 			
 		
 			
@@ -375,7 +387,7 @@
 
 
   <div class="linkslist">
-  <p class="asidetitle">Links</p>
+  <p class="asidetitle">友情链接</p>
     <ul>
         
           <li>
@@ -394,7 +406,7 @@
 </div>
 
   <div class="rsspart">
-	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
 </div>
 
 </aside>
@@ -431,7 +443,7 @@
 		
 
 		<p class="copyright">
-		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
 		
 		<a href="/about" target="_blank" title="xuwenjiang">xuwenjiang</a>
 		
@@ -640,7 +652,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
 	</div>
 	<script src="/js/totop.js"></script>
 

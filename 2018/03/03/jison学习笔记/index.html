@@ -1,0 +1,646 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>jison学习笔记 | xuwenjiang</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="xuwenjiang">
+    
+
+    
+    <meta name="description" content="最近在工作中遇到一个由js精度引发的bug：比如用户自定义了一个表单提交的校验条件SUM(a, b) &amp;lt;= 0.3，此时，当a=0.1，b=0.2的时候，SUM(a, b)的值为0.30000000000000004，这导致校验条件得不到满足，表单也无法提交。 原因分析这个根本原因是js中的数字全部是采用IEEE 754标准的64双精度浮点数。改规范定义了浮点数在内存中的表示格式：  符号位">
+<meta name="keywords" content="jison">
+<meta property="og:type" content="article">
+<meta property="og:title" content="jison学习笔记">
+<meta property="og:url" content="http://xwjgo.github.io/2018/03/03/jison学习笔记/index.html">
+<meta property="og:site_name" content="xuwenjiang">
+<meta property="og:description" content="最近在工作中遇到一个由js精度引发的bug：比如用户自定义了一个表单提交的校验条件SUM(a, b) &amp;lt;= 0.3，此时，当a=0.1，b=0.2的时候，SUM(a, b)的值为0.30000000000000004，这导致校验条件得不到满足，表单也无法提交。 原因分析这个根本原因是js中的数字全部是采用IEEE 754标准的64双精度浮点数。改规范定义了浮点数在内存中的表示格式：  符号位">
+<meta property="og:updated_time" content="2018-03-03T18:38:24.024Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="jison学习笔记">
+<meta name="twitter:description" content="最近在工作中遇到一个由js精度引发的bug：比如用户自定义了一个表单提交的校验条件SUM(a, b) &amp;lt;= 0.3，此时，当a=0.1，b=0.2的时候，SUM(a, b)的值为0.30000000000000004，这导致校验条件得不到满足，表单也无法提交。 原因分析这个根本原因是js中的数字全部是采用IEEE 754标准的64双精度浮点数。改规范定义了浮点数在内存中的表示格式：  符号位">
+
+    
+    <link rel="alternative" href="/atom.xml" title="xuwenjiang" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="xuwenjiang" title="xuwenjiang"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="xuwenjiang">xuwenjiang</a></h1>
+				<h2 class="blog-motto">外面的繁华不是我的繁华</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="/tags">标签</a></li>
+					
+						<li><a href="/categories">分类</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="搜索" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/03/03/jison学习笔记/" title="jison学习笔记" itemprop="url">jison学习笔记</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="xuwenjiang" target="_blank" itemprop="author">xuwenjiang</a>
+		
+  <p class="article-time">
+    <time datetime="2018-03-03T02:08:03.000Z" itemprop="datePublished"> 发表于 2018-03-03</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#原因分析"><span class="toc-number">1.</span> <span class="toc-text">原因分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#问题解决"><span class="toc-number">2.</span> <span class="toc-text">问题解决</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最开始的思路"><span class="toc-number">3.</span> <span class="toc-text">最开始的思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jison"><span class="toc-number">4.</span> <span class="toc-text">jison</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#上下文无关文法-Context-Free-Grammer"><span class="toc-number">4.1.</span> <span class="toc-text">上下文无关文法(Context Free Grammer)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#巴克斯范式-Backus-Normal-Form"><span class="toc-number">4.2.</span> <span class="toc-text">巴克斯范式(Backus Normal Form)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#非终止符（nonterminal-symbols-amp-终止符-terminal-symbols"><span class="toc-number">4.3.</span> <span class="toc-text">非终止符（nonterminal symbols) & 终止符(terminal symbols)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#语义值-semantic-value"><span class="toc-number">4.4.</span> <span class="toc-text">语义值(semantic value)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#语义动作-semantic-action"><span class="toc-number">4.5.</span> <span class="toc-text">语义动作(semantic action)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#左递归-OR-右递归"><span class="toc-number">4.6.</span> <span class="toc-text">左递归 OR 右递归</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#结合性-amp-优先级"><span class="toc-number">4.7.</span> <span class="toc-text">结合性 & 优先级</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jison的使用案例"><span class="toc-number">5.</span> <span class="toc-text">jison的使用案例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#写好grammer-file"><span class="toc-number">5.1.</span> <span class="toc-text">写好grammer file</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#生成parser"><span class="toc-number">5.2.</span> <span class="toc-text">生成parser</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用parser"><span class="toc-number">5.3.</span> <span class="toc-text">使用parser</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最后"><span class="toc-number">6.</span> <span class="toc-text">最后</span></a></li></ol>
+		
+		</div>
+		
+		<p>最近在工作中遇到一个由js精度引发的bug：比如用户自定义了一个表单提交的校验条件<code>SUM(a, b) &lt;= 0.3</code>，此时，当<code>a=0.1</code>，<code>b=0.2</code>的时候，<code>SUM(a, b)</code>的值为0.30000000000000004，这导致校验条件得不到满足，表单也无法提交。</p>
+<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><p>这个根本原因是js中的数字全部是采用IEEE 754标准的<code>64双精度浮点数</code>。改规范定义了浮点数在内存中的表示格式：</p>
+<ul>
+<li>符号位S：第0位，0表示正数，1表示负数。</li>
+<li>指数位E：第1到11位，共11位，存储指数部分。</li>
+<li>尾数位M：第12位到63位，52位，存储小数部分。</li>
+</ul>
+<p>举个栗子，比如-8.25这个浮点数转化为二进制为<code>-1000.01</code>，然后转化为二进制的科学计数法为<code>-1.00001*2^3</code>，总之，任何数字都可以表示为<code>(-1)^S*1.EEE*2^MMM</code>的形式。这样，对于<code>-1.00001*2^3</code>，我们只需要保存3个部分的值，即符号（正负），指数，尾数（即1.XXX后面的XXX，因为前面的1是固定的），这三部分正好分别存储在IEEE 754标准所定义的符号位S，指数位E，尾数位M中。</p>
+<p>由此可见，任何一个数字转化成二进制之后，其有效数字最长为53个二进制位（52位尾数加上前面的1）。这样某个数字的二进制表示如果比53位长，那么多余部分将无法表示。比如0.1和0.2这样的数字：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 0.1和0.2转化成二进制后，尾数部分是无限循环的，所以超出部分将会截去</span></div><div class="line">(<span class="number">0.1</span>).toString(<span class="number">2</span>);    <span class="comment">// "0.0001100110011001100110011001100110011001100110011001101"</span></div><div class="line">(<span class="number">0.2</span>).toString(<span class="number">2</span>);    <span class="comment">// "0.001100110011001100110011001100110011001100110011001101"</span></div></pre></td></tr></table></figure>
+<p>这样0.1+0.2的结果就是<code>0.0100110011001100110011001100110011001100110011001100</code>，转化成10进制就是<code>0.30000000000000004</code>。</p>
+<p>其实不只是加法，四则元算都会有这个问题:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 加法</span></div><div class="line"><span class="number">0.1</span> + <span class="number">0.2</span> == <span class="number">0.30000000000000004</span></div><div class="line"><span class="number">0.7</span> + <span class="number">0.1</span> == <span class="number">0.7999999999999999</span></div><div class="line"><span class="comment">// 减法</span></div><div class="line"><span class="number">1.5</span> - <span class="number">1.2</span> == <span class="number">0.30000000000000004</span></div><div class="line"><span class="number">0.3</span> - <span class="number">0.2</span> == <span class="number">0.09999999999999998</span></div><div class="line"><span class="comment">// 乘法</span></div><div class="line"><span class="number">19.9</span> * <span class="number">100</span> == <span class="number">1989.9999999999998</span></div><div class="line"><span class="number">39.7</span> * <span class="number">100</span> == <span class="number">3970.0000000000005</span></div><div class="line"><span class="comment">// 除法</span></div><div class="line"><span class="number">0.3</span> / <span class="number">0.1</span> == <span class="number">2.9999999999999996</span></div><div class="line"><span class="number">0.69</span> / <span class="number">10</span> == <span class="number">0.06899999999999999</span></div></pre></td></tr></table></figure>
+<p>综上，我们可以把这种js精度的问题归结为：js采用的IEEE 754标准无法准确表示某些浮点数，类似十进制中我们无法精确表示1/3，二进制中我们也无法精确表示0.1。</p>
+<h2 id="问题解决"><a href="#问题解决" class="headerlink" title="问题解决"></a>问题解决</h2><p>发现了问题的原因，我们就可以对症下药了。其实实际的计算结果与正确的计算结果的差距非常小，所以我们可以通过<code>toFixed</code>来根据指定的精度进行四舍五入，并且使用<code>parseFloat</code>来抹掉后面多余的0。比如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">parseFloat</span>((<span class="number">0.1</span> + <span class="number">0.2</span>).toFixed(<span class="number">10</span>));   <span class="comment">// 0.3</span></div><div class="line"><span class="built_in">parseFloat</span>((<span class="number">19.9</span> * <span class="number">100</span>).toFixed(<span class="number">10</span>));  <span class="comment">// 1990</span></div></pre></td></tr></table></figure>
+<p>这样只解决掉了最最基本的情况。但是在实际项目中，用户可以输入类似<code>IF(SUM(0.1, 0.2) &lt;= 0.3, 19.9 * 100, 0.69/10)</code>这样稍显复杂的表达式。在这个表达式中，任何一个四则运算都可能导致精度问题。因此，我们解决问题的重心就转移到了<strong>如何劫持（或者是重载）这个表达式中的所有加减乘除运算符，并且让每个运算符都走自己实现的方法</strong>。目前es5中并没有提供重载运算符的工具，所以我们必须自己解析这个表达式。</p>
+<h2 id="最开始的思路"><a href="#最开始的思路" class="headerlink" title="最开始的思路"></a>最开始的思路</h2><p>说到解析，一般有3个步骤：</p>
+<ul>
+<li>将源码转化成AST(Abstract Syntax Tree)，即抽象语法树。对应工具为<a href="http://esprima.org/index.html" target="_blank" rel="external">esprima</a></li>
+<li>遍历并更新AST。对应工具<a href="https://github.com/estools/estraverse" target="_blank" rel="external">estraverse</a></li>
+<li>将AST重新生成源码。对应工具<a href="https://github.com/estools/escodegen" target="_blank" rel="external">escodegen</a></li>
+</ul>
+<p>其中esprima提供了一个在线转AST的<a href="http://esprima.org/demo/parse.html" target="_blank" rel="external">工具</a>，可以一览AST的面貌。</p>
+<p>但是最终我并没采用这一套方法，主要原因是我现在要解析的只是一些函数和基本表达式，并非全部的js语法，所以这套工具略显沉重。另外，有了AST之后，我们还需要手动遍历AST来劫持加减乘除运算符，这样的算法不太容易实现。</p>
+<p>还好后来发现了jison这个工具，恰好可以满足我们的需求。</p>
+<h2 id="jison"><a href="#jison" class="headerlink" title="jison"></a>jison</h2><p><a href="https://github.com/zaach/jison" target="_blank" rel="external">jison</a>就是<a href="http://dinosaur.compilertools.net/bison/bison_4.html#SEC7" target="_blank" rel="external">Bison</a>的js实现。它可以根据我们定义的grammer来生成parser，然后我们可以使用parser来解析表达式。由于jison的文档较少，所以，建议参看Bison的文档。下面是我看Bison文档过程中记录的一些要点：</p>
+<h3 id="上下文无关文法-Context-Free-Grammer"><a href="#上下文无关文法-Context-Free-Grammer" class="headerlink" title="上下文无关文法(Context Free Grammer)"></a>上下文无关文法(Context Free Grammer)</h3><p>Bison如果想要解析一种语言，那么这种语言必须能够被上下文无关文法来描述。这意味着我们需要指定一个或者多个语法分组（syntactic grouping)，并且给出这些语法分组的规则（rules)。比如在c语言中，“一个表达式可能由一个减号和左右两个表达式来组成”，“一个表达式可以是一个整数”，由这两条规则可以看出，规则往往是递归的，并且必须有一条规则可以结束递归。</p>
+<h3 id="巴克斯范式-Backus-Normal-Form"><a href="#巴克斯范式-Backus-Normal-Form" class="headerlink" title="巴克斯范式(Backus Normal Form)"></a>巴克斯范式(Backus Normal Form)</h3><p>巴克斯范式是最常用的描述这些rules的系统，简称BNF。任何使用BNF来描述的语法，都是上下文无关文法。而BNF可以作为Bison的输入。</p>
+<h3 id="非终止符（nonterminal-symbols-amp-终止符-terminal-symbols"><a href="#非终止符（nonterminal-symbols-amp-终止符-terminal-symbols" class="headerlink" title="非终止符（nonterminal symbols) &amp; 终止符(terminal symbols)"></a>非终止符（nonterminal symbols) &amp; 终止符(terminal symbols)</h3><p>在描述rules的语法中，非终止符是那些由更小的单元组成的符号，在Bison中被称为<code>grouping</code>，一般用小写字母表示，比如’expression’, ‘args’等。</p>
+<p>终止符指那些不能被降解的符号，在Bison中被称为<code>token</code>，一般用大些字母表示，比如’NUMBER’, ‘FUNCTION’等。但是如果终止符只有一个字符，类似’+’, ‘-‘，那么我们就可以用完全一样的’+’, ‘-‘来表示。</p>
+<h3 id="语义值-semantic-value"><a href="#语义值-semantic-value" class="headerlink" title="语义值(semantic value)"></a>语义值(semantic value)</h3><p>每个token，都可以有一个对应的语义值。比如input中的一个token，可能对应的token type为NUMBER，对应的语义值为200；而另外一个input token，对应的token type可能也是NUMBER，但是对应的语义值为5000。</p>
+<p>grouping也是一样的，比如一个expression可以有对应的语义值为5000。</p>
+<h3 id="语义动作-semantic-action"><a href="#语义动作-semantic-action" class="headerlink" title="语义动作(semantic action)"></a>语义动作(semantic action)</h3><p>在Bison中，每个rule都可以对应一个<code>action</code>，这样我们就可以基于input来产生输出。action可以写C语言（在jison中则是js），解析input的过程中，每次匹配到这个rule，就会执行对应的action。大多数情况下，action就是为了计算某个grouping的semantic value，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">expr: expr &apos;+&apos; expr &#123;$$ = $1 + $3&#125; ;</div></pre></td></tr></table></figure>
+<p>上面的grammer中，$$代表第一个expr这个grouping的语义值，$1，$3则分别代表第二个和第三个expr的语义值。</p>
+<p>action可以省略，Bison会自动添加<code>$$ = $1</code>。</p>
+<p>如果有多个rules，那么语法将会是这样:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">result: component1 &#123;action1&#125;</div><div class="line">    | component2 &#123;action2&#125;</div><div class="line">    | component3 &#123;action3&#125;</div><div class="line">;</div></pre></td></tr></table></figure>
+<p>不仅action可以被省略，其实component也可以被省略，这时代表匹配到<strong>空字符串</strong>，但是注意，此时默认的action将毫无意义，所以需要手动指定。写法通常如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">result: <span class="comment">/* empty */</span> &#123;action1&#125;</div><div class="line">    | component2 &#123;action2&#125;</div><div class="line">;</div></pre></td></tr></table></figure>
+<h3 id="左递归-OR-右递归"><a href="#左递归-OR-右递归" class="headerlink" title="左递归 OR 右递归"></a>左递归 OR 右递归</h3><p>递归是指在component中又实用result grouping，而左递归和右递归可以看下面案例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">// good</div><div class="line">// 左递归：第三行的args是作为最左边的component</div><div class="line">args: /* empty */ &#123;$$ = [];&#125;</div><div class="line">    | e &#123;$$ = $1;&#125;</div><div class="line">    | args &apos;,&apos; e &#123;$1.push($3); $$ = $1;&#125;</div><div class="line">;</div><div class="line">// bad</div><div class="line">// 右递归：第三行的args是作为最右边的component</div><div class="line">args: /* empty */ &#123;$$ = [];&#125;</div><div class="line">    | e &#123;$$ = $1;&#125;</div><div class="line">    | e &apos;,&apos; args &#123;$3.push($1); $$ = $3;&#125;</div><div class="line">;</div></pre></td></tr></table></figure>
+<p>Bison文档中推荐的方式是永远左递归。</p>
+<h3 id="结合性-amp-优先级"><a href="#结合性-amp-优先级" class="headerlink" title="结合性 &amp; 优先级"></a>结合性 &amp; 优先级</h3><p><code>%left</code>和<code>%right</code>代表改运算符是左结合还是右结合。</p>
+<p>行号越靠前，运算符优先级越低。</p>
+<p>关于js中的运算符优先级和结合性，可以参考<a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence" target="_blank" rel="external">这里</a>。</p>
+<h2 id="jison的使用案例"><a href="#jison的使用案例" class="headerlink" title="jison的使用案例"></a>jison的使用案例</h2><p>了解了Bison中一些基础概念之后，我们可以将它们迁移到jison中来。这个小节来尝试使用jison来完成我们的公式解析。</p>
+<h3 id="写好grammer-file"><a href="#写好grammer-file" class="headerlink" title="写好grammer file"></a>写好grammer file</h3><p>以下为FormulaCalc.jison的内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div></pre></td><td class="code"><pre><div class="line">/* lexical grammar */</div><div class="line">%lex</div><div class="line">%%</div><div class="line"></div><div class="line">\s+                                                            /* skip whitespace */</div><div class="line">[0-9]+(\.[0-9]+)?\b                                            return &apos;NUMBER&apos;</div><div class="line">\&quot;(\\\&quot;|[^&quot;])*\&quot;                                               return &apos;STRING&apos;</div><div class="line">\&apos;(\\\&apos;|[^&apos;])*\&apos;                                               return &apos;STRING&apos;</div><div class="line">(true|false)                                                   return &apos;BOOLEAN&apos;</div><div class="line">[A-Za-z]+(?=\()                                                return &apos;FUNC&apos;</div><div class="line">(&quot;===&quot;|&quot;!==&quot;|&quot;&gt;=&quot;|&quot;&lt;=&quot;|&quot;==&quot;|&quot;!=&quot;|&quot;&gt;&quot;|&quot;&lt;&quot;)                      return &apos;COMPARE_OP&apos;</div><div class="line">&quot;!&quot;                                                            return &apos;!&apos;</div><div class="line">&quot;&amp;&amp;&quot;                                                           return &apos;&amp;&amp;&apos;</div><div class="line">&quot;||&quot;                                                           return &apos;||&apos;</div><div class="line">&quot;*&quot;                                                            return &apos;*&apos;</div><div class="line">&quot;/&quot;                                                            return &apos;/&apos;</div><div class="line">&quot;-&quot;                                                            return &apos;-&apos;</div><div class="line">&quot;+&quot;                                                            return &apos;+&apos;</div><div class="line">&quot;[&quot;                                                            return &apos;[&apos;</div><div class="line">&quot;]&quot;                                                            return &apos;]&apos;</div><div class="line">&quot;(&quot;                                                            return &apos;(&apos;</div><div class="line">&quot;)&quot;                                                            return &apos;)&apos;</div><div class="line">&quot;,&quot;                                                            return &apos;,&apos;</div><div class="line">&lt;&lt;EOF&gt;&gt;                                                        return &apos;EOF&apos;</div><div class="line">.                                                              return &apos;INVALID&apos;</div><div class="line"></div><div class="line">/lex</div><div class="line"></div><div class="line">/* operator associations and precedence */</div><div class="line"></div><div class="line">%left &apos;||&apos;</div><div class="line">%left &apos;&amp;&amp;&apos;</div><div class="line">%left COMPARE_OP</div><div class="line">%left &apos;+&apos; &apos;-&apos;</div><div class="line">%left &apos;*&apos; &apos;/&apos;</div><div class="line">%right UNARY</div><div class="line">%right &apos;!&apos;</div><div class="line"></div><div class="line">%start expressions</div><div class="line"></div><div class="line">%% /* language grammar */</div><div class="line"></div><div class="line">expressions</div><div class="line">    : e EOF</div><div class="line">        &#123; return $1; &#125;</div><div class="line">    ;</div><div class="line"></div><div class="line">e</div><div class="line">    : e &apos;+&apos; e</div><div class="line">        &#123;$$ = FormulaCalcParser.plus($1, $3);&#125;</div><div class="line">    | e &apos;-&apos; e</div><div class="line">        &#123;$$ = FormulaCalcParser.minus($1, $3);&#125;</div><div class="line">    | e &apos;*&apos; e</div><div class="line">        &#123;$$ = FormulaCalcParser.multiple($1, $3);&#125;</div><div class="line">    | e &apos;/&apos; e</div><div class="line">        &#123;$$ = FormulaCalcParser.divide($1, $3);&#125;</div><div class="line">    | e COMPARE_OP e</div><div class="line">        &#123;$$ = eval($1 + $2 + $3);&#125;</div><div class="line">    | &apos;!&apos; e</div><div class="line">        &#123;$$ = eval($1 + $2);&#125;</div><div class="line">    | e &apos;&amp;&amp;&apos; e</div><div class="line">        &#123;$$ = eval($1 + $2 + $3);&#125;</div><div class="line">    | e &apos;||&apos; e</div><div class="line">        &#123;$$ = eval($1 + $2 + $3);&#125;</div><div class="line">    | &apos;-&apos; e  %prec UNARY</div><div class="line">        &#123;$$ = -$2;&#125;</div><div class="line">    | &apos;+&apos; e  %prec UNARY</div><div class="line">        &#123;$$ = +$2;&#125;</div><div class="line">    | &apos;(&apos; e &apos;)&apos;</div><div class="line">        &#123;$$ = $2;&#125;</div><div class="line">    | NUMBER</div><div class="line">        &#123;$$ = Number($1);&#125;</div><div class="line">    | STRING</div><div class="line">        &#123;$$ = $1.substring(1, $1.length - 1);&#125;</div><div class="line">    | BOOLEAN</div><div class="line">        &#123;$$ = $1 === &apos;true&apos; ? true : false;&#125;</div><div class="line">    | &apos;[&apos; args &apos;]&apos;</div><div class="line">        &#123;$$ = $2;&#125;</div><div class="line">    | FUNC &apos;(&apos; args &apos;)&apos;</div><div class="line">        &#123;$$ = FormulaCalcParser.applyFunc($1, $3);&#125;</div><div class="line">    ;</div><div class="line"></div><div class="line">args</div><div class="line">    : /* empty */</div><div class="line">        &#123;$$ = [];&#125;</div><div class="line">    | e</div><div class="line">        &#123;$$ = [$1];&#125;</div><div class="line">    | args &apos;,&apos; e</div><div class="line">        &#123;</div><div class="line">            $1.push($3);</div><div class="line">            $$ = $1;</div><div class="line">        &#125;</div><div class="line">    ;</div></pre></td></tr></table></figure>
+<p>以上有几个需要注意的点：</p>
+<ul>
+<li>第一部分的lex grammer，左边为正则表达式，右边为对应的token。根据输入来匹配时是从上到下，从左到右的，所以正则的顺序需要注意。</li>
+<li>最后一部分的language grammer中描述了rules及其对应的action，其中<code>%prec</code>表示’-‘和’+’的运算符优先级和第二部分定义的UNARY相同。</li>
+<li>其中FormulaParser是自己实现的一个对象，其中的加减乘除对应的方法，都对运行结果进行了精度处理。</li>
+</ul>
+<h3 id="生成parser"><a href="#生成parser" class="headerlink" title="生成parser"></a>生成parser</h3><p>有了grammer file，jison就可以根据它来生成parser：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">jison FormulaCalc.jison</div></pre></td></tr></table></figure>
+<p>这条命令会在当前目录生成<code>FormulaCalc.js</code>文件，即我们语言的parser。</p>
+<h3 id="使用parser"><a href="#使用parser" class="headerlink" title="使用parser"></a>使用parser</h3><p>最后将<code>FormulaCalc.js</code>打包到项目代码中，然后就可以调用<code>FormulaCalc.parse(input)</code>来解析我们的表达式了。效果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">FormulaCalc.parse(&apos;&quot;foobar&quot;&apos;);    // &quot;foobar&quot;</div><div class="line">FormulaCalc.parse(&apos;0.1 + 0.2&apos;);   // 0.3</div><div class="line">FormulaCalc.parse(&apos;IF(SUM(0.1, 0.2) &lt;= 0.3, true, false)&apos;);   // true</div></pre></td></tr></table></figure>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>以上就是我对jison的初步认识，更多的概念，还是去读Bison的文档吧!</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/乱七八糟/">乱七八糟</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/jison/">jison</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://xwjgo.github.io/2018/03/03/jison学习笔记/" data-title="jison学习笔记 | xuwenjiang" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2018/02/14/搭建graphql服务器/"  title="搭建一个简单的graphql服务器">
+ <strong>下一篇：</strong><br/> 
+ <span>搭建一个简单的graphql服务器
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2018/03/03/jison学习笔记/" data-title="jison学习笔记" data-url="http://xwjgo.github.io/2018/03/03/jison学习笔记/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#原因分析"><span class="toc-number">1.</span> <span class="toc-text">原因分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#问题解决"><span class="toc-number">2.</span> <span class="toc-text">问题解决</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最开始的思路"><span class="toc-number">3.</span> <span class="toc-text">最开始的思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jison"><span class="toc-number">4.</span> <span class="toc-text">jison</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#上下文无关文法-Context-Free-Grammer"><span class="toc-number">4.1.</span> <span class="toc-text">上下文无关文法(Context Free Grammer)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#巴克斯范式-Backus-Normal-Form"><span class="toc-number">4.2.</span> <span class="toc-text">巴克斯范式(Backus Normal Form)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#非终止符（nonterminal-symbols-amp-终止符-terminal-symbols"><span class="toc-number">4.3.</span> <span class="toc-text">非终止符（nonterminal symbols) & 终止符(terminal symbols)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#语义值-semantic-value"><span class="toc-number">4.4.</span> <span class="toc-text">语义值(semantic value)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#语义动作-semantic-action"><span class="toc-number">4.5.</span> <span class="toc-text">语义动作(semantic action)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#左递归-OR-右递归"><span class="toc-number">4.6.</span> <span class="toc-text">左递归 OR 右递归</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#结合性-amp-优先级"><span class="toc-number">4.7.</span> <span class="toc-text">结合性 & 优先级</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jison的使用案例"><span class="toc-number">5.</span> <span class="toc-text">jison的使用案例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#写好grammer-file"><span class="toc-number">5.1.</span> <span class="toc-text">写好grammer file</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#生成parser"><span class="toc-number">5.2.</span> <span class="toc-text">生成parser</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用parser"><span class="toc-number">5.3.</span> <span class="toc-text">使用parser</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最后"><span class="toc-number">6.</span> <span class="toc-text">最后</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/graphql/" title="graphql">graphql<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/javascript/" title="javascript">javascript<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/linux/" title="linux">linux<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/node-js/" title="node.js">node.js<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/react/" title="react">react<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/乱七八糟/" title="乱七八糟">乱七八糟<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/前端/" title="前端">前端<sup>23</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构/" title="数据结构">数据结构<sup>2</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/javascript/" title="javascript">javascript<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/es6/" title="es6">es6<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/react/" title="react">react<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C">C<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/css/" title="css">css<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/express/" title="express">express<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/webpack/" title="webpack">webpack<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/TODOLIST/" title="TODOLIST">TODOLIST<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/mongoose/" title="mongoose">mongoose<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ajax/" title="ajax">ajax<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/redux/" title="redux">redux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/react-redux/" title="react-redux">react-redux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/history/" title="history">history<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/File/" title="File">File<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/vue-js/" title="vue.js">vue.js<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/mongodb/" title="mongodb">mongodb<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.ouc.edu.cn" target="_blank" title="中国海洋大学">中国海洋大学</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://weilai5432.github.io" target="_blank" title="魏来">魏来</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> No matter who gives up, i will not. <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/xwjgo" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
+		
+		<a href="/about" target="_blank" title="xuwenjiang">xuwenjiang</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"xwjgo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-93479022-1', 'xwjgo.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
