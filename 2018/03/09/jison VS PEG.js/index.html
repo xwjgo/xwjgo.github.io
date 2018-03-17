@@ -51,7 +51,7 @@
 				<h1 class="site-name"><a href="/" title="xuwenjiang">xuwenjiang</a></h1>
 				<h2 class="blog-motto">外面的繁华不是我的繁华</h2>
 			</div>
-			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
 			</a></div>
 			<nav class="animated">
 				<ul>
@@ -69,7 +69,7 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="搜索" />
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Search" />
 					</form>
 					
 					</li>
@@ -91,14 +91,14 @@
 		<a href="/about" title="xuwenjiang" target="_blank" itemprop="author">xuwenjiang</a>
 		
   <p class="article-time">
-    <time datetime="2018-03-09T02:08:03.000Z" itemprop="datePublished"> 发表于 2018-03-09</time>
+    <time datetime="2018-03-09T02:08:03.000Z" itemprop="datePublished"> Published 2018-03-09</time>
     
   </p>
 </header>
 	<div class="article-content">
 		
 		<div id="toc" class="toc-article">
-			<strong class="toc-title">文章目录</strong>
+			<strong class="toc-title">Contents</strong>
 		
 			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一些基础概念"><span class="toc-number">2.</span> <span class="toc-text">一些基础概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#parser"><span class="toc-number">2.1.</span> <span class="toc-text">parser</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#grammar"><span class="toc-number">2.2.</span> <span class="toc-text">grammar</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jison和PEG-js的异同"><span class="toc-number">3.</span> <span class="toc-text">jison和PEG.js的异同</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#相同点"><span class="toc-number">3.1.</span> <span class="toc-text">相同点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#不同点"><span class="toc-number">3.2.</span> <span class="toc-text">不同点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#性能对比"><span class="toc-number">4.</span> <span class="toc-text">性能对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最后"><span class="toc-number">5.</span> <span class="toc-text">最后</span></a></li></ol>
 		
@@ -155,7 +155,7 @@
 </ul>
 <p>在生成了<code>JisonCalc.js</code>和<code>PegCalc.js</code>这两个parser后，我们可以在项目中直接引入使用并测试，如下：</p>
 <p>index.html:</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">&lt;script type=<span class="string">"text/javascript"</span> src=<span class="string">"./parser/JisonCalc.js"</span>&gt;&lt;/script&gt;</div><div class="line">&lt;script type=<span class="string">"text/javascript"</span> src=<span class="string">"./parser/PegCalc.js"</span>&gt;&lt;/script&gt;</div><div class="line">&lt;script type=<span class="string">"text/javscript"</span>&gt;</div><div class="line"><span class="keyword">var</span> testExpr = <span class="string">"-1.25 + 23.56*10*(10 + 4/(2-1.5)) + 9/3.2*8"</span>, <span class="comment">// 4262.5</span></div><div class="line">    testTimes = <span class="number">100000</span>;</div><div class="line"><span class="comment">// 解析结果验证</span></div><div class="line">JisonCalc.parse(testExpr); <span class="comment">// 4262.5</span></div><div class="line">PegCalc.parser(testExpr);  <span class="comment">// 4262.5</span></div><div class="line"><span class="built_in">eval</span>(testExpr);            <span class="comment">// 4262.5</span></div><div class="line"><span class="comment">// jison测试</span></div><div class="line"><span class="built_in">console</span>.time();</div><div class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; testTimes; i ++) &#123;</div><div class="line">    JisonCalc.parse(testExpr);</div><div class="line">&#125;;</div><div class="line"><span class="built_in">console</span>.timeEnd(); <span class="comment">// 2456.34814453125ms</span></div><div class="line"><span class="comment">// PEG.js测试</span></div><div class="line"><span class="built_in">console</span>.time();</div><div class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; testTimes; i ++) &#123;</div><div class="line">    PegCalc.parse(testExpr);</div><div class="line">&#125;;</div><div class="line"><span class="built_in">console</span>.timeEnd(); <span class="comment">// 1191.030029296875ms</span></div><div class="line">&lt;<span class="regexp">/script&gt;</span></div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">&lt;script type=<span class="string">"text/javascript"</span> src=<span class="string">"./parser/JisonCalc.js"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></div><div class="line">&lt;script type=<span class="string">"text/javascript"</span> src=<span class="string">"./parser/PegCalc.js"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></div><div class="line">&lt;script type=<span class="string">"text/javscript"</span>&gt;</div><div class="line"><span class="keyword">var</span> testExpr = <span class="string">"-1.25 + 23.56*10*(10 + 4/(2-1.5)) + 9/3.2*8"</span>, <span class="comment">// 4262.5</span></div><div class="line">    testTimes = <span class="number">100000</span>;</div><div class="line"><span class="comment">// 解析结果验证</span></div><div class="line">JisonCalc.parse(testExpr); <span class="comment">// 4262.5</span></div><div class="line">PegCalc.parser(testExpr);  <span class="comment">// 4262.5</span></div><div class="line"><span class="built_in">eval</span>(testExpr);            <span class="comment">// 4262.5</span></div><div class="line"><span class="comment">// jison测试</span></div><div class="line"><span class="built_in">console</span>.time();</div><div class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; testTimes; i ++) &#123;</div><div class="line">    JisonCalc.parse(testExpr);</div><div class="line">&#125;;</div><div class="line"><span class="built_in">console</span>.timeEnd(); <span class="comment">// 2456.34814453125ms</span></div><div class="line"><span class="comment">// PEG.js测试</span></div><div class="line"><span class="built_in">console</span>.time();</div><div class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; testTimes; i ++) &#123;</div><div class="line">    PegCalc.parse(testExpr);</div><div class="line">&#125;;</div><div class="line"><span class="built_in">console</span>.timeEnd(); <span class="comment">// 1191.030029296875ms</span></div><div class="line">&lt;<span class="regexp">/script&gt;</span></div></pre></td></tr></table></figure>
 <p>从上面可以看出，在对同一个公式进行10万次解析的情况下，PEG.js的耗时约等于jison的1/2，在解析速度方面，PEG.js显然更具优势。</p>
 <h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>jison和PEG.js各有自己的优点，在grammar的写作层面，个人感觉jison要更加容易一点。在生成parser时，PEGjs提供了较多的配置项，parser的大小两者相差无几。此外，jison更加稳定且在很多知名项目中使用，而PEG.js在不断更新中，且有更快的解析速度。如果不考虑大批量解析公式的场景，可能jison更适合用在生产环境中。</p>
   
@@ -193,6 +193,14 @@
 	
 <nav class="article-nav clearfix">
  
+ <div class="prev" >
+ <a href="/2018/03/17/js中精度问题及解决方案/" title="js中精度问题以及解决方案">
+  <strong>上一篇：</strong><br/>
+  <span>
+  js中精度问题以及解决方案</span>
+</a>
+</div>
+
 
 <div class="next">
 <a href="/2018/03/03/jison学习笔记/"  title="jison学习笔记">
@@ -211,22 +219,22 @@
 
 
 </div>  
-      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
 
   <div id="toc" class="toc-aside">
-  <strong class="toc-title">文章目录</strong>
+  <strong class="toc-title">Contents</strong>
  
  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一些基础概念"><span class="toc-number">2.</span> <span class="toc-text">一些基础概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#parser"><span class="toc-number">2.1.</span> <span class="toc-text">parser</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#grammar"><span class="toc-number">2.2.</span> <span class="toc-text">grammar</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jison和PEG-js的异同"><span class="toc-number">3.</span> <span class="toc-text">jison和PEG.js的异同</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#相同点"><span class="toc-number">3.1.</span> <span class="toc-text">相同点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#不同点"><span class="toc-number">3.2.</span> <span class="toc-text">不同点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#性能对比"><span class="toc-number">4.</span> <span class="toc-text">性能对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最后"><span class="toc-number">5.</span> <span class="toc-text">最后</span></a></li></ol>
  
   </div>
 
 <div id="asidepart">
-<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
 <aside class="clearfix">
 
   
 <div class="categorieslist">
-	<p class="asidetitle">分类</p>
+	<p class="asidetitle">Categories</p>
 		<ul>
 		
 		  
@@ -234,7 +242,7 @@
 		  
 		
 		  
-			<li><a href="/categories/javascript/" title="javascript">javascript<sup>1</sup></a></li>
+			<li><a href="/categories/javascript/" title="javascript">javascript<sup>2</sup></a></li>
 		  
 		
 		  
@@ -267,11 +275,11 @@
 
   
 <div class="tagslist">
-	<p class="asidetitle">标签</p>
+	<p class="asidetitle">Tags</p>
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/javascript/" title="javascript">javascript<sup>10</sup></a></li>
+				<li><a href="/tags/javascript/" title="javascript">javascript<sup>11</sup></a></li>
 			
 		
 			
@@ -291,7 +299,7 @@
 			
 		
 			
-				<li><a href="/tags/css/" title="css">css<sup>2</sup></a></li>
+				<li><a href="/tags/jison/" title="jison">jison<sup>2</sup></a></li>
 			
 		
 			
@@ -303,19 +311,7 @@
 			
 		
 			
-				<li><a href="/tags/jison/" title="jison">jison<sup>2</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/mongoose/" title="mongoose">mongoose<sup>1</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/ajax/" title="ajax">ajax<sup>1</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/redux/" title="redux">redux<sup>1</sup></a></li>
+				<li><a href="/tags/css/" title="css">css<sup>2</sup></a></li>
 			
 		
 			
@@ -323,11 +319,23 @@
 			
 		
 			
+				<li><a href="/tags/CSRF/" title="CSRF">CSRF<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/XSS/" title="XSS">XSS<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/history/" title="history">history<sup>1</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/File/" title="File">File<sup>1</sup></a></li>
+				<li><a href="/tags/immutable-js/" title="immutable.js">immutable.js<sup>1</sup></a></li>
 			
 		
 			
@@ -335,19 +343,19 @@
 			
 		
 			
-				<li><a href="/tags/vue-js/" title="vue.js">vue.js<sup>1</sup></a></li>
+				<li><a href="/tags/缓存/" title="缓存">缓存<sup>1</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/mongodb/" title="mongodb">mongodb<sup>1</sup></a></li>
+				<li><a href="/tags/前端/" title="前端">前端<sup>1</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/密码学/" title="密码学">密码学<sup>1</sup></a></li>
+				<li><a href="/tags/redux/" title="redux">redux<sup>1</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+				<li><a href="/tags/ajax/" title="ajax">ajax<sup>1</sup></a></li>
 			
 		
 		</ul>
@@ -355,7 +363,7 @@
 
 
   <div class="linkslist">
-  <p class="asidetitle">友情链接</p>
+  <p class="asidetitle">Links</p>
     <ul>
         
           <li>
@@ -374,7 +382,7 @@
 </div>
 
   <div class="rsspart">
-	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
 </div>
 
 </aside>
@@ -620,7 +628,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
 	</div>
 	<script src="/js/totop.js"></script>
 
